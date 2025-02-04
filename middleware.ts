@@ -1,8 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 
-// This conflicts with the comprehensive middleware, so I'll rather use the comprehensive middleware
-// export { auth as middleware } from "@/auth"
-
 export async function middleware(request: NextRequest): Promise<NextResponse> {
   if (request.method === "GET") {
     const response = NextResponse.next();
