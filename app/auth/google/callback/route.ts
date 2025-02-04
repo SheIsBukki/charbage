@@ -69,47 +69,4 @@ export async function GET(request: Request): Promise<Response> {
 				Location: "/"
 			}
 		});
-  
 }
-
-
-/** 
-This might be helpful later...provided by Chat GPT
-
-function isClaims(obj: any): obj is Claims {
-  return (
-    typeof obj === 'object' &&
-    obj !== null &&
-    typeof obj.sub === 'string' &&
-    (typeof obj.email === 'string' || obj.email === undefined) &&
-    (typeof obj.name === 'string' || obj.name === undefined) &&
-    (typeof obj.picture === 'string' || obj.picture === undefined)
-  );
-}
-
-This comes after claims variable, not before
-if (!isClaims(claims)) {
-  return new Response(null, { status: 400, statusText: "Invalid claims structure" });
-}
-
-Example of Claims data 
-{
-  "sub": "1234567890",
-  "name": "John Doe",
-  "given_name": "John",
-  "family_name": "Doe",
-  "picture": "https://example.com/johndoe.jpg",
-  "email": "johndoe@example.com",
-  "email_verified": true,
-  "locale": "en"
-}
-*/
-
-/**
-Some requested scopes were invalid. {valid=[https://www.googleapis.com/auth/userinfo.profile], invalid=[openId]} Learn more about this error
-If you are a developer of Charbage, see error details.
-Error 400: invalid_scope
-
-Error 400: invalid_scope
-Request details: flowName=GeneralOAuthFlow
-*/
