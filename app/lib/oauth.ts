@@ -13,7 +13,7 @@ export const github = new GitHub(
   null,
 );
 
-/** Google OAuth*/ 
+/** Google OAuth*/
 if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
   throw new Error(
     "Missing GOOGLE_CLIENT_ID or/and GOOGLE_CLIENT_SECRET environment variables",
@@ -23,5 +23,6 @@ if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
 export const google = new Google(
   process.env.GOOGLE_CLIENT_ID,
   process.env.GOOGLE_CLIENT_SECRET,
-  "http://localhost:3000/auth/google/callback",
+  "https://charbage.netlify.app/auth/google/callback", // Production
+  // "http://localhost:3000/auth/google/callback", // Development
 );
