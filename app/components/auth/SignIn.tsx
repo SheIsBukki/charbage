@@ -137,6 +137,7 @@ export default function SignIn({ action }: SignInProps) {
               alt="Up close view of a typewriter focusing on the keys"
               className="aspect-square object-cover"
               priority
+              loading="lazy"
             />
           </figure>
 
