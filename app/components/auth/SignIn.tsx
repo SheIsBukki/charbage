@@ -136,7 +136,7 @@ export default function SignIn({ action }: SignInProps) {
               src="/johnny-briggs-unsplash.jpg"
               alt="Up close view of a typewriter focusing on the keys"
               className="aspect-square object-cover"
-              loading="lazy"
+              priority
             />
           </figure>
 
