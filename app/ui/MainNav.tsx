@@ -13,7 +13,7 @@ export default function MainNav({ user }: MainNavProps) {
   const router = useRouter();
 
   return (
-    <nav className="mb-4 flex items-center justify-between px-8 py-4 shadow">
+    <nav className="flex items-center justify-between px-8 py-4 shadow">
       <div className="flex justify-center space-x-4">
         <Link href="/">Home</Link>
 
