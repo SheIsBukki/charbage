@@ -51,6 +51,12 @@ export const registerUser = async (
 };
 
 export const loginUser = async (email: string, password?: string) => {
+  /**REMEMBER TO REMOVE THIS IF CHECK FOR PRODUCTION*/
+  // if (!db) {
+  //   console.warn("Database not available: skipping user login");
+  //   return { user: null };
+  // }
+
   const [user] = await db
     .select()
     .from(userTable)
@@ -65,6 +71,7 @@ export const loginUser = async (email: string, password?: string) => {
   if (user.password === null) {
     return { user: null, error: "No password set for this account" };
   }
+
   // This if statement checks if a password is provided—handles case where password is required
   if (password === null) {
     return { user: null, error: "Password is required" };
