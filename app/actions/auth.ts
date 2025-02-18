@@ -2,7 +2,7 @@
 
 import { encodeHexLowerCase } from "@oslojs/encoding";
 import { sha256 } from "@oslojs/crypto/sha2";
-import { and, eq } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { db } from "@/db";
 import { User, userTable } from "@/db/schema";
 import {
@@ -115,16 +115,16 @@ export const logoutUser = async () => {
  * */
 export const getUserWithGithubData = async (
   githubUserId: number,
-  githubUserEmail: string,
+  // githubUserEmail: string,
 ): Promise<User | null> => {
   const [user] = await db
     .select()
     .from(userTable)
     .where(
-      and(
-        eq(userTable.githubUserId, githubUserId),
-        eq(userTable.email, githubUserEmail),
-      ),
+      // and(
+      eq(userTable.githubUserId, githubUserId),
+      // eq(userTable.email, githubUserEmail),
+      // ),
     )
     .execute();
 
@@ -145,16 +145,16 @@ export const getUserWithGithubData = async (
 
 export const getUserWithGoogleData = async (
   googleUserId: string,
-  googleUserEmail: string,
+  // googleUserEmail: string,
 ): Promise<User | null> => {
   const [user] = await db
     .select()
     .from(userTable)
     .where(
-      and(
-        eq(userTable.googleUserId, googleUserId),
-        eq(userTable.email, googleUserEmail),
-      ),
+      // and(
+      eq(userTable.googleUserId, googleUserId),
+      // eq(userTable.email, googleUserEmail),
+      // ),
     )
     .execute();
 

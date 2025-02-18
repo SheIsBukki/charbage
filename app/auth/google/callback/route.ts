@@ -49,7 +49,7 @@ export async function GET(request: Request): Promise<Response> {
   const googleUserId = claims.sub;
   const name = claims.name;
 
-  const existingUser = await getUserWithGoogleData(googleUserId, email);
+  const existingUser = await getUserWithGoogleData(googleUserId);
 
   if (existingUser !== null) {
     const sessionToken = await generateSessionToken();
