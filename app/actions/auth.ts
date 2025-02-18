@@ -28,8 +28,8 @@ export const registerUser = async (
   name: string,
   email: string,
   password?: string,
-  githubUserId?: number,
-  googleUserId?: string,
+  // githubUserId?: number,
+  // googleUserId?: string,
 ) => {
   let hashedPassword = null;
   if (password) {
@@ -43,8 +43,8 @@ export const registerUser = async (
         name,
         email,
         password: hashedPassword,
-        githubUserId,
-        googleUserId,
+        // githubUserId,
+        // googleUserId,
       })
       .returning()
       .execute();
@@ -61,8 +61,8 @@ export const registerUser = async (
 export const loginUser = async (
   email: string,
   password?: string,
-  githubUserId?: number,
-  googleUserId?: string,
+  // githubUserId?: number,
+  // googleUserId?: string,
 ) => {
   /**REMEMBER TO REMOVE THIS IF CHECK FOR PRODUCTION*/
   // if (!db) {
@@ -96,13 +96,13 @@ export const loginUser = async (
     return { user: null, error: "Invalid password" };
   }
 
-  if (user.googleUserId === null && user.githubUserId === null) {
-    return { user: null, error: "No OAuth ID set for this account" };
-  }
+  // if (user.googleUserId === null && user.githubUserId === null) {
+  //   return { user: null, error: "No OAuth ID set for this account" };
+  // }
 
-  if (githubUserId === null && googleUserId === null) {
-    return { user: null, error: "OAuth ID is required" };
-  }
+  // if (githubUserId === null && googleUserId === null) {
+  //   return { user: null, error: "OAuth ID is required" };
+  // }
 
   const token = await generateSessionToken();
   const session = await createSession(token, user.id);

@@ -37,9 +37,9 @@ export async function GET(request: Request): Promise<Response> {
   });
 
   const githubUser = await githubUserResponse.json();
-  const githubUserEmail = githubUser.email;
+  const email = githubUser.email;
   const githubUserId = githubUser.id;
-  const githubUsername = githubUser.login;
+  const name = githubUser.login;
 
   const existingUser = await getUserWithGithubData(githubUserId);
 
@@ -51,11 +51,7 @@ export async function GET(request: Request): Promise<Response> {
     return new Response(null, { status: 302, headers: { Location: "/" } });
   }
 
-  const { user } = await registerUser(
-    githubUsername,
-    githubUserEmail,
-    githubUserId,
-  );
+  const { user } = await registerUser(name, email, githubUserId);
 
   if (!user) {
     return new Response(null, { status: 404 });
