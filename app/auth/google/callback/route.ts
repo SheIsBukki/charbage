@@ -46,7 +46,7 @@ export async function GET(request: Request): Promise<Response> {
 
   const claims = decodeIdToken(tokens.idToken()) as Claims;
   const googleUserEmail = claims.email;
-  const googleUserId = claims.sub;
+  // const googleUserId = claims.sub;
   const name = claims.name;
 
   const existingUser = await getUserWithGoogleData(googleUserEmail);
@@ -63,7 +63,7 @@ export async function GET(request: Request): Promise<Response> {
     });
   }
 
-  const { user } = await registerUser(name, googleUserId, googleUserEmail);
+  const { user } = await registerUser(name, googleUserEmail);
 
   if (!user) {
     return new Response(null, { status: 404 });
