@@ -1,24 +1,19 @@
 "use client";
 
-import { Post } from "@/app/db/schema";
 import { ArticleFormSchema } from "@/app/lib/definitions";
 import React, { useActionState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import MarkdownEditor from "@/app/components/editor/MarkdownEditor";
 import Form from "next/form";
-
-type ActionState = {
-  errors: Record<string, { message: string }>;
-  values: Post;
-};
+import { ActionState, PostFormValues } from "@/app/write/page";
 
 type ArticleFormProps = {
   action: (
     initialState: ActionState,
     formData: FormData,
   ) => Promise<ActionState>;
-  values: Post;
+  values: PostFormValues;
 };
 
 const ErrorMessage = ({ message }: { message: string | undefined }) => (

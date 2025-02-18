@@ -3,18 +3,20 @@ import ArticleForm from "@/app/components/editor/ArticleForm";
 import { redirect } from "next/navigation";
 import { ArticleFormSchema } from "@/app/lib/definitions";
 import { createPost } from "@/app/db/queries/insert";
-import { Post } from "@/app/db/schema";
 
-type ActionState = {
+export type PostFormValues = {
+  title: string,content:string,featuredImage:string
+}
+
+export type ActionState = {
   errors: Record<string, { message: string }>;
-  values: Post;
+  values: PostFormValues;
 };
 
 const submitForm = async (initialState: ActionState, formData: FormData) => {
   "use server";
 
-  const values = {
-    id: String(initialState.values.id),
+  const values: PostFormValues = {
     title: String(formData.get("title") || ""),
     content: String(formData.get("content") || ""),
     featuredImage: String(formData.get("featuredImage") || ""),
@@ -41,7 +43,7 @@ export default async function WritePage() {
   return (
     /**/
     <div className="my-8">
-      <ArticleForm action={submitForm} />
+      <ArticleForm action={submitForm} values={{title:'', content: '', featuredImage: ''}} />
     </div>
   );
 }
