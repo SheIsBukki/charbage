@@ -2,7 +2,7 @@
 
 import { encodeHexLowerCase } from "@oslojs/encoding";
 import { sha256 } from "@oslojs/crypto/sha2";
-import { eq } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
 import { db } from "@/db";
 import { User, userTable } from "@/db/schema";
 import {
@@ -28,8 +28,8 @@ export const registerUser = async (
   name: string,
   email: string,
   password?: string,
-  // githubUserId?: number,
-  // googleUserId?: string,
+  githubUserId?: number,
+  googleUserId?: string,
 ) => {
   let hashedPassword = null;
   if (password) {
@@ -43,8 +43,8 @@ export const registerUser = async (
         name,
         email,
         password: hashedPassword,
-        // githubUserId,
-        // googleUserId,
+        githubUserId: githubUserId ? githubUserId : null,
+        googleUserId: googleUserId ? googleUserId : null,
       })
       .returning()
       .execute();
@@ -115,16 +115,16 @@ export const logoutUser = async () => {
  * */
 export const getUserWithGithubData = async (
   githubUserId: number,
-  // githubUserEmail: string,
+  githubUserEmail: string,
 ): Promise<User | null> => {
   const [user] = await db
     .select()
     .from(userTable)
     .where(
-      // and(
-      eq(userTable.githubUserId, githubUserId),
-      // eq(userTable.email, githubUserEmail),
-      // ),
+      and(
+        eq(userTable.githubUserId, githubUserId),
+        eq(userTable.email, githubUserEmail),
+      ),
     )
     .execute();
 
@@ -145,16 +145,16 @@ export const getUserWithGithubData = async (
 
 export const getUserWithGoogleData = async (
   googleUserId: string,
-  // googleUserEmail: string,
+  googleUserEmail: string,
 ): Promise<User | null> => {
   const [user] = await db
     .select()
     .from(userTable)
     .where(
-      // and(
-      eq(userTable.googleUserId, googleUserId),
-      // eq(userTable.email, googleUserEmail),
-      // ),
+      and(
+        eq(userTable.googleUserId, googleUserId),
+        eq(userTable.email, googleUserEmail),
+      ),
     )
     .execute();
 

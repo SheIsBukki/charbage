@@ -41,7 +41,7 @@ export async function GET(request: Request): Promise<Response> {
   const githubUserId = githubUser.id;
   const name = githubUser.login;
 
-  const existingUser = await getUserWithGithubData(githubUserId);
+  const existingUser = await getUserWithGithubData(githubUserId, email);
 
   if (existingUser !== null) {
     const sessionToken = await generateSessionToken();
