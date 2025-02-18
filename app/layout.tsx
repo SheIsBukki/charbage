@@ -4,6 +4,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/app/context/ThemeProvider";
 import MainNav from "@/app/ui/MainNav";
 import { getCurrentSession } from "@/app/lib/session";
+import { Toaster } from "react-hot-toast";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -16,7 +17,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: {template:"%s | Charbage", default: "Charbage"},
+  title: { template: "%s | Charbage", default: "Charbage" },
   description: "Charbage blog app—Charbage in, Charbage out",
 };
 
@@ -26,6 +27,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const { user } = await getCurrentSession();
+
   return (
     <html lang="en" suppressHydrationWarning>
       <body
@@ -33,6 +35,7 @@ export default async function RootLayout({
       >
         <ThemeProvider>
           <MainNav user={user} />
+          <Toaster />
           {children}
         </ThemeProvider>
       </body>

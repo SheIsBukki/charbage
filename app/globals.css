@@ -4,18 +4,128 @@
 
 :root {
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #2b3035;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
+    --background: #2b3035;
     --foreground: #ededed;
   }
 }
 
 body {
-  /* color: var(--foreground);
-  background: var(--background); */
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/*Rulesets for Markdown Editor*/
+
+.w-md-editor {
+  height: 80vh !important;
+}
+
+/*This controls the colour of both columns*/
+/*.wmde-markdown-color {
+}*/
+
+/*This controls the preview column*/
+/*.wmde-markdown {
+}*/
+
+/*This controls the input column*/
+/*.code-highlight {
+}*/
+
+/*The controls the input column colour and the out borders*/
+/*.w-md-editor-show-live {
+}*/
+
+/*This controls upper-outer border and the background colour of the toolbar*/
+/*.w-md-editor-toolbar {
+  padding-inline: 8px !important;
+}*/
+
+/*Controls the tool items border as a groupd] and its bg*/
+/*.w-md-editor-toolbar ul {
+}*/
+
+/*Only controls the border of the list item */
+/*.w-md-editor-toolbar ul > li {
+  padding-inline: 2px;
+}*/
+
+/*.w-md-editor,
+.w-md-editor-toolbar,
+.w-md-editor-show-live,
+.w-md-editor-content,
+.w-md-editor-area,
+.w-md-editor-input,
+.w-md-editor-preview,
+.wmde-markdown-var,
+.wmde-markdown,
+.wmde-markdown-color,
+.w-md-editor-bar,
+.w-md-editor-text-input,
+.w-md-editor-text-pre {}*/
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}
+
+th {
+  background-color: #000;
+  color: #999;
+}
+
+/* markdown blockquote */
+blockquote {
+  background: #000;
+  color: #999;
+  border-inline-start: 10px solid #ccc;
+  margin: 1.5em 10px;
+  padding: 1em 10px;
+  quotes: "\201C" "\201D" "\2018" "\2019";
+}
+
+blockquote:before {
+  color: #ccc;
+  content: open-quote;
+  font-size: 4em;
+  line-height: 0.1em;
+  margin-inline-end: 0.25em;
+  vertical-align: -0.4em;
+}
+
+blockquote p {
+  display: inline;
+  color: #999;
+}
+
+/*.w-md-editor-text-pre > code,
+.w-md-editor-text-input {
+}*/
+
+/* Some of the classes of the markdown edit
+.w-md-editor,
+.w-md-editor-toolbar,
+.w-md-editor-show-live,
+.w-md-editor-content,
+.w-md-editor-area,
+.w-md-editor-input,
+.w-md-editor-preview,
+.wmde-markdown-var,
+.wmde-markdown,
+.wmde-markdown-color,
+.w-md-editor-bar,
+.w-md-editor-text-input,
+.w-md-editor-text-pre
+
+*/

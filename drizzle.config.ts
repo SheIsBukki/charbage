@@ -10,7 +10,7 @@
 // // Check to determine when Supabase will kick off
 // const useDB = process.env.USE_DB === "true";
 // if (!useDB) {
-//   throw new Error("USE_DB has not be set in the .env file");
+//   throw new Error("USE_DB has not been set in the .env file");
 // }
 
 // export default defineConfig({

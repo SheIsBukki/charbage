@@ -1,7 +1,24 @@
-/**
- *
 import { z } from "zod";
 
+export const ArticleFormSchema = z.object({
+  title: z
+    .string()
+    .min(20, { message: "Title must be at least 20 characters" }),
+  content: z
+    .string()
+    .min(100, { message: "Content must be at least 100 characters" }),
+  featuredImage: z
+    .string()
+    .url({ message: "Please provide a valid image URL" })
+    .optional(),
+  tags: z
+    .array(z.string().min(2, { message: "Tag must be at least 2 characters" }))
+    .max(20, { message: "Tag cannot exceed 10 characters" })
+    .optional(),
+});
+
+/**
+ *
 export const SignupFormSchema = z.object({
   name: z
     .string()

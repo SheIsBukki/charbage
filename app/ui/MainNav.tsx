@@ -86,7 +86,7 @@ export default function MainNav({ user }: MainNavProps) {
               )}
             </li>
             {!user && (
-              <li className="">
+              <li onClick={() => setOpen(false)} className="">
                 <Link href="/auth/sign-up">Sign up</Link>
               </li>
             )}
