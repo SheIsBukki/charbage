@@ -1,10 +1,18 @@
-import { getUserWithOAuthEmail, registerUser } from "@/app/actions/auth";
+import { getUserWithGoogleData, registerUser } from "@/app/actions/auth";
 import { google } from "@/app/lib/oauth";
-import { createSession, generateSessionToken, setSessionTokenCookie } from "@/app/lib/session";
+import {
+  createSession,
+  generateSessionToken,
+  setSessionTokenCookie,
+} from "@/app/lib/session";
 import { decodeIdToken, type OAuth2Tokens } from "arctic";
 import { cookies } from "next/headers";
 
-interface Claims {name:string, email:string}
+interface Claims {
+  name: string;
+  email: string;
+  sub: string;
+}
 
 export async function GET(request: Request): Promise<Response> {
   const url = new URL(request.url);
@@ -38,35 +46,40 @@ export async function GET(request: Request): Promise<Response> {
 
   const claims = decodeIdToken(tokens.idToken()) as Claims;
   const googleUserEmail = claims.email;
-  const googleUserName = claims.name
-  
-  const existingUser = await getUserWithOAuthEmail(googleUserEmail)
-  
-  if(existingUser!==null){
+  const googleUserId = claims.sub;
+  const googleUserName = claims.name;
+
+  const existingUser = await getUserWithGoogleData(googleUserId);
+
+  if (existingUser !== null) {
     const sessionToken = await generateSessionToken();
-		const session = await createSession(sessionToken, existingUser.id);
-		await setSessionTokenCookie(sessionToken, session.expiresAt);
-		return new Response(null, {
-			status: 302,
-			headers: {
-				Location: "/"
-			}
-		});
+    const session = await createSession(sessionToken, existingUser.id);
+    await setSessionTokenCookie(sessionToken, session.expiresAt);
+    return new Response(null, {
+      status: 302,
+      headers: {
+        Location: "/",
+      },
+    });
   }
-  
-  const {user} = await registerUser(googleUserName, googleUserEmail)
-  
-  if(!user){
-    return new Response(null,{status:404})
+
+  const { user } = await registerUser(
+    googleUserName,
+    googleUserId,
+    googleUserEmail,
+  );
+
+  if (!user) {
+    return new Response(null, { status: 404 });
   }
-  
+
   const sessionToken = await generateSessionToken();
-		const session = await createSession(sessionToken, user.id);
-		await setSessionTokenCookie(sessionToken, session.expiresAt);
-		return new Response(null, {
-			status: 302,
-			headers: {
-				Location: "/"
-			}
-		});
+  const session = await createSession(sessionToken, user.id);
+  await setSessionTokenCookie(sessionToken, session.expiresAt);
+  return new Response(null, {
+    status: 302,
+    headers: {
+      Location: "/",
+    },
+  });
 }

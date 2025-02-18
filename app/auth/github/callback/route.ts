@@ -1,7 +1,7 @@
 import { cookies } from "next/headers";
 import type { OAuth2Tokens } from "arctic";
 import { github } from "@/app/lib/oauth";
-import {  getUserWithOAuthEmail, registerUser } from "@/app/actions/auth";
+import { getUserWithGithubData, registerUser } from "@/app/actions/auth";
 import {
   createSession,
   generateSessionToken,
@@ -38,9 +38,10 @@ export async function GET(request: Request): Promise<Response> {
 
   const githubUser = await githubUserResponse.json();
   const githubUserEmail = githubUser.email;
+  const githubUserId = githubUser.id;
   const githubUsername = githubUser.login;
 
-  const existingUser = await getUserWithOAuthEmail(githubUserEmail);
+  const existingUser = await getUserWithGithubData(githubUserId);
 
   if (existingUser !== null) {
     const sessionToken = await generateSessionToken();
@@ -50,7 +51,11 @@ export async function GET(request: Request): Promise<Response> {
     return new Response(null, { status: 302, headers: { Location: "/" } });
   }
 
-  const { user } = await registerUser(githubUsername, githubUserEmail);
+  const { user } = await registerUser(
+    githubUsername,
+    githubUserEmail,
+    githubUserId,
+  );
 
   if (!user) {
     return new Response(null, { status: 404 });

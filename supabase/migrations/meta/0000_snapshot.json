@@ -1,5 +1,5 @@
 {
-  "id": "61bd6496-aa6f-4aa3-ac26-cc72981ef989",
+  "id": "bf52660d-c0be-4401-9a47-1b45cf1698a3",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -149,6 +149,18 @@
           "primaryKey": false,
           "notNull": true
         },
+        "githubUserId": {
+          "name": "githubUserId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "googleUserId": {
+          "name": "googleUserId",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
         "password": {
           "name": "password",
           "type": "varchar",
@@ -172,6 +184,20 @@
           "nullsNotDistinct": false,
           "columns": [
             "email"
+          ]
+        },
+        "users_githubUserId_unique": {
+          "name": "users_githubUserId_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "githubUserId"
+          ]
+        },
+        "users_googleUserId_unique": {
+          "name": "users_googleUserId_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "googleUserId"
           ]
         }
       },

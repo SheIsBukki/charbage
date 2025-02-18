@@ -9,6 +9,8 @@ const SignUpSchema = z.object({
   name: z.string().min(2),
   email: z.string().email(),
   password: z.string().min(5),
+  // githubUserId: z.number().optional(),
+  // googleUserId: z.string().optional(),
 });
 
 export default async function SignUpPage() {
@@ -28,7 +30,13 @@ export default async function SignUpPage() {
     }
 
     const { name, email, password } = parsed.data;
-    const { user, error } = await registerUser(name, email, password);
+    const { user, error } = await registerUser(
+      name,
+      email,
+      password,
+      // githubUserId,
+      // googleUserId,
+    );
 
     if (error) {
       return { message: error };

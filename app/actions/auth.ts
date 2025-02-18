@@ -28,6 +28,8 @@ export const registerUser = async (
   name: string,
   email: string,
   password?: string,
+  githubUserId?: number,
+  googleUserId?: string,
 ) => {
   let hashedPassword = null;
   if (password) {
@@ -37,7 +39,13 @@ export const registerUser = async (
   try {
     const [user] = await db
       .insert(userTable)
-      .values({ name, email, password: hashedPassword })
+      .values({
+        name,
+        email,
+        password: hashedPassword,
+        githubUserId,
+        googleUserId,
+      })
       .returning()
       .execute();
 
@@ -50,7 +58,12 @@ export const registerUser = async (
   }
 };
 
-export const loginUser = async (email: string, password?: string) => {
+export const loginUser = async (
+  email: string,
+  password?: string,
+  githubUserId?: number,
+  googleUserId?: string,
+) => {
   /**REMEMBER TO REMOVE THIS IF CHECK FOR PRODUCTION*/
   // if (!db) {
   //   console.warn("Database not available: skipping user login");
@@ -83,6 +96,14 @@ export const loginUser = async (email: string, password?: string) => {
     return { user: null, error: "Invalid password" };
   }
 
+  if (user.googleUserId === null && user.githubUserId === null) {
+    return { user: null, error: "No OAuth ID set for this account" };
+  }
+
+  if (githubUserId === null && googleUserId === null) {
+    return { user: null, error: "OAuth ID is required" };
+  }
+
   const token = await generateSessionToken();
   const session = await createSession(token, user.id);
   await setSessionTokenCookie(token, session.expiresAt);
@@ -105,13 +126,13 @@ export const logoutUser = async () => {
 /**
  *  query to see if a user signed up through github or google oauth
  * */
-export const getUserWithOAuthEmail = async (
-  oauthUserEmail: string,
+export const getUserWithGithubData = async (
+  githubUserId: number,
 ): Promise<User | null> => {
   const [user] = await db
     .select()
     .from(userTable)
-    .where(eq(userTable.email, oauthUserEmail))
+    .where(eq(userTable.githubUserId, githubUserId))
     .execute();
 
   if (!user) {
@@ -122,6 +143,32 @@ export const getUserWithOAuthEmail = async (
     id: user.id,
     email: user.email,
     name: user.name,
+    githubUserId: user.githubUserId,
+    googleUserId: user.googleUserId,
+    password: user.password,
+    createdAt: user.createdAt,
+  };
+};
+
+export const getUserWithGoogleData = async (
+  googleUserId: string,
+): Promise<User | null> => {
+  const [user] = await db
+    .select()
+    .from(userTable)
+    .where(eq(userTable.googleUserId, googleUserId))
+    .execute();
+
+  if (!user) {
+    return null;
+  }
+
+  return {
+    id: user.id,
+    email: user.email,
+    name: user.name,
+    githubUserId: user.githubUserId,
+    googleUserId: user.googleUserId,
     password: user.password,
     createdAt: user.createdAt,
   };

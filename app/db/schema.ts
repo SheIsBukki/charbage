@@ -1,4 +1,11 @@
-import { text, pgTable, timestamp, uuid, varchar } from "drizzle-orm/pg-core";
+import {
+  text,
+  pgTable,
+  timestamp,
+  uuid,
+  varchar,
+  integer,
+} from "drizzle-orm/pg-core";
 import { InferSelectModel } from "drizzle-orm";
 
 export const sessionTable = pgTable("sessions", {
@@ -16,6 +23,8 @@ export const userTable = pgTable("users", {
   id: uuid("id").defaultRandom().primaryKey(),
   name: text("name").notNull(),
   email: text("email").notNull().unique(),
+  githubUserId: integer("githubUserId").unique(),
+  googleUserId: text("googleUserId").unique(),
   password: varchar("password"),
   createdAt: timestamp("createdAt", {
     withTimezone: true,
