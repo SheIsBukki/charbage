@@ -45,11 +45,11 @@ export async function GET(request: Request): Promise<Response> {
   }
 
   const claims = decodeIdToken(tokens.idToken()) as Claims;
-  const email = claims.email;
+  const googleUserEmail = claims.email;
   const googleUserId = claims.sub;
   const name = claims.name;
 
-  const existingUser = await getUserWithGoogleData(googleUserId, email);
+  const existingUser = await getUserWithGoogleData(googleUserEmail);
 
   if (existingUser !== null) {
     const sessionToken = await generateSessionToken();
@@ -63,7 +63,7 @@ export async function GET(request: Request): Promise<Response> {
     });
   }
 
-  const { user } = await registerUser(name, googleUserId, email);
+  const { user } = await registerUser(name, googleUserId, googleUserEmail);
 
   if (!user) {
     return new Response(null, { status: 404 });
