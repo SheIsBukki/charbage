@@ -14,6 +14,7 @@ const submitForm = async (initialState: ActionState, formData: FormData) => {
   "use server";
 
   const values = {
+    id: String(initialState.values.id),
     title: String(formData.get("title") || ""),
     content: String(formData.get("content") || ""),
     featuredImage: String(formData.get("featuredImage") || ""),
