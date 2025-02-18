@@ -1,10 +1,10 @@
 import { getUserWithGoogleData, registerUser } from "@/app/actions/auth";
-import { google } from "@/app/lib/oauth";
+import { google } from "@/lib/oauth";
 import {
   createSession,
   generateSessionToken,
   setSessionTokenCookie,
-} from "@/app/lib/session";
+} from "@/lib/session";
 import { decodeIdToken, type OAuth2Tokens } from "arctic";
 import { cookies } from "next/headers";
 
@@ -45,7 +45,7 @@ export async function GET(request: Request): Promise<Response> {
   }
 
   const claims = decodeIdToken(tokens.idToken()) as Claims;
-  const googleUserEmail = claims.email;
+  const email = claims.email;
   const googleUserId = claims.sub;
   const name = claims.name;
 
@@ -63,7 +63,7 @@ export async function GET(request: Request): Promise<Response> {
     });
   }
 
-  const { user } = await registerUser(name, googleUserId, googleUserEmail);
+  const { user } = await registerUser(name, googleUserId, email);
 
   if (!user) {
     return new Response(null, { status: 404 });

@@ -1,14 +1,14 @@
 import { generateCodeVerifier, generateState } from "arctic";
-import { google } from "@/app/lib/oauth";
+import { google } from "@/lib/oauth";
 import { cookies } from "next/headers";
 
 export async function GET(): Promise<Response> {
   const state = generateState();
   const codeVerifier = generateCodeVerifier();
   const url = google.createAuthorizationURL(state, codeVerifier, [
-    'openid',
+    "openid",
     "profile",
-    'email'
+    "email",
   ]);
 
   const cookieStore = await cookies();

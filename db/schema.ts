@@ -23,8 +23,8 @@ export const userTable = pgTable("users", {
   id: uuid("id").defaultRandom().primaryKey(),
   name: text("name").notNull(),
   email: text("email").notNull().unique(),
-  githubUserId: integer("githubUserId").unique(),
-  googleUserId: text("googleUserId").unique(),
+  githubUserId: integer("githubUserId"),
+  googleUserId: text("googleUserId"),
   password: varchar("password"),
   createdAt: timestamp("createdAt", {
     withTimezone: true,

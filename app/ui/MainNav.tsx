@@ -3,7 +3,7 @@
 import Link from "next/link";
 import ThemeSwitcher from "@/app/ui/ThemeSwitcher";
 import { useRouter } from "next/navigation";
-import { User } from "@/app/db/schema";
+import { User } from "@/db/schema";
 import { logoutUser } from "@/app/actions/auth";
 import React, { useState } from "react";
 import { GiCabbage } from "react-icons/gi";
@@ -30,7 +30,7 @@ export default function MainNav({ user }: MainNavProps) {
         <button
           type="button"
           onClick={() =>
-            user ? router.push("/write") : router.replace("/auth/sign-in")
+            user ? router.push("/write") : router.replace("/sign-in")
           }
         >
           <span className="hidden md:block">Write</span>
@@ -82,12 +82,12 @@ export default function MainNav({ user }: MainNavProps) {
                   Log out
                 </button>
               ) : (
-                <Link href="/auth/sign-in">Log in</Link>
+                <Link href="/sign-in">Log in</Link>
               )}
             </li>
             {!user && (
               <li onClick={() => setOpen(false)} className="">
-                <Link href="/auth/sign-up">Sign up</Link>
+                <Link href="/sign-up">Sign up</Link>
               </li>
             )}
             <li onClick={() => setOpen(false)} className="">
@@ -116,7 +116,7 @@ export default function MainNav({ user }: MainNavProps) {
               </button>
             </div>
           ) : (
-            <Link href="/auth/sign-in">Log in</Link>
+            <Link href="/sign-in">Log in</Link>
           )}
         </div>
 

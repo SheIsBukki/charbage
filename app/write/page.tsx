@@ -1,8 +1,8 @@
-import { getCurrentSession } from "@/app/lib/session";
-import ArticleForm from "@/app/components/editor/ArticleForm";
+import { getCurrentSession } from "@/lib/session";
+import ArticleForm from "@/components/editor/ArticleForm";
 import { redirect } from "next/navigation";
-import { ArticleFormSchema } from "@/app/lib/definitions";
-import { createPost } from "@/app/db/queries/insert";
+import { ArticleFormSchema } from "@/lib/definitions";
+import { createPost } from "@/db/queries/insert";
 
 export type PostFormValues = {
   title: string;
@@ -39,7 +39,7 @@ export default async function WritePage() {
   const { user } = await getCurrentSession();
 
   if (!user) {
-    return redirect("/auth/sign-in");
+    return redirect("/sign-in");
   }
 
   return (

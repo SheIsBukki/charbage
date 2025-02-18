@@ -1,12 +1,12 @@
 import { cookies } from "next/headers";
 import type { OAuth2Tokens } from "arctic";
-import { github } from "@/app/lib/oauth";
+import { github } from "@/lib/oauth";
 import { getUserWithGithubData, registerUser } from "@/app/actions/auth";
 import {
   createSession,
   generateSessionToken,
   setSessionTokenCookie,
-} from "@/app/lib/session";
+} from "@/lib/session";
 
 export async function GET(request: Request): Promise<Response> {
   const url = new URL(request.url);

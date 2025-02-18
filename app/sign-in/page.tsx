@@ -1,6 +1,6 @@
 import { loginUser } from "@/app/actions/auth";
-import SignIn from "@/app/components/auth/SignIn";
-import { getCurrentSession } from "@/app/lib/session";
+import SignIn from "@/components/auth/SignIn";
+import { getCurrentSession } from "@/lib/session";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 

@@ -1,4 +1,4 @@
-import editorDarkCss from "@/app/utils/editorDarkCss";
+// import editorDarkCss from "@/app/utils/editorDarkCss";
 import MDEditor from "@uiw/react-md-editor";
 import { useTheme } from "next-themes";
 import React, { useEffect } from "react";
@@ -10,7 +10,7 @@ export default function MarkdownEditor({ ...field }: ControllerRenderProps) {
   useEffect(() => {
     const customStyle = document.createElement("style");
     customStyle.classList.add("editor-dark-theme");
-    customStyle.innerHTML = editorDarkCss;
+    // customStyle.innerHTML = editorDarkCss;
     const existingStyle = document.querySelector(".editor-dark-theme");
 
     if (theme === "dark") {

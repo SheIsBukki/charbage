@@ -3,8 +3,8 @@
 import { encodeHexLowerCase } from "@oslojs/encoding";
 import { sha256 } from "@oslojs/crypto/sha2";
 import { eq } from "drizzle-orm";
-import { db } from "@/app/db";
-import { User, userTable } from "@/app/db/schema";
+import { db } from "@/db";
+import { User, userTable } from "@/db/schema";
 import {
   createSession,
   deleteSessionTokenCookie,
@@ -12,7 +12,7 @@ import {
   getCurrentSession,
   invalidateSession,
   setSessionTokenCookie,
-} from "@/app/lib/session";
+} from "@/lib/session";
 
 export const hashPassword = async (password: string) => {
   return encodeHexLowerCase(sha256(new TextEncoder().encode(password)));
@@ -28,8 +28,8 @@ export const registerUser = async (
   name: string,
   email: string,
   password?: string,
-  // githubUserId?: number,
-  // googleUserId?: string,
+  githubUserId?: number,
+  googleUserId?: string,
 ) => {
   let hashedPassword = null;
   if (password) {
@@ -43,8 +43,8 @@ export const registerUser = async (
         name,
         email,
         password: hashedPassword,
-        // githubUserId,
-        // googleUserId,
+        githubUserId,
+        googleUserId,
       })
       .returning()
       .execute();
@@ -58,12 +58,7 @@ export const registerUser = async (
   }
 };
 
-export const loginUser = async (
-  email: string,
-  password?: string,
-  // githubUserId?: number,
-  // googleUserId?: string,
-) => {
+export const loginUser = async (email: string, password?: string) => {
   /**REMEMBER TO REMOVE THIS IF CHECK FOR PRODUCTION*/
   // if (!db) {
   //   console.warn("Database not available: skipping user login");
@@ -95,14 +90,6 @@ export const loginUser = async (
   if (!passwordValid) {
     return { user: null, error: "Invalid password" };
   }
-
-  // if (user.googleUserId === null && user.githubUserId === null) {
-  //   return { user: null, error: "No OAuth ID set for this account" };
-  // }
-
-  // if (githubUserId === null && googleUserId === null) {
-  //   return { user: null, error: "OAuth ID is required" };
-  // }
 
   const token = await generateSessionToken();
   const session = await createSession(token, user.id);

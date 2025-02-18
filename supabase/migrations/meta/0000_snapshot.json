@@ -1,5 +1,5 @@
 {
-  "id": "bf52660d-c0be-4401-9a47-1b45cf1698a3",
+  "id": "3a6d9425-020c-48f0-affa-af9a5140428a",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -184,20 +184,6 @@
           "nullsNotDistinct": false,
           "columns": [
             "email"
-          ]
-        },
-        "users_githubUserId_unique": {
-          "name": "users_githubUserId_unique",
-          "nullsNotDistinct": false,
-          "columns": [
-            "githubUserId"
-          ]
-        },
-        "users_googleUserId_unique": {
-          "name": "users_googleUserId_unique",
-          "nullsNotDistinct": false,
-          "columns": [
-            "googleUserId"
           ]
         }
       },

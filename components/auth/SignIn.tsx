@@ -87,7 +87,7 @@ export default function SignIn({ action }: SignInProps) {
                       >
                         Password
                       </label>
-                      <p className="mt-5 text-xs font-semibold text-red-500 hover:underline">
+                      <p className="mt-5 text-xs font-semibold text-blue-500 hover:underline">
                         Forgot password?
                       </p>
                     </div>
@@ -125,7 +125,7 @@ export default function SignIn({ action }: SignInProps) {
             {/*Sign up traditionally*/}
             <p className="flex items-center justify-around py-4 text-sm">
               <span className="">Don&lsquo;t have an account?</span>
-              <Link href="/auth/sign-up" className="underline">
+              <Link href="/sign-up" className="underline">
                 Sign Up
               </Link>
             </p>

@@ -1,10 +1,10 @@
 "use client";
 
-import { ArticleFormSchema } from "@/app/lib/definitions";
+import { ArticleFormSchema } from "@/lib/definitions";
 import React, { useActionState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
-import MarkdownEditor from "@/app/components/editor/MarkdownEditor";
+import MarkdownEditor from "@/components/editor/MarkdownEditor";
 import Form from "next/form";
 import { ActionState, PostFormValues } from "@/app/write/page";
 

@@ -102,7 +102,7 @@ export default function SignUp({ action }: SignUpProps) {
         {/*Sign in traditionally*/}
         <p className="flex w-full items-center justify-around py-4 text-sm">
           <span className="">Already have an account?</span>
-          <Link href="/auth/sign-in" className="underline">
+          <Link href="/sign-in" className="underline">
             Log In
           </Link>
         </p>

@@ -8,8 +8,8 @@ import { sha256 } from "@oslojs/crypto/sha2";
 import { eq } from "drizzle-orm";
 import { cookies } from "next/headers";
 import { cache } from "react";
-import { Session, sessionTable, User, userTable } from "@/app/db/schema";
-import { db } from "@/app/db";
+import { Session, sessionTable, User, userTable } from "@/db/schema";
+import { db } from "@/db";
 
 /** SESSION */
 

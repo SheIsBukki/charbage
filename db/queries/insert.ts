@@ -1,8 +1,8 @@
 "use server";
 
-import { db } from "@/app/db";
-import { postTable } from "@/app/db/schema";
-import { getCurrentSession } from "@/app/lib/session";
+import { db } from "@/db";
+import { postTable } from "@/db/schema";
+import { getCurrentSession } from "@/lib/session";
 import slugify from "slugify";
 
 export async function createPost(data: {

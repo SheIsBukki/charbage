@@ -1,9 +1,9 @@
 import React from "react";
 import { z } from "zod";
-import { getCurrentSession } from "@/app/lib/session";
+import { getCurrentSession } from "@/lib/session";
 import { redirect } from "next/navigation";
 import { loginUser, registerUser } from "@/app/actions/auth";
-import SignUp from "@/app/components/auth/SignUp";
+import SignUp from "@/components/auth/SignUp";
 
 const SignUpSchema = z.object({
   name: z.string().min(2),
