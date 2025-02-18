@@ -28,8 +28,8 @@ export const registerUser = async (
   name: string,
   email: string,
   password?: string,
-  githubUserId?: number,
-  googleUserId?: string,
+  // githubUserId?: number,
+  // googleUserId?: string,
 ) => {
   let hashedPassword = null;
   if (password) {
@@ -43,8 +43,8 @@ export const registerUser = async (
         name,
         email,
         password: hashedPassword,
-        githubUserId,
-        googleUserId,
+        // githubUserId,
+        // googleUserId,
       })
       .returning()
       .execute();
