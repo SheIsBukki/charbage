@@ -5,8 +5,10 @@ import { ArticleFormSchema } from "@/app/lib/definitions";
 import { createPost } from "@/app/db/queries/insert";
 
 export type PostFormValues = {
-  title: string,content:string,featuredImage:string
-}
+  title: string;
+  content: string;
+  featuredImage: string;
+};
 
 export type ActionState = {
   errors: Record<string, { message: string }>;
@@ -41,9 +43,11 @@ export default async function WritePage() {
   }
 
   return (
-    /**/
     <div className="my-8">
-      <ArticleForm action={submitForm} values={{title:'', content: '', featuredImage: ''}} />
+      <ArticleForm
+        action={submitForm}
+        values={{ title: "", content: "", featuredImage: "" }}
+      />
     </div>
   );
 }

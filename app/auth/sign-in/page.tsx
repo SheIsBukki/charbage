@@ -7,8 +7,8 @@ import { z } from "zod";
 const SignInSchema = z.object({
   email: z.string().email(),
   password: z.string().min(5),
-  // googleUserId: z.string().optional(),
-  // githubUserId: z.number().optional(),
+  googleUserId: z.string(),
+  githubUserId: z.number(),
 });
 
 export default async function SignInPage() {
@@ -26,12 +26,12 @@ export default async function SignInPage() {
       return { message: "Invalid email or password" };
     }
 
-    const { email, password } = parsed.data;
+    const { email, password, githubUserId, googleUserId } = parsed.data;
     const { user, error } = await loginUser(
       email,
       password,
-      // githubUserId,
-      // googleUserId,
+      githubUserId,
+      googleUserId,
     );
 
     if (error) {
