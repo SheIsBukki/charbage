@@ -20,9 +20,19 @@ body {
 
 /*Rulesets for Markdown Editor*/
 
-.w-md-editor {
+body .w-md-editor {
   height: 80vh !important;
 }
+
+body .w-md-editor-toolbar {
+  padding: 12px !important;
+}
+
+/*body .w-md-editor-text-pre > code,
+body .w-md-editor-text-input {
+  font-size: 16px !important;
+  line-height: 16px !important;
+}*/
 
 /*This controls the colour of both columns*/
 /*.wmde-markdown-color {

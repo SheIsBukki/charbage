@@ -50,7 +50,7 @@ export const registerUser = async (
       .execute();
 
     const safeUser = { ...user, hashedPassword: undefined };
-    console.log(safeUser);
+
     return { user: safeUser, error: null };
   } catch (error) {
     console.error("Error registering user:", error);
@@ -96,8 +96,6 @@ export const loginUser = async (email: string, password?: string) => {
   await setSessionTokenCookie(token, session.expiresAt);
 
   const safeUser = { ...user, hashedPassword: undefined };
-
-  console.log(safeUser);
 
   return { user: safeUser, error: null };
 };

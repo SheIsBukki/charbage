@@ -17,7 +17,7 @@ type ArticleFormProps = {
 };
 
 const ErrorMessage = ({ message }: { message: string | undefined }) => (
-  <p role="alert" className="text-red-500">
+  <p role="alert" className="my-1 text-xs text-red-500 md:text-base">
     {message}
   </p>
 );
@@ -48,7 +48,7 @@ export default function ArticleForm({ action, values }: ArticleFormProps) {
               id="title"
               aria-describedby="title-error"
               type="text"
-              className="h-fit w-full py-2 text-start text-3xl outline-0"
+              className="h-fit w-full px-1 py-2 text-start text-lg outline-0 md:text-3xl"
               placeholder="Your blog title..."
               {...register("title")}
               disabled={isPending}
@@ -59,7 +59,7 @@ export default function ArticleForm({ action, values }: ArticleFormProps) {
           <button
             disabled={isPending}
             type="submit"
-            className="rounded-full bg-blue-500 px-4 py-2 text-lg text-white"
+            className="rounded-full bg-purple-500 px-4 py-2 text-white md:text-lg"
           >
             {isPending ? "Publishing" : "Publish"}
           </button>
@@ -72,14 +72,8 @@ export default function ArticleForm({ action, values }: ArticleFormProps) {
             disabled={isPending}
             render={({ field }) => (
               <>
-                <div className="">
-                  <MarkdownEditor {...field} />
-                  <input
-                    type="hidden"
-                    name="content"
-                    value={field.value || ""}
-                  />
-                </div>
+                <MarkdownEditor {...field} />
+                <input type="hidden" name="content" value={field.value || ""} />
               </>
             )}
           />
@@ -89,37 +83,3 @@ export default function ArticleForm({ action, values }: ArticleFormProps) {
     </div>
   );
 }
-
-// defaultValues: {
-//   title: "",
-//   markdownContent: "",
-//   featuredImage: "",
-//   tags: [],
-// },
-
-/**
- * async function onSubmit(data: z.infer<typeof ArticleFormSchema>) {
-    setSubmitting(true);
-
-    try {
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      await createPost(data);
-      console.log("Blog Post Submitted:", data);
-
-      toast({
-        title: "Blog Post Created",
-        description: `"${data.title}" submitted successfully!`,
-      });
-
-      reset();
-    } catch (error) {
-      toast({
-        title: "Blog Post Submission Failed",
-        description: "There was an error submitting your blog post",
-        variant: "destructive",
-      });
-    } finally {
-      setSubmitting(false);
-    }
-  }
- * */

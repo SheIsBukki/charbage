@@ -53,41 +53,13 @@ export default async function WritePage() {
 }
 
 /**
- * async function onSubmit(data: z.infer<typeof ArticleFormSchema>) {
-  "use server";
-  setSubmitting(true);
-
-  try {
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    await createPost(data);
-    console.log("Blog Post Submitted:", data);
-
-    toast({
-      title: "Blog Post Created",
-      description: `"${data.title}" submitted successfully!`,
-    });
-
-    reset();
-  } catch (error) {
-    toast({
-      title: "Blog Post Submission Failed",
-      description: "There was an error submitting your blog post",
-      variant: "destructive",
-    });
-  } finally {
-    setSubmitting(false);
-  }
-}
- * */
-
-/**
  * The blog form will ask users to fill blog title and markdown content, feaatured image is optional
  * Before sending to database, the blog creation will generate a slug for the blog and record the user data and blog data
  * Blog title
  * Slug
  * Markdown content
- * User data—name and id
- * Blog data—date created, data updated, blog id
+ * User data: name and id
+ * Blog data: date created, data updated, blog id
  * Featured Image?
  *
  *
@@ -110,4 +82,5 @@ export default async function WritePage() {
       />
 
       <div dangerouslySetInnerHTML={{ __html: md.render(markdownContent) }} />
+      <Interweave content={md.render(markdownContent)} />
  * */

@@ -1,8 +1,12 @@
 // import editorDarkCss from "@/app/utils/editorDarkCss";
-import MDEditor from "@uiw/react-md-editor";
+import { commands } from "@uiw/react-md-editor";
 import { useTheme } from "next-themes";
+import dynamic from "next/dynamic";
 import React, { useEffect } from "react";
 import { ControllerRenderProps } from "react-hook-form";
+import rehypeSanitize from "rehype-sanitize";
+
+const MDEditor = dynamic(() => import("@uiw/react-md-editor"), { ssr: false });
 
 export default function MarkdownEditor({ ...field }: ControllerRenderProps) {
   const { theme } = useTheme();
@@ -27,6 +31,10 @@ export default function MarkdownEditor({ ...field }: ControllerRenderProps) {
   return (
     <>
       <MDEditor
+        preview="edit"
+        commands={[commands.help]}
+        data-color-mode="dark"
+        previewOptions={{ rehypePlugins: [[rehypeSanitize]] }}
         aria-describedby="markdown-error"
         visibleDragbar={false}
         className="!rounded-lg"
@@ -78,7 +86,7 @@ export default function MarkdownEditor({ ...field }: ControllerRenderProps) {
 //         aria-describedby="markdown-error"
 //         visibleDragbar={false}
 //         className="!rounded-lg"
-//         value={markdownContent}
+//         value={content}
 //         onChange={(text) => setMarkdownContent(text ?? "")}
 //         style={{ height: "80vh", whiteSpace: "pre-wrap" }}
 //         aria-placeholder="Start writing markdown..."
@@ -86,11 +94,11 @@ export default function MarkdownEditor({ ...field }: ControllerRenderProps) {
 //       />
 
 //       {/*<MDEditor.Markdown
-//         source={md.render(markdownContent)}
+//         source={md.render(ontent)}
 //         style={{ whiteSpace: "pre-wrap" }}
 //       />*/}
 
-//       {/*<Interweave content={md.render(markdownContent)} />*/}
+//       {/*<Interweave content={md.render(content)} />*/}
 //     </>
 //   );
 // }
