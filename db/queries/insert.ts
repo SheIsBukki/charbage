@@ -3,20 +3,17 @@
 import { db } from "@/db";
 import { postTable } from "@/db/schema";
 import { getCurrentSession } from "@/lib/session";
-// import { encodeBase32LowerCaseNoPadding } from "@oslojs/encoding";
+// import { revalidatePath } from "next/cache";
+// import { redirect } from "next/navigation";
 import slugify from "slugify";
 
+/**This will generate over 2 billion random values, each 6 characters long with a mix of letters and numbers */
 const byte = crypto.getRandomValues(new Uint8Array(6));
 const characters = "abcdefghijklmnopqrstuvwxyz0123456789";
 let randomString = "";
 for (let i = 0; i < byte.length; i++) {
   randomString += characters[byte[i] % characters.length];
 }
-
-/**This will generate over 16 million random values, each 5 characters long with a mix of letters and numbers. If i increase the Unit8Array value to 4, the random values will increase to over 4 billion */
-// const byte = new Uint8Array(4);
-// crypto.getRandomValues(byte);
-// const randomString = encodeBase32LowerCaseNoPadding(byte);
 
 export async function createPost(data: {
   title: string;
@@ -44,8 +41,9 @@ export async function createPost(data: {
       })
       .returning()
       .execute();
-    // revalidatePath("posts");
-    // redirect(`/post/$(id)`);
+
+    // revalidatePath("/write");
+    // redirect("/write");
 
     return { ...post, error: null };
   } catch (error) {
@@ -53,9 +51,3 @@ export async function createPost(data: {
     return { post: null, error: "Failed to create post" };
   }
 }
-
-/**
- * Bring in the user to collect and connect the userId
- * Create a slug of the title using Slugify
- *
- * */

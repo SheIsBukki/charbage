@@ -26,7 +26,10 @@ export default async function SignUpPage() {
     const parsed = SignUpSchema.safeParse(Object.fromEntries(formData));
 
     if (!parsed.success) {
-      return { message: "Invalid email or password" };
+      return {
+        errors: parsed.error.flatten().fieldErrors,
+        message: "Invalid email or password",
+      };
     }
 
     const { name, email, password } = parsed.data;
