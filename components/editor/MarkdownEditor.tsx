@@ -110,7 +110,7 @@ export default function MarkdownEditor({ ...field }: ControllerRenderProps) {
         //   navigator.clipboard.writeText(markdownImage);
         // }
         if ("clipboard" in navigator && "writeText" in navigator.clipboard) {
-          navigator.clipboard.writeText(markdownImage);
+          await navigator.clipboard.writeText(markdownImage);
         } else {
           document.execCommand("insertText", false, markdownImage);
         }
@@ -121,7 +121,7 @@ export default function MarkdownEditor({ ...field }: ControllerRenderProps) {
         //   );
         // }
         if ("clipboard" in navigator && "writeText" in navigator.clipboard) {
-          navigator.clipboard.writeText(
+          await navigator.clipboard.writeText(
             "ERROR: Image has not been stored on server",
           );
         } else {
