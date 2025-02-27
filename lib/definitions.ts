@@ -9,13 +9,19 @@ export const ArticleFormSchema = z.object({
     .min(100, { message: "Content must be at least 100 characters" }),
   featuredImage: z
     .string()
-    .url({ message: "Please provide a valid image URL" })
+    .url({ message: "Image should not exceed 10MB" })
     .optional(),
   tags: z
     .array(z.string().min(2, { message: "Tag must be at least 2 characters" }))
     .max(20, { message: "Tag cannot exceed 10 characters" })
     .optional(),
 });
+
+/** TAGs
+ * id
+ * title
+ * description
+ * */
 
 /**
  *

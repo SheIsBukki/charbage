@@ -1,7 +1,7 @@
 import React from "react";
 import { z } from "zod";
-import { getCurrentSession } from "@/lib/session";
 import { redirect } from "next/navigation";
+import { getCurrentSession } from "@/lib/session";
 import { loginUser, registerUser } from "@/app/actions/auth";
 import SignUp from "@/components/auth/SignUp";
 

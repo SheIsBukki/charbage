@@ -44,17 +44,21 @@ export default function ArticleForm({ action, values }: ArticleFormProps) {
     <div className="container mx-auto w-[80%] lg:w-[70%]">
       <Form action={formAction}>
         {/*Featured Image*/}
-        <Controller
-          name="featuredImage"
-          control={control}
-          disabled={isPending}
-          render={() => (
-            <>
-              <FeaturedImage />
-            </>
+        <div className="">
+          <Controller
+            name="featuredImage"
+            control={control}
+            disabled={isPending}
+            render={() => (
+              <>
+                <FeaturedImage />
+              </>
+            )}
+          />
+          {errors.featuredImage && (
+            <ErrorMessage message={errors.featuredImage.message} />
           )}
-        />
-        <div className="flex w-full place-content-center place-items-center justify-between space-x-4 px-2"></div>
+        </div>
 
         {/*Title*/}
         <div className="m-2 w-full">

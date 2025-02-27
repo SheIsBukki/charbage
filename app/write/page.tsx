@@ -1,6 +1,6 @@
+import { redirect } from "next/navigation";
 import { getCurrentSession } from "@/lib/session";
 import ArticleForm from "@/components/editor/ArticleForm";
-import { redirect } from "next/navigation";
 import { ArticleFormSchema } from "@/lib/definitions";
 import { createPost } from "@/db/queries/insert";
 
@@ -63,10 +63,13 @@ export default async function WritePage() {
  * Featured Image?
  *
  *
- * Tags
- * Comments
- * Bookmarks
- * Likes
+ * Tags — array of strings
+ *
+ *
+ * // This is for posts—not applicable to ArticleForm
+ * Comments — array of objects
+ * Bookmarks — number, probably an array of numbers
+ * Likes — number, probably an array of nunbers
  * */
 
 /**

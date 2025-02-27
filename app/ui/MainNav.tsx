@@ -1,16 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import ThemeSwitcher from "@/app/ui/ThemeSwitcher";
-import { useRouter } from "next/navigation";
-import { User } from "@/db/schema";
-import { logoutUser } from "@/app/actions/auth";
 import React, { useState } from "react";
 import { GiCabbage } from "react-icons/gi";
 import { CiEdit } from "react-icons/ci";
 import { FcMenu } from "react-icons/fc";
 import { MdClose } from "react-icons/md";
 import { clsx } from "clsx";
+import ThemeSwitcher from "@/app/ui/ThemeSwitcher";
+import { useRouter } from "next/navigation";
+import { User } from "@/db/schema";
+import { logoutUser } from "@/app/actions/auth";
 
 type MainNavProps = { user: Omit<User, "password"> | null };
 

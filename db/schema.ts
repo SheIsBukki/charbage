@@ -50,8 +50,15 @@ export const postTable = pgTable("posts", {
     .references(() => userTable.id, { onDelete: "cascade" }),
 });
 
+// export const tagTable=pgTable('tags',{
+//   id:uuid('id').defaultRandom().primaryKey(),
+//   title:text('title').notNull(),
+//   description:text('descriptione'),
+//   createdAt:timestamp('createdAt',{withTimezone:true,mode:'date'}).notNull()
+// })
+
 export type Session = InferSelectModel<typeof sessionTable>;
 export type User = InferSelectModel<typeof userTable>;
 export type Post = InferSelectModel<typeof postTable>;
 
-// export type InsertPost = typeof postTable.$inferInsert;
+// export type Tag = typeof tagTable.$inferInsert;

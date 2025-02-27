@@ -78,11 +78,12 @@ export default function MarkdownEditor({ ...field }: ControllerRenderProps) {
     const { preview, dispatch } = useContext(EditorContext);
     return (
       <button
-        // onClick={}
-        aria-roledescription="Upload button"
+        onClick={() => handlePaste}
+        aria-roledescription="Upload image button"
         disabled={preview === "preview"}
+        className="text-gray-400 hover:text-blue-500"
       >
-        <FaImage className="text-gray-400 hover:text-blue-500 md:size-5" />
+        <FaImage className="md:size-5" />
       </button>
     );
   };
@@ -101,37 +102,26 @@ export default function MarkdownEditor({ ...field }: ControllerRenderProps) {
       event.preventDefault();
       const imageFile = clipboardData.files[0] as File;
 
-      const imageUrl = await uploadImage(imageFile);
-
-      if (imageUrl) {
+      try {
+        const imageUrl = await uploadImage(imageFile);
         const markdownImage = `![Replace with Alt text](${imageUrl})`;
 
-        // if (window.isSecureContext && navigator.clipboard) {
-        //   navigator.clipboard.writeText(markdownImage);
-        // }
-        if ("clipboard" in navigator && "writeText" in navigator.clipboard) {
-          await navigator.clipboard.writeText(markdownImage);
-        } else {
-          document.execCommand("insertText", false, markdownImage);
-        }
-      } else {
-        // if (window.isSecureContext) {
-        //   navigator.clipboard.writeText(
+        document.execCommand("insertText", false, markdownImage);
+        // await navigator.clipboard.writeText(markdownImage);
+      } catch (error) {
+        document.execCommand(
+          "insertText",
+          false,
+          "ERROR: Image has not been stored on server",
+        );
+
+        console.error("Image upload failed:", error);
+
+        // if ("clipboard" in navigator && "writeText" in navigator.clipboard) {
+        //   await navigator.clipboard.writeText(
         //     "ERROR: Image has not been stored on server",
         //   );
         // }
-        if ("clipboard" in navigator && "writeText" in navigator.clipboard) {
-          await navigator.clipboard.writeText(
-            "ERROR: Image has not been stored on server",
-          );
-        } else {
-          document.execCommand(
-            // "insertHTML", // this Inserts an HTML string at the insertion point (deletes selection). Requires a valid HTML string as a value argument., so I'm not sure whether I should use it
-            "insertText", // this inserts plain text as is
-            false,
-            "ERROR Image has not been stored on server",
-          );
-        }
       }
     }
   };
@@ -139,6 +129,7 @@ export default function MarkdownEditor({ ...field }: ControllerRenderProps) {
   return (
     <>
       <MDEditor
+        id="editorTextArea"
         preview="edit"
         commands={[customHelp, customUpload]}
         extraCommands={[customPreview]}
@@ -150,7 +141,7 @@ export default function MarkdownEditor({ ...field }: ControllerRenderProps) {
         {...field}
         value={field.value}
         onChange={(value) => field.onChange(value)}
-        // onPaste={handlePaste}
+        // onPaste={}
         style={{ height: "80vh", whiteSpace: "pre-wrap" }}
         aria-placeholder="Start writing markdown..."
         textareaProps={{
@@ -161,165 +152,6 @@ export default function MarkdownEditor({ ...field }: ControllerRenderProps) {
     </>
   );
 }
-
-/** windown.isSecureContext Temporary Button
- * const temporaryButton = document.createElement("button");
-          temporaryButton.textContent = "Insert image";
-          temporaryButton.onclick = () => {
-            navigator.clipboard.writeText(markdownImage);
-          };
-          document.body.appendChild(temporaryButton);
-          temporaryButton.click();
-          document.body.removeChild(temporaryButton);
- * */
-
-/** This is REQUIRED for approaches that use useRef()
- * const textareaRef = useRef<HTMLTextAreaElement | null>(null); // Create a ref for the textarea— this actually returns null so this useRef() approach probably doesn't work
- * */
-
-/**
-  // APPROACH 2 OG Code that works but prepends the image URL to the existing content/
- const handlePaste = async (event: React.ClipboardEvent) => {
-    const items = event.clipboardData.items;
-    for (let i = 0; i < items.length; i++) {
-      const item = items[i];
-
-      if (item.type.startsWith("image/")) {
-        const file = item.getAsFile();
-
-        if (file) {
-          event.preventDefault();
-          // console.log(file.name);
-          try {
-            const imageUrl = await uploadImage(file);
-            const markdownImage = `![Replace with Alt text](${imageUrl}) `; // Markdown syntax for images
-            // Get the current markdown content
-            const existingContent = field.value || "";
-
-            const start = textareaRef.current?.selectionStart || 0; // Cursor position
-            const end = textareaRef.current?.selectionEnd || 0; // End of selection
-
-            // Insert the image markdown at the cursor position — it actually prepends the markdown image to the existing content
-            const updatedContent =
-              existingContent.slice(0, start) +
-              markdownImage +
-              existingContent.slice(end);
-
-            field.onChange(updatedContent);
-
-            setTimeout(() => {
-              if (textareaRef.current) {
-                textareaRef.current.selectionStart =
-                  textareaRef.current.selectionEnd =
-                    start! + markdownImage.length;
-                textareaRef.current.focus();
-              }
-            }, 0);
-          } catch (error) {
-            console.error("Image upload failed:", error);
-          }
-        }
-      }
-    }
-  };
- * */
-
-/**
- * // TWO DIFFERENT APPROACHS: APPROACH 1
-  const handlePaste = async (event: React.ClipboardEvent) => {
-    const clipboardData = event.clipboardData;
-    if (clipboardData.files.length === 1) {
-      const imageFile = clipboardData.files[0] as File;
-      // console.log(imageFile.name);
-      const imageUrl = await uploadImage(imageFile);
-      console.log(imageUrl);
-      event.preventDefault();
-
-      try {
-        // const imageUrl = await uploadImage(imageFile);
-        const markdownImage = `![Replace with Alt text](${imageUrl}) `; // Markdown syntax for images
-        // Get the current markdown content
-        const existingContent = field.value || "";
-        // field.onChange(existingContent + markdownImage); // Append the image markdown to the current value
-
-        // This approach prepends the markdown image to the existing content
-        const start = textareaRef.current?.selectionStart || 0; // Cursor position
-        const end = textareaRef.current?.selectionEnd || 0; // End of selection
-
-        // Insert the image markdown at the cursor position
-        const updatedContent =
-          existingContent.slice(0, start) +
-          markdownImage +
-          existingContent.slice(end);
-
-        field.onChange(updatedContent); // Append the image markdown to the current value
-
-        // Move the cursor to the end of the inserted image markdown
-        setTimeout(() => {
-          if (textareaRef.current) {
-            textareaRef.current.selectionStart =
-              textareaRef.current.selectionEnd = start! + markdownImage.length;
-            textareaRef.current.focus();
-          }
-        }, 0);
-      } catch (error) {
-        console.error("Image upload failed:", error);
-      }
-    }
-  };
- * */
-
-/**
- * // THE REAL OG Code that appends the image URL to the existing content/
-  const handlePaste = async (event: React.ClipboardEvent) => {
-    const items = event.clipboardData.items;
-    for (let i = 0; i < items.length; i++) {
-      const item = items[i];
-
-      if (item.type.startsWith("image/")) {
-        const file = item.getAsFile();
-
-        if (file) {
-          event.preventDefault();
-          // console.log(file.name);
-          try {
-            const imageUrl = await uploadImage(file);
-            const markdownImage = `![Replace with Alt text](${imageUrl}) `; // Markdown syntax for images
-            // Get the current markdown content
-            const existingContent = field.value || "";
-            field.onChange(existingContent + markdownImage); // Append the image markdown to the current value
-          } catch (error) {
-            console.error("Image upload failed:", error);
-          }
-        }
-      }
-    }
-  };
- * */
-
-/** WITHOUT useRef() — it returns error
-  //            * Instead of appending the markdwon image to the currentValue, we can place it at the current cursor position of the user, hence we Get the cursor position
-
-  //           const textarea = event.currentTarget; // Reference to the textarea— this actually returns null so this without useRef() approach doesn't work
-
-  //           const start = textarea.selectionStart; // Cursor position
-  //           const end = textarea.selectionEnd; // End of selection
-
-  //           // Insert the image markdown at the cursor position
-  //           const updatedContent =
-  //             existingContent.slice(0, start) +
-  //             markdownImage +
-  //             existingContent.slice(end);
-
-  //           field.onChange(updatedContent); // Append the image markdown to the current value
-
-  //           //Without useRef() setTimeout() Move the cursor to the end of the inserted image markdown
-  //           setTimeout(() => {
-  //             textarea.selectionStart = textarea.selectionEnd =
-  //               start + markdownImage.length;
-  //             textarea.focus();
-  //           }, 0);
-        */
 
 /**
  *

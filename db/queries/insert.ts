@@ -51,3 +51,10 @@ export async function createPost(data: {
     return { post: null, error: "Failed to create post" };
   }
 }
+
+/** TO DO
+ * createTag()
+ * createComment()
+ * createBookmark()
+ * createLike()
+ * */
