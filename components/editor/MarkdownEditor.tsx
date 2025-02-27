@@ -106,9 +106,11 @@ export default function MarkdownEditor({ ...field }: ControllerRenderProps) {
         const imageUrl = await uploadImage(imageFile);
         const markdownImage = `![Replace with Alt text](${imageUrl})`;
 
-        // document.execCommand("insertText", false, markdownImage);
-        await navigator.clipboard.writeText(markdownImage);
-        await navigator.clipboard.readText();
+        document.execCommand("insertText", false, markdownImage);
+
+        // Attempt to write the code above using Clipboard API—only writeText() works for, the paste doesn't kick off automatically. No permision on Safari and Chrome will ask for permission but still doesn't paste automatically
+        // await navigator.clipboard.writeText(markdownImage);
+        // await navigator.clipboard.readText();
       } catch (error) {
         document.execCommand(
           "insertText",
@@ -147,10 +149,7 @@ export default function MarkdownEditor({ ...field }: ControllerRenderProps) {
         aria-placeholder="Start writing markdown..."
         textareaProps={{
           placeholder: "Start writing markdown...",
-          onPaste: async (event) => {
-            handlePaste(event);
-            await navigator.clipboard.readText();
-          },
+          onPaste: handlePaste,
         }}
       />
     </>
