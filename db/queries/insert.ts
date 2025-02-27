@@ -3,11 +3,11 @@
 import { db } from "@/db";
 import { postTable } from "@/db/schema";
 import { getCurrentSession } from "@/lib/session";
-// import { revalidatePath } from "next/cache";
+import { revalidatePath } from "next/cache";
 // import { redirect } from "next/navigation";
 import slugify from "slugify";
 
-/**This will generate over 2 billion random values, each 6 characters long with a mix of letters and numbers */
+/**This can generate up to over 2 billion random values, each 6 characters long with a mix of letters and numbers */
 const byte = crypto.getRandomValues(new Uint8Array(6));
 const characters = "abcdefghijklmnopqrstuvwxyz0123456789";
 let randomString = "";
@@ -42,7 +42,7 @@ export async function createPost(data: {
       .returning()
       .execute();
 
-    // revalidatePath("/write");
+    revalidatePath("/write");
     // redirect("/write");
 
     return { ...post, error: null };
