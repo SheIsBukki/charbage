@@ -106,8 +106,9 @@ export default function MarkdownEditor({ ...field }: ControllerRenderProps) {
         const imageUrl = await uploadImage(imageFile);
         const markdownImage = `![Replace with Alt text](${imageUrl})`;
 
-        document.execCommand("insertText", false, markdownImage);
-        // await navigator.clipboard.writeText(markdownImage);
+        // document.execCommand("insertText", false, markdownImage);
+        await navigator.clipboard.writeText(markdownImage);
+        await navigator.clipboard.readText();
       } catch (error) {
         document.execCommand(
           "insertText",
@@ -146,7 +147,10 @@ export default function MarkdownEditor({ ...field }: ControllerRenderProps) {
         aria-placeholder="Start writing markdown..."
         textareaProps={{
           placeholder: "Start writing markdown...",
-          onPaste: handlePaste,
+          onPaste: async (event) => {
+            handlePaste(event);
+            await navigator.clipboard.readText();
+          },
         }}
       />
     </>
