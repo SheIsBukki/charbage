@@ -112,6 +112,7 @@ export const logoutUser = async () => {
 
 /**
  *  query to see if a user signed up through github or google oauth
+ * It's possible that both OAuth code blocks below are problematic because of this addiong —> : Promise<User | null>
  * */
 export const getUserWithGithubData = async (
   // githubUserId: number,

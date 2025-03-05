@@ -76,7 +76,7 @@ export default function FeaturedImage() {
               <span>Uploading...</span>
             </p>
           ) : (
-            <p className="flex items-center space-x-2 rounded-lg p-2 hover:bg-gray-200 dark:hover:bg-gray-600">
+            <p className="flex items-center space-x-2 rounded-lg bg-gray-100 px-4 py-2 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-600">
               <FaImage className="size-5" />
               {imagePreview ? (
                 <span>Change Cover</span>

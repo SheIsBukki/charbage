@@ -2,7 +2,8 @@ import { redirect } from "next/navigation";
 import { getCurrentSession } from "@/lib/session";
 import ArticleForm from "@/components/editor/ArticleForm";
 import { ArticleFormSchema } from "@/lib/definitions";
-import { createPost } from "@/db/queries/insert";
+import { addTag, createPost } from "@/db/queries/insert";
+// import TagForm from "@/components/tag/TagForm";
 
 export type PostFormValues = {
   title: string;
@@ -32,6 +33,15 @@ const submitForm = async (initialState: ActionState, formData: FormData) => {
   }
 
   await createPost(values);
+  // Uncomment this and use when the TagSelection component is functional — I also need to console log the data to see what it returns
+  // const post = await createPost(values);
+
+  // I need to retrieve tagId from localStorage
+
+  // if (post.data) {
+  //   await addTag(post.data.id, tagId);
+  // }
+
   return { values, errors: {} };
 };
 
@@ -43,14 +53,30 @@ export default async function WritePage() {
   }
 
   return (
-    <div className="my-8">
-      <ArticleForm
-        action={submitForm}
-        values={{ title: "", content: "", featuredImage: "" }}
-      />
+    // <TagForm />
+    <div className="container mx-auto my-8 w-[80%] gap-12 lg:grid lg:w-[90%] lg:grid-cols-8">
+      <div className="col-span-2 hidden lg:block">
+        <p className="">The Article Draft and other info section</p>
+      </div>
+      <div className="col-span-6">
+        <ArticleForm
+          action={submitForm}
+          values={{ title: "", content: "", featuredImage: "" }}
+        />
+      </div>
     </div>
   );
 }
+
+/** 
+ * TO DO: Some logic to enable tagsToPostsRelations
+  If a user selects a tag—they can add up to three tags, to associate with their post when they're creating the post, there should be a way to create a relationship between said post's id and tag's id — I will insert data into the tagsToPostsTable immediately after the form is submitted. The tagsToPostsTable will accept two arguments automatically: the postId, and the tagId
+
+  Before inserting into the tagsToPostsTable, first the user will either select from existing tags—hence db select from tagTable, or create a new tag—hence db insert into tagTable
+  This will provide the tag's id that will later be used to insert into tagsToPostsTable — await addTag()
+
+  
+**/
 
 /**
  * The blog form will ask users to fill blog title and markdown content, feaatured image is optional
