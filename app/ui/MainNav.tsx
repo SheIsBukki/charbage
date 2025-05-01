@@ -43,30 +43,36 @@ export default function MainNav({ user }: MainNavProps) {
         <button
           aria-expanded={open}
           type="button"
-          onClick={() => setOpen(true)}
+          onClick={() => (open ? setOpen(false) : setOpen(true))}
           className="md:hidden"
         >
-          <FcMenu className="size-6" />
-          <span className="sr-only">Open menu</span>
+          {open ? (
+            <MdClose
+              className={`size-6 md:hidden ${open && "absolute z-50"}`}
+            />
+          ) : (
+            <FcMenu className="size-6" />
+          )}
+          <span className="sr-only">Open and close menu</span>
         </button>
 
         {/*Mobile nav*/}
-
         <div
           className={clsx(
             "fixed bottom-0 left-0 right-0 top-0 z-40 flex flex-col items-end bg-white pr-4 pt-14 transition-transform duration-300 ease-in-out motion-reduce:transition-none md:hidden dark:bg-[#0a0a0a]",
             open ? "translate-x-0" : "translate-x-[100%]",
           )}
         >
-          <button
+          {/*I probably don't need this button defined explictly here afterall*/}
+          {/*<button
             aria-expanded={open}
             onClick={() => setOpen(false)}
             type="button"
             className="fixed right-4 top-4 mb-4 block p-2 text-3xl md:hidden"
           >
-            <MdClose className="size-6 md:hidden" />
+            <MdClose className="size-6 animate-bounce md:hidden" />
             <span className="sr-only">Close menu</span>
-          </button>
+          </button>*/}
 
           <ul className="container mx-auto my-8 grid place-content-center place-items-center items-center gap-8 p-8 text-lg">
             <li onClick={() => setOpen(false)} className="">

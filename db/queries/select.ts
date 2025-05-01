@@ -10,8 +10,17 @@ import {
   userTable,
 } from "@/db/schema";
 import { db } from "@/db";
-import { asc, between, count, eq, getTableColumns, sql } from "drizzle-orm";
-import handleDatabaseOperation from "@/utils/handleDatabaseOperation";
+import {
+  asc,
+  between,
+  count,
+  desc,
+  eq,
+  getTableColumns,
+  ilike,
+  sql,
+} from "drizzle-orm";
+import { handleDatabaseOperation } from "@/utils/helpers";
 
 export async function getUserWithId(id: User["id"]) {
   try {
@@ -55,16 +64,20 @@ export async function getLatestPosts(page = 1, pageSize = 5) {
     const posts = await db
       .select({
         ...getTableColumns(postTable),
-        tags: sql<
-          Tag[]
-        >`ARRAY(SELECT * FROM ${tagsToPostsTable} JOIN ${tagTable} ON ${tagsToPostsTable.tagId} = ${tagTable.id} WHERE ${tagsToPostsTable.postId} = ${postTable.id} )`,
+        author: userTable.name,
+
+        // tags: sql<
+        //   tag[]
+        // >`array(select * from ${tagstopoststable} join ${tagtable} on ${tagstopoststable.tagid} = ${tagtable.id} where ${tagstopoststable.postid} = ${posttable.id} )`,
       })
       .from(postTable)
-      .where(
-        between(postTable.createdAt, sql`now() - interval '1 day'`, sql`now()`),
-      )
+      // I don't need the where statement for now, and will probably never need it since the orderBy desc statement does the job
+      // .where(
+      //   between(postTable.createdAt, sql`now() - interval '1 day'`, sql`now()`),
+      // )
       .leftJoin(tagsToPostsTable, eq(postTable.id, tagsToPostsTable.postId))
-      .orderBy(asc(postTable.id))
+      .innerJoin(userTable, eq(postTable.userId, userTable.id))
+      .orderBy(desc(postTable.createdAt))
       .limit(pageSize)
       .offset((page - 1) * pageSize);
 
@@ -126,6 +139,21 @@ export async function getTags(
     return tags;
   }, "Something went wrong with getting all tags");
 }
+
+// Tag Search Functionality
+export const searchTags = async (keyword: string) => {
+  try {
+    const searchedTag = await db
+      .select()
+      .from(tagTable)
+      .where(keyword ? ilike(tagTable.name, keyword) : undefined);
+
+    return searchedTag;
+  } catch (error) {
+    console.error(error);
+    throw new Error("Something went wrong with searching for tag");
+  }
+};
 
 // export async function getTags3() {
 //   try {

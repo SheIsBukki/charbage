@@ -7,9 +7,12 @@ export const ArticleFormSchema = z.object({
   content: z
     .string()
     .min(100, { message: "Content must be at least 100 characters" }),
+  // featuredImage: z
+  //   .string()
+  //   .url({ message: "Image should not exceed 10MB" })
+  //   .optional(),
   featuredImage: z
-    .string()
-    .url({ message: "Image should not exceed 10MB" })
+    .string({ message: "Image should not exceed 10MB" })
     .optional(),
 });
 
@@ -31,6 +34,8 @@ export const TagFormSchema = z.object({
     .min(5, { message: "Tag description must be at least 5 characters" })
     .max(100, { message: "Tag description cannot exceed 100 characters" }),
 });
+
+export const TagSearchSchema = z.object({ keyword: z.string() });
 
 /**
  * tags: z

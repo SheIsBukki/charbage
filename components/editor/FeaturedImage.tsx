@@ -5,7 +5,6 @@ import { FaImage } from "react-icons/fa";
 import { uploadImage } from "@/utils/uploadImage";
 
 export default function FeaturedImage() {
-  // const [imagePreview, setImagePreview] = useState("");
   const [imagePreview, setImagePreview] = useState<string | ArrayBuffer>("");
   const [featuredImage, setFeaturedImage] = useState("");
   const [uploadingImage, setUploadingImage] = useState(false);

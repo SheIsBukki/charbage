@@ -1,15 +1,17 @@
 "use client";
 
-import React, { useActionState, useState } from "react";
+import React, { useActionState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import Form from "next/form";
-import { MdClose } from "react-icons/md";
+
 import { ArticleFormSchema } from "@/lib/definitions";
 import MarkdownEditor from "@/components/editor/MarkdownEditor";
 import { ActionState, PostFormValues } from "@/app/write/page";
 import FeaturedImage from "@/components/editor/FeaturedImage";
-import TagForm from "@/components/tag/TagForm";
+import TagFormModal from "@/components/tag/TagFormModal";
+// import { Button } from "@/components/ui/button";
+import TagSelectionModal from "@/components/tag/TagSelectionModal";
 
 type ArticleFormProps = {
   action: (
@@ -37,7 +39,8 @@ export default function ArticleForm({ action, values }: ArticleFormProps) {
     // mode: "onSubmit",
   });
 
-  const [openTagForm, setOpenTagForm] = useState(false);
+  // const [openTagForm, setOpenTagForm] = useState(false);
+  // const [openTagSelection, setOpenTagSelection] = useState<boolean>(false);
 
   const ErrorMessage = ({ message }: { message: string | undefined }) => (
     <p role="alert" className="mt-1 text-xs text-red-500 md:text-base">
@@ -47,27 +50,6 @@ export default function ArticleForm({ action, values }: ArticleFormProps) {
 
   return (
     <div className="mx-auto w-full">
-      {/*TAG*/}
-      <div className="">
-        {/*This creates a new tag*/}
-        {openTagForm && (
-          <div className="relative mx-auto h-full w-full">
-            <div className="absolute z-50 mx-auto w-full rounded-lg bg-gray-100 px-4 py-20 md:px-36 md:py-48 lg:px-48 dark:bg-gray-900">
-              <div className="w-full">
-                <button
-                  className="relative bottom-10 w-full place-items-end space-x-2 rounded-lg px-4 py-2 text-3xl md:bottom-20"
-                  onClick={() => setOpenTagForm(false)}
-                >
-                  <MdClose className="size-12 text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" />
-                </button>
-              </div>
-
-              <TagForm />
-            </div>
-          </div>
-        )}
-      </div>
-
       {/*ARTICLE*/}
       <div className="h-[50%]">
         <Form action={formAction}>
@@ -105,22 +87,16 @@ export default function ArticleForm({ action, values }: ArticleFormProps) {
             {errors.title && <ErrorMessage message={errors.title.message} />}
           </div>
 
-          <div className="flex w-full items-center justify-between space-x-4 text-sm md:justify-end md:space-x-6 md:text-base">
-            {/*TAG CREATE FORM MODAL BUTTON*/}
-            <button
-              type="button"
-              onClick={() => setOpenTagForm(true)}
-              className="mb-4 mt-2 rounded-lg bg-gray-100 px-4 py-2 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700"
-            >
-              Create a tag
-            </button>
+          {/*TAG CREATE FORM MODAL AND TAG SEARCH MODAL*/}
+          <div className="mb-4 flex w-full items-center justify-between space-x-4 text-sm md:justify-end md:space-x-4 md:text-base">
+            {/*Looks like I don't need to even attempt to create the modal at all*/}
+            <TagFormModal />
 
-            <button
-              type="button"
-              className="mb-4 mt-2 rounded-lg bg-gray-100 px-4 py-2 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700"
-            >
+            {/*This will be for Tag search */}
+            <TagSelectionModal />
+            {/*<Button variant="outline" type="button" className="">
               Select a tag
-            </button>
+            </Button>*/}
           </div>
 
           {/*Markdown Content*/}
@@ -160,3 +136,65 @@ export default function ArticleForm({ action, values }: ArticleFormProps) {
     </div>
   );
 }
+
+/**
+ *  TAG SELECTION MODAL
+       <>
+        {openTagSelection && (
+          <div className="">
+            <TagSelectionModal />
+          </div>
+        )}
+      </>
+ * */
+
+/**
+ *     //TAG CREATE FORM
+      <div className="">
+        //This creates a new tag
+        {openTagForm && (
+          <div className="relative mx-auto h-full w-full">
+            <div className="absolute z-50 mx-auto w-full rounded-lg bg-gray-100 px-4 py-20 md:px-36 md:py-48 lg:px-48 dark:bg-gray-900">
+              <div className="w-full">
+                <button
+                  className="relative bottom-10 w-full place-items-end space-x-2 rounded-lg px-4 py-2 text-3xl md:bottom-20"
+                  onClick={() => setOpenTagForm(false)}
+                >
+                  <MdClose className="size-12 text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" />
+                </button>
+              </div>
+
+              <TagForm />
+            </div>
+          </div>
+        )}
+      </div>
+ * */
+
+/**
+ *  <div className="flex w-full items-center justify-between space-x-4 text-sm md:justify-end md:space-x-6 md:text-base">
+            TAG CREATE FORM MODAL BUTTON
+            <button
+              type="button"
+              onClick={() => setOpenTagForm(true)}
+              className="mb-4 mt-2 rounded-lg bg-gray-100 px-4 py-2 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700"
+            >
+              Create a tag
+            </button>
+          </div>
+ * */
+
+/**
+ * <TagSelectionModal />
+            <button
+              type="button"
+              onClick={() =>
+                openTagSelection
+                  ? setOpenTagSelection(false)
+                  : setOpenTagSelection(true)
+              }
+              className="mb-4 mt-2 rounded-lg bg-gray-100 px-4 py-2 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700"
+            >
+              Select a tag
+            </button>
+ * */

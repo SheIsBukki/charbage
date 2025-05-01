@@ -11,7 +11,8 @@ import {
   tagTable,
 } from "@/db/schema";
 import { getCurrentSession } from "@/lib/session";
-import handleDatabaseOperation from "@/utils/handleDatabaseOperation";
+import { handleDatabaseOperation } from "@/utils/helpers";
+
 import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import slugify from "slugify";

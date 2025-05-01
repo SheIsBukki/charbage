@@ -28,6 +28,7 @@ export default function ThemeSwitcher() {
           title="Loading Light/Dark Toggle"
         />
       )}
+      <span className="sr-only">Light dark mode toggle</span>
     </>
   );
 }

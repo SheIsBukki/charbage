@@ -3,7 +3,9 @@ import { getCurrentSession } from "@/lib/session";
 import ArticleForm from "@/components/editor/ArticleForm";
 import { ArticleFormSchema } from "@/lib/definitions";
 import { addTag, createPost } from "@/db/queries/insert";
-// import TagForm from "@/components/tag/TagForm";
+// import TagFormModal from "@/components/tag/TagFormModal";
+// import PostForm from "@/components/editor/PostForm";
+// import toast from "react-hot-toast";
 
 export type PostFormValues = {
   title: string;
@@ -32,15 +34,17 @@ const submitForm = async (initialState: ActionState, formData: FormData) => {
     errors[path.join(".")] = { message };
   }
 
-  await createPost(values);
+  // await createPost(values);
   // Uncomment this and use when the TagSelection component is functional — I also need to console log the data to see what it returns
-  // const post = await createPost(values);
+  const post = await createPost(values);
+  const publishedArticle = post.data;
 
   // I need to retrieve tagId from localStorage
+  if (publishedArticle) {
+    console.log(publishedArticle);
 
-  // if (post.data) {
-  //   await addTag(post.data.id, tagId);
-  // }
+    // await addTag(publishedArticle.id, tagId);
+  }
 
   return { values, errors: {} };
 };
@@ -53,16 +57,17 @@ export default async function WritePage() {
   }
 
   return (
-    // <TagForm />
     <div className="container mx-auto my-8 w-[80%] gap-12 lg:grid lg:w-[90%] lg:grid-cols-8">
       <div className="col-span-2 hidden lg:block">
         <p className="">The Article Draft and other info section</p>
       </div>
       <div className="col-span-6">
+        {/*<PostForm />*/}
         <ArticleForm
           action={submitForm}
           values={{ title: "", content: "", featuredImage: "" }}
         />
+        {/*<TagFormModal />*/}
       </div>
     </div>
   );
@@ -109,6 +114,8 @@ export default async function WritePage() {
         source={md.render(markdownContent)}
         style={{ whiteSpace: "pre-wrap" }}
       />
+
+      NOTE: MDEditor approach only works in client components
 
       <div dangerouslySetInnerHTML={{ __html: md.render(markdownContent) }} />
       <Interweave content={md.render(markdownContent)} />
