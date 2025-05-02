@@ -43,10 +43,10 @@ export async function validateSessionToken(
   const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
 
   /**REMEMBER TO DELETE THIS IF CHECK FOR PRODUCTTION*/
-  if (!db) {
-    console.warn("Database not available: skipping session validation");
-    return { session: null, user: null };
-  }
+  // if (!db) {
+  //   console.warn("Database not available: skipping session validation");
+  //   return { session: null, user: null };
+  // }
 
   const result = await db
     .select({ user: userTable, session: sessionTable })

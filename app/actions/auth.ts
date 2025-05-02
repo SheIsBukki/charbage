@@ -60,10 +60,10 @@ export const registerUser = async (
 
 export const loginUser = async (email: string, password?: string) => {
   /**REMEMBER TO REMOVE THIS IF CHECK FOR PRODUCTION*/
-  if (!db) {
-    console.warn("Database not available: skipping user login");
-    return { user: null };
-  }
+  // if (!db) {
+  //   console.warn("Database not available: skipping user login");
+  //   return { user: null };
+  // }
 
   const [user] = await db
     .select()
