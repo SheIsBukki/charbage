@@ -92,8 +92,8 @@ export default function ArticleForm({ action, values }: ArticleFormProps) {
             {/*Looks like I don't need to even attempt to create the modal at all*/}
             <TagFormModal />
 
-            {/*This will be for Tag search */}
-            <TagSelectionModal />
+            {/*This will be for Tag search——I COMMENTED OUT THIS BECAUSE IT MIGHT BE CAUSING RUNTIME UNHANDLED PROMISE REJECTION ERROR IN PRODUCTION */}
+            {/*<TagSelectionModal />*/}
             {/*<Button variant="outline" type="button" className="">
               Select a tag
             </Button>*/}

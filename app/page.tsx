@@ -2,9 +2,44 @@
 import { getCurrentSession } from "@/lib/session";
 import MainNav from "@/app/ui/MainNav";
 import ArticleCard from "@/components/articles/ArticleCard";
+import { getLatestPosts } from "@/db/queries/select";
+import { polyfill } from "interweave-ssr";
+
+polyfill();
+
+// export type ArticlesProps =
+//   | {
+//       posts: {
+//         author: string;
+//         id: string;
+//         title: string;
+//         content: string;
+//         featuredImage: string | null;
+//         slug: string;
+//         createdAt: Date;
+//         updatedAt: Date;
+//         userId: string;
+//       }[];
+//       error: null;
+//     }
+//   | {};
+//
+// export type PostsProps = {
+//   author: string;
+//   id: string;
+//   title: string;
+//   content: string;
+//   featuredImage: string | null;
+//   slug: string;
+//   createdAt: Date;
+//   updatedAt: Date;
+//   userId: string;
+// }[];
 
 export default async function Home() {
   const { user } = await getCurrentSession();
+  const latestArticles = await getLatestPosts();
+  // const { posts } = latestArticles;
   return (
     <>
       <MainNav user={user} />
@@ -14,7 +49,7 @@ export default async function Home() {
 
         {/*Article*/}
         <div className="col-span-5">
-          <ArticleCard />
+          <ArticleCard latestArticles={latestArticles} />
         </div>
       </main>
     </>

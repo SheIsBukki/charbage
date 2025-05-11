@@ -81,10 +81,16 @@ export async function getLatestPosts(page = 1, pageSize = 5) {
       .limit(pageSize)
       .offset((page - 1) * pageSize);
 
-    return { posts, error: null };
+    return {
+      posts,
+      error: null,
+    };
   } catch (error) {
     console.error(error);
-    return { posts: null, error: "Failed to fetch posts" };
+    return {
+      posts: null,
+      error: "Failed to fetch posts",
+    };
   }
 }
 
