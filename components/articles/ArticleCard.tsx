@@ -7,22 +7,24 @@ import "highlight.js/styles/shades-of-purple.css";
 import { BsBookmark } from "react-icons/bs";
 import { BiLike } from "react-icons/bi";
 import { TfiCommentAlt } from "react-icons/tfi";
-import { getLatestPosts } from "@/db/queries/select";
+
 import md from "@/utils/md";
 import { regularDate } from "@/utils/helpers";
+import { type Post } from "@/db/schema";
+import { getLatestPosts } from "@/db/queries/select";
 
-polyfill();
+// polyfill();
 
-export default async function ArticleCard() {
-  const latestArticles = await getLatestPosts();
+export default function ArticleCard({ latestArticles }) {
+  // const articles = await getLatestPosts();
   const { posts } = latestArticles;
-
+  //
   return (
     <div className="">
       {posts &&
-        posts.map((post) => (
+        posts.map((article) => (
           <div
-            key={post.id}
+            key={article.id}
             className="space-y-2 px-8 py-3 md:px-4 lg:my-6 lg:rounded-lg lg:border"
           >
             {/*Author and publication info*/}
@@ -39,10 +41,10 @@ export default async function ArticleCard() {
                   />
                 </figure>
                 <div className="text-sm">
-                  <p className="font-semibold">{post.author}</p>
+                  <p className="font-semibold">{article.author}</p>
                   <p className="dark:text-gray-400">
                     {" "}
-                    {regularDate(post.createdAt)}
+                    {regularDate(article.createdAt)}
                   </p>
                 </div>
               </div>
@@ -51,30 +53,30 @@ export default async function ArticleCard() {
             {/*Title, Post excerpt and featured image*/}
             <div
               className={`${
-                post.featuredImage
+                article.featuredImage
                   ? "grid-cols-6 items-center gap-8 md:grid"
                   : "md:flex"
               } space-y-2 sm:block`}
             >
               <div className="col-span-4">
                 {/*Title*/}
-                <h1 className="mb-1 font-bold md:text-xl">{post.title}</h1>
+                <h1 className="mb-1 font-bold md:text-xl">{article.title}</h1>
 
                 <Interweave
                   className="line-clamp-3 dark:text-gray-400"
                   // content={createExcerpt(post.content)}
-                  content={md.render(post.content)}
+                  content={md.render(article.content)}
                 />
               </div>
 
-              {post.featuredImage && (
+              {article.featuredImage && (
                 <div className="col-span-2 size-full rounded-lg">
                   <figure className="relative h-[150px] w-full">
                     <Image
                       width={0}
                       height={0}
                       alt="featured image"
-                      src={post.featuredImage}
+                      src={article.featuredImage}
                       sizes="(min-width: 808px) 50vw, 100vw"
                       className="aspect-auto size-full rounded-lg object-cover"
                     />
