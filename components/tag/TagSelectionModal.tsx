@@ -1,3 +1,5 @@
+"use client";
+
 import toast from "react-hot-toast";
 import { getTags, searchTags } from "@/db/queries/select";
 import { Button } from "@/components/ui/button";

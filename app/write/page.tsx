@@ -1,5 +1,3 @@
-'use server'
-
 import { redirect } from "next/navigation";
 import { getCurrentSession } from "@/lib/session";
 import ArticleForm from "@/components/editor/ArticleForm";
