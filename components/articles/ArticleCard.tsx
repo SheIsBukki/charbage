@@ -2,7 +2,6 @@
 
 import Image from "next/image";
 import { Interweave } from "interweave";
-import { polyfill } from "interweave-ssr";
 import "highlight.js/styles/shades-of-purple.css";
 import { BsBookmark } from "react-icons/bs";
 import { BiLike } from "react-icons/bi";
@@ -10,19 +9,15 @@ import { TfiCommentAlt } from "react-icons/tfi";
 
 import md from "@/utils/md";
 import { regularDate } from "@/utils/helpers";
-import { type Post } from "@/db/schema";
-import { getLatestPosts } from "@/db/queries/select";
+import { ArticlesType } from "@/app/page";
 
-// polyfill();
-
-export default function ArticleCard({ latestArticles }: any) {
-  // const articles = await getLatestPosts();
-  const { posts } = latestArticles;
-  //
+export default function ArticleCard({ articlesData }: any) {
+  const { posts } = articlesData;
+  const latestArticles: ArticlesType = posts;
   return (
     <div className="">
-      {posts &&
-        posts.map((article: any) => (
+      {latestArticles &&
+        latestArticles.map((article) => (
           <div
             key={article.id}
             className="space-y-2 px-8 py-3 md:px-4 lg:my-6 lg:rounded-lg lg:border"
