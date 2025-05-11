@@ -15,14 +15,14 @@ import { getLatestPosts } from "@/db/queries/select";
 
 // polyfill();
 
-export default function ArticleCard({ latestArticles }) {
+export default function ArticleCard({ latestArticles }: any) {
   // const articles = await getLatestPosts();
   const { posts } = latestArticles;
   //
   return (
     <div className="">
       {posts &&
-        posts.map((article) => (
+        posts.map((article: any) => (
           <div
             key={article.id}
             className="space-y-2 px-8 py-3 md:px-4 lg:my-6 lg:rounded-lg lg:border"
