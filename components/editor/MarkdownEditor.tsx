@@ -1,3 +1,5 @@
+"use client";
+
 import { EditorContext } from "@uiw/react-md-editor";
 import dynamic from "next/dynamic";
 import React, { useContext } from "react";
