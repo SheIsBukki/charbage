@@ -1,3 +1,5 @@
+"use client";
+
 import Image from "next/image";
 import { Interweave } from "interweave";
 import { polyfill } from "interweave-ssr";
