@@ -7,19 +7,6 @@ import { polyfill } from "interweave-ssr";
 
 polyfill();
 
-// I will still change this to Post[] && author: string somehow
-export type ArticlesType = {
-  author: string;
-  id: string;
-  title: string;
-  content: string;
-  featuredImage: string | null;
-  slug: string;
-  createdAt: Date;
-  updatedAt: Date;
-  userId: string;
-}[];
-
 export default async function Home() {
   const { user } = await getCurrentSession();
   const articlesData = await getLatestPosts();

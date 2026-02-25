@@ -9,11 +9,36 @@ import { TfiCommentAlt } from "react-icons/tfi";
 
 import md from "@/utils/md";
 import { regularDate } from "@/utils/helpers";
-import { ArticlesType } from "@/app/page";
+// import { Post } from "@/db/schema";
 
-export default function ArticleCard({ articlesData }: any) {
+// export type ArticlesType = { author: string } & Post;
+export type PostType = {
+  author: string;
+  id: string;
+  title: string;
+  content: string;
+  featuredImage: string | null;
+  slug: string;
+  createdAt: Date;
+  updatedAt: Date;
+  userId: string;
+};
+
+export type ArticlesDataType = {
+  posts: PostType[] | null;
+  error: null | string;
+};
+
+export default function ArticleCard({
+  articlesData,
+}: {
+  articlesData: ArticlesDataType;
+}) {
   const { posts } = articlesData;
-  const latestArticles: ArticlesType = posts;
+  if (!posts) {
+    return;
+  }
+  const latestArticles: PostType[] = posts;
   return (
     <div className="">
       {latestArticles &&

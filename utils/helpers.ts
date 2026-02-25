@@ -19,6 +19,7 @@ export const regularDate = (dateValue: string | number | Date) => {
     year: "numeric",
     month: "short",
     day: "numeric",
+    weekday: "short",
   });
 };
 
