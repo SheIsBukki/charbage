@@ -6,6 +6,7 @@ import {
   varchar,
   integer,
   primaryKey,
+  serial,
 } from "drizzle-orm/pg-core";
 import { InferInsertModel, InferSelectModel, relations } from "drizzle-orm";
 
@@ -21,6 +22,7 @@ export const sessionTable = pgTable("sessions", {
 });
 
 export const userTable = pgTable("users", {
+  serialNumber: serial("serialNumber").notNull(),
   id: uuid("id").defaultRandom().primaryKey(),
   name: text("name").notNull(),
   email: text("email").notNull().unique(),
@@ -36,6 +38,7 @@ export const userTable = pgTable("users", {
 });
 
 export const postTable = pgTable("posts", {
+  serialNumber: serial("serialNumber").notNull(),
   id: uuid("id").defaultRandom().primaryKey(),
   title: text("title").notNull(),
   content: text("content").notNull(),
@@ -44,9 +47,7 @@ export const postTable = pgTable("posts", {
   createdAt: timestamp("createdAt", { withTimezone: true, mode: "date" })
     .notNull()
     .defaultNow(),
-  updatedAt: timestamp("updatedAt")
-    .notNull()
-    .$onUpdate(() => new Date()),
+  updatedAt: timestamp("updatedAt").$onUpdate(() => new Date()),
 
   userId: uuid("userId")
     .notNull()
@@ -58,6 +59,7 @@ export const postTableRelations = relations(postTable, ({ many }) => ({
 }));
 
 export const tagTable = pgTable("tags", {
+  serialNumber: serial("serialNumber").notNull(),
   id: uuid("id").defaultRandom().primaryKey(),
   name: text("name").notNull().unique(),
   description: text("description").notNull(),
@@ -104,6 +106,7 @@ export const tagsToPostsRelations = relations(tagsToPostsTable, ({ one }) => ({
 }));
 
 export const commentTable = pgTable("comments", {
+  serialNumber: serial("serialNumber").notNull(),
   id: uuid("id").defaultRandom().primaryKey(),
   content: text("content").notNull(),
   createdAt: timestamp("createdAt", {
@@ -139,6 +142,7 @@ export const likeTable = pgTable("likes", {
 });
 
 export const bookmarkTable = pgTable("bookmarks", {
+  serialNumber: serial("serialNumber").notNull(),
   id: uuid("id").defaultRandom().primaryKey(),
   userId: uuid("userId")
     .notNull()

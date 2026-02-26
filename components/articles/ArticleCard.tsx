@@ -20,7 +20,7 @@ export type PostType = {
   featuredImage: string | null;
   slug: string;
   createdAt: Date;
-  updatedAt: Date;
+  updatedAt: Date | null;
   userId: string;
 };
 
