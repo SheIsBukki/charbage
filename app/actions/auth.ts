@@ -129,6 +129,7 @@ export const getUserWithGithubData = async (
   }
 
   return {
+    serialNumber: user.serialNumber,
     id: user.id,
     email: user.email,
     name: user.name,
@@ -154,6 +155,7 @@ export const getUserWithGoogleData = async (
   }
 
   return {
+    serialNumber: user.serialNumber,
     id: user.id,
     email: user.email,
     name: user.name,
