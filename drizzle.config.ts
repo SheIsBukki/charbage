@@ -32,12 +32,13 @@ import { defineConfig } from "drizzle-kit";
 config({ path: ".env" });
 
 if (!process.env.DATABASE_URL) {
-  throw new Error("Missing Supabase database URL environment variable");
+  throw new Error("Missing Neon database URL environment variable");
 }
 
 export default defineConfig({
   schema: "./db/schema.ts",
-  out: "./supabase/migrations",
+  // out: "./supabase/migrations",
+  out: "./migrations",
   dialect: "postgresql",
   dbCredentials: {
     url: process.env.DATABASE_URL,
