@@ -2,7 +2,6 @@
 
 import Image from "next/image";
 import { Interweave } from "interweave";
-import { polyfill } from "interweave-ssr";
 import "highlight.js/styles/shades-of-purple.css";
 import { BsBookmark } from "react-icons/bs";
 import { BiLike } from "react-icons/bi";
@@ -10,19 +9,40 @@ import { TfiCommentAlt } from "react-icons/tfi";
 
 import md from "@/utils/md";
 import { regularDate } from "@/utils/helpers";
-import { type Post } from "@/db/schema";
-import { getLatestPosts } from "@/db/queries/select";
+// import { Post } from "@/db/schema";
 
-// polyfill();
+// export type ArticlesType = { author: string } & Post;
+export type PostType = {
+  author: string;
+  id: string;
+  title: string;
+  content: string;
+  featuredImage: string | null;
+  slug: string;
+  createdAt: Date;
+  updatedAt: Date;
+  userId: string;
+};
 
-export default function ArticleCard({ latestArticles }: any) {
-  // const articles = await getLatestPosts();
-  const { posts } = latestArticles;
-  //
+export type ArticlesDataType = {
+  posts: PostType[] | null;
+  error: null | string;
+};
+
+export default function ArticleCard({
+  articlesData,
+}: {
+  articlesData: ArticlesDataType;
+}) {
+  const { posts } = articlesData;
+  if (!posts) {
+    return;
+  }
+  const latestArticles: PostType[] = posts;
   return (
     <div className="">
-      {posts &&
-        posts.map((article: any) => (
+      {latestArticles &&
+        latestArticles.map((article) => (
           <div
             key={article.id}
             className="space-y-2 px-8 py-3 md:px-4 lg:my-6 lg:rounded-lg lg:border"

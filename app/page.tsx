@@ -7,39 +7,10 @@ import { polyfill } from "interweave-ssr";
 
 polyfill();
 
-// export type ArticlesProps =
-//   | {
-//       posts: {
-//         author: string;
-//         id: string;
-//         title: string;
-//         content: string;
-//         featuredImage: string | null;
-//         slug: string;
-//         createdAt: Date;
-//         updatedAt: Date;
-//         userId: string;
-//       }[];
-//       error: null;
-//     }
-//   | {};
-//
-// export type PostsProps = {
-//   author: string;
-//   id: string;
-//   title: string;
-//   content: string;
-//   featuredImage: string | null;
-//   slug: string;
-//   createdAt: Date;
-//   updatedAt: Date;
-//   userId: string;
-// }[];
-
 export default async function Home() {
   const { user } = await getCurrentSession();
-  const latestArticles = await getLatestPosts();
-  // const { posts } = latestArticles;
+  const articlesData = await getLatestPosts();
+  // const { posts } = articlesData;
   return (
     <>
       <MainNav user={user} />
@@ -49,7 +20,7 @@ export default async function Home() {
 
         {/*Article*/}
         <div className="col-span-5">
-          <ArticleCard latestArticles={latestArticles} />
+          <ArticleCard articlesData={articlesData} />
         </div>
       </main>
     </>
