@@ -1,8 +1,8 @@
 import { config } from "dotenv";
-// import { drizzle } from "drizzle-orm/postgres-js";
-// import postgres from "postgres";
-import { neon } from "@neondatabase/serverless";
-import { drizzle } from "drizzle-orm/neon-http";
+import { drizzle } from "drizzle-orm/postgres-js";
+import postgres from "postgres";
+// import { neon } from "@neondatabase/serverless";
+// import { drizzle } from "drizzle-orm/neon-http";
 
 config({ path: ".env" });
 
@@ -11,12 +11,13 @@ const connectionString = process.env.DATABASE_URL;
 if (!connectionString) {
   throw new Error("Missing neon database connection string");
 }
-
-const sql = neon(connectionString);
-
+const client = postgres(process.env.DATABASE_URL!);
+// const sql = neon(connectionString);
+export const db = drizzle(client);
 // Disable prefetch as it is not supported for "Transaction" pool mode
 // export const client = postgres(connectionString, { prepare: false });
-export const db = drizzle({ client: sql, casing: "snake_case" });
+// export const db = drizzle({ client: sql, casing: "snake_case" });
+// export const db = drizzle(sql);
 
 /**I WILL USE THIS FOR LOCAL and DELETE FOR PRODUCTION AT THE FINAL STAGE*/
 // import { config } from "dotenv";
