@@ -1,6 +1,9 @@
 "use server";
 
 import {
+  bookmarkTable,
+  commentTable,
+  likeTable,
   Post,
   postTable,
   Tag,
@@ -63,24 +66,31 @@ export async function getLatestPosts(page = 1, pageSize = 5) {
   try {
     const posts = await db
       .select({
+        // postId: postTable.id,
         ...getTableColumns(postTable),
         author: userTable.name,
+        // comments: count(commentTable.id),
+        // likes: count(likeTable.id),
+        // bookmarks: count(bookmarkTable.id),
 
         // tags: sql<
         //   tag[]
         // >`array(select * from ${tagstopoststable} join ${tagtable} on ${tagstopoststable.tagid} = ${tagtable.id} where ${tagstopoststable.postid} = ${posttable.id} )`,
       })
       .from(postTable)
+      // .groupBy(postTable.id)
       // I don't need the where statement for now, and will probably never need it since the orderBy desc statement does the job
       // .where(
       //   between(postTable.createdAt, sql`now() - interval '1 day'`, sql`now()`),
       // )
       .leftJoin(tagsToPostsTable, eq(postTable.id, tagsToPostsTable.postId))
       .innerJoin(userTable, eq(postTable.userId, userTable.id))
+      // .leftJoin(commentTable, eq(commentTable.postId, postTable.id))
+      // .leftJoin(likeTable, eq(likeTable.id, commentTable.postId))
+      // .leftJoin(bookmarkTable, eq(bookmarkTable.postId, postTable.id))
       .orderBy(desc(postTable.createdAt))
       .limit(pageSize)
       .offset((page - 1) * pageSize);
-
     return {
       posts,
       error: null,
@@ -91,6 +101,47 @@ export async function getLatestPosts(page = 1, pageSize = 5) {
       posts: null,
       error: "Failed to fetch posts",
     };
+  }
+}
+
+export async function getPostWithSlug(slug: Post["slug"]) {
+  try {
+    const [post] = await db
+      .select({
+        ...getTableColumns(postTable),
+        author: userTable.name,
+      })
+      .from(postTable)
+      .innerJoin(userTable, eq(postTable.userId, userTable.id))
+      .where(eq(postTable.slug, slug))
+      .execute();
+
+    return { post, error: null };
+  } catch (error) {
+    console.error("Post could not be found", error);
+    return { post: null, error: "Failed to find post" };
+  }
+}
+
+export async function getPostReactionCountWithId(id: Post["id"]) {
+  try {
+    const [reactionCount] = await db
+      .select({
+        comments: count(commentTable),
+        likes: count(likeTable),
+        bookmarks: count(bookmarkTable),
+      })
+      .from(postTable)
+      .leftJoin(commentTable, eq(commentTable.postId, postTable.id))
+      .leftJoin(likeTable, eq(likeTable.postId, postTable.id))
+      .leftJoin(bookmarkTable, eq(bookmarkTable.postId, postTable.id))
+      .where(eq(postTable.id, id))
+      .execute();
+
+    return { reactionCount, error: null };
+  } catch (error) {
+    console.error(error);
+    return { reactionCount: null, error: "Failed to fetch reaction count" };
   }
 }
 

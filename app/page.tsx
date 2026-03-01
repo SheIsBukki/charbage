@@ -1,7 +1,7 @@
 // import TagSelection from "@/components/tag/TagSelection";
 import { getCurrentSession } from "@/lib/session";
 import MainNav from "@/app/ui/MainNav";
-import ArticleCard from "@/components/articles/ArticleCard";
+import ArticleCards from "@/components/articles/ArticleCards";
 import { getLatestPosts } from "@/db/queries/select";
 import { polyfill } from "interweave-ssr";
 
@@ -20,7 +20,7 @@ export default async function Home() {
 
         {/*Article*/}
         <div className="col-span-5">
-          <ArticleCard articlesData={articlesData} />
+          <ArticleCards articlesData={articlesData} />
         </div>
       </main>
     </>
