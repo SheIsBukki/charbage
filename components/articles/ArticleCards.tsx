@@ -9,6 +9,8 @@ import { TfiCommentAlt } from "react-icons/tfi";
 
 import md from "@/utils/md";
 import { regularDate } from "@/utils/helpers";
+import Link from "next/link";
+import { getPostReactionCountWithId } from "@/db/queries/select";
 // import { Post } from "@/db/schema";
 
 // export type ArticlesType = { author: string } & Post;
@@ -22,6 +24,9 @@ export type PostType = {
   createdAt: Date;
   updatedAt: Date | null;
   userId: string;
+  comments?: number;
+  likes?: number;
+  bookmarks?: number;
 };
 
 export type ArticlesDataType = {
@@ -29,7 +34,7 @@ export type ArticlesDataType = {
   error: null | string;
 };
 
-export default function ArticleCard({
+export default function ArticleCards({
   articlesData,
 }: {
   articlesData: ArticlesDataType;
@@ -39,6 +44,8 @@ export default function ArticleCard({
     return;
   }
   const latestArticles: PostType[] = posts;
+  // const getReactionCount = async (postId: string) =>
+  //   await getPostReactionCountWithId(postId);
   return (
     <div className="">
       {latestArticles &&
@@ -80,7 +87,9 @@ export default function ArticleCard({
             >
               <div className="col-span-4">
                 {/*Title*/}
-                <h1 className="mb-1 font-bold md:text-xl">{article.title}</h1>
+                <h1 className="mb-1 font-bold md:text-xl">
+                  <Link href={`/blog/${article.slug}`}>{article.title}</Link>
+                </h1>
 
                 <Interweave
                   className="line-clamp-3 dark:text-gray-400"
@@ -117,15 +126,16 @@ export default function ArticleCard({
               </div>
 
               {/*Interactions*/}
+
               <div className="flex items-center space-x-2.5 md:space-x-4">
                 <span className="inline-flex items-center space-x-1">
-                  <span className="">6</span>
+                  <span className="">{article.likes}</span>
                   <span className="hidden md:inline-block">likes</span>
                   <BiLike className="inline-block md:hidden md:size-4" />
                 </span>
 
                 <span className="inline-flex items-center space-x-1">
-                  <span className="">4</span>
+                  <span className="">{article.likes}</span>
                   <span className="hidden md:inline-block">comments</span>
                   <TfiCommentAlt className="inline-block md:hidden md:size-4" />
                 </span>

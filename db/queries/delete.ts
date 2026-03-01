@@ -1,3 +1,5 @@
+"use server";
+
 import {
   Comment,
   commentTable,
@@ -10,19 +12,32 @@ import {
   userTable,
 } from "@/db/schema";
 import { db } from "@/db";
-import { count, eq, getTableColumns } from "drizzle-orm";
+import { and, count, eq, getTableColumns } from "drizzle-orm";
 import { getCurrentSession } from "@/lib/session";
+import { revalidatePath } from "next/cache";
 
 export async function deletePost(id: Post["id"]) {
   const { user } = await getCurrentSession();
   if (!user) {
     return {
-      user: null,
       error: "You are not authorised to delete this post",
+      result: null,
     };
   }
 
-  await db.delete(postTable).where(eq(postTable.id, id));
+  try {
+    await db
+      .delete(postTable)
+      .where(and(eq(postTable.id, id), eq(postTable.userId, user.id)));
+
+    return { result: "Post deleted successfully.", error: null };
+  } catch (err) {
+    console.log(err);
+    return {
+      error: "Failed to delete post",
+      result: null,
+    };
+  }
 }
 
 export async function deleteComment(id: Comment["id"]) {

@@ -41,7 +41,8 @@ const submitForm = async (initialState: ActionState, formData: FormData) => {
 
   // I need to retrieve tagId from localStorage
   if (publishedArticle) {
-    console.log(publishedArticle);
+    redirect(`/blog/${publishedArticle.slug}`);
+    // console.log(publishedArticle);
 
     // await addTag(publishedArticle.id, tagId);
   }
