@@ -37,7 +37,6 @@ if (!process.env.DATABASE_URL) {
 
 export default defineConfig({
   schema: "./db/schema.ts",
-  // out: "./supabase/migrations",
   out: "./migrations",
   dialect: "postgresql",
   dbCredentials: {
