@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { startTransition, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { BiLoaderAlt } from "react-icons/bi";
 import { FaImage } from "react-icons/fa";
 import { uploadImage } from "@/utils/uploadImage";
@@ -55,7 +55,6 @@ export default function FeaturedImage({ userId }: { userId: string }) {
       return;
     }
 
-    // startTransition(async () => {});
     await deleteFeaturedImageEverywhere(imgUrl, id, "/write");
     setIsImageRemoved(true);
   };
@@ -133,8 +132,4 @@ export default function FeaturedImage({ userId }: { userId: string }) {
       </div>
     </div>
   );
-}
-{
-  /*<pre>{JSON.stringify(featuredImage, null, 4)}</pre>
-          <p>{featuredImage}</p>*/
 }
