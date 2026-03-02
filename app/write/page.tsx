@@ -65,6 +65,7 @@ export default async function WritePage() {
       <div className="col-span-6">
         {/*<PostForm />*/}
         <ArticleForm
+          userId={user.id}
           action={submitForm}
           values={{ title: "", content: "", featuredImage: "" }}
         />

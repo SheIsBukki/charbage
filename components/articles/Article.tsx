@@ -1,10 +1,12 @@
 "use client";
+
 import Image from "next/image";
 import { regularDate } from "@/utils/helpers";
 import { Interweave } from "interweave";
 import md from "@/utils/md";
 import { PostType } from "@/components/articles/ArticleCards";
 import { redirect } from "next/navigation";
+import { deleteFeaturedImageEverywhere } from "@/lib/deleteFeaturedImageEverywhere";
 
 export const dynamic = "force-dynamic";
 
@@ -41,6 +43,7 @@ export default function Article({
   deletePostAction: DeletePostActionType;
   authorisedPostAuthor: boolean;
 }) {
+  // console.log(post.featuredImage);
   return (
     <>
       <div className="mx-auto w-4/5">
@@ -95,6 +98,10 @@ export default function Article({
           <div className="">
             <button
               onClick={async () => {
+                await deleteFeaturedImageEverywhere(
+                  post?.featuredImage || "",
+                  post.userId,
+                );
                 await deletePostAction(post.id);
                 redirect("/");
               }}

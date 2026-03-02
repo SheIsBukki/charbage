@@ -26,7 +26,7 @@ export const uploadImage = (file: any): Promise<any> => {
             const data = await response.json();
             resolve(data.url);
             toast.success("Image upload successful");
-            console.log(data.url);
+            // console.log(data.url);
           }
         } catch (error) {
           reject(error);
