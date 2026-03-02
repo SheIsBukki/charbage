@@ -19,9 +19,14 @@ type ArticleFormProps = {
     formData: FormData,
   ) => Promise<ActionState>;
   values: PostFormValues;
+  userId: string;
 };
 
-export default function ArticleForm({ action, values }: ArticleFormProps) {
+export default function ArticleForm({
+  action,
+  values,
+  userId,
+}: ArticleFormProps) {
   const [state, formAction, isPending] = useActionState(action, {
     values,
     errors: {},
@@ -61,7 +66,7 @@ export default function ArticleForm({ action, values }: ArticleFormProps) {
               disabled={isPending}
               render={() => (
                 <>
-                  <FeaturedImage />
+                  <FeaturedImage userId={userId} />
                 </>
               )}
             />

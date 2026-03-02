@@ -1,3 +1,5 @@
+"use server";
+
 import { v2 as cloudinary } from "cloudinary";
 import { NextResponse } from "next/server";
 
@@ -5,16 +7,22 @@ cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET,
-  upload_preset: process.env.CLOUDINARY_FOLDER_NAME,
 });
 
 export async function POST(req: Request) {
-  const { image } = await req.json();
+  const { publicId } = await req.json();
+  console.log(publicId);
 
   try {
-    const response = await cloudinary.uploader.upload(image, {
-      folder: "charbage",
-    });
+    const response = await cloudinary.uploader.destroy(
+      `${process.env.CLOUDINARY_FOLDER_NAME}/${publicId}`,
+      {
+        invalidate: true,
+      },
+    );
+
+    // console.log(response);
+
     return NextResponse.json({ url: response.secure_url });
   } catch (err) {
     return NextResponse.json(

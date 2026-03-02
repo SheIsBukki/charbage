@@ -1,13 +1,15 @@
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { startTransition, useEffect, useState } from "react";
 import { BiLoaderAlt } from "react-icons/bi";
 import { FaImage } from "react-icons/fa";
 import { uploadImage } from "@/utils/uploadImage";
+import { deleteFeaturedImageEverywhere } from "@/lib/deleteFeaturedImageEverywhere";
 
-export default function FeaturedImage() {
+export default function FeaturedImage({ userId }: { userId: string }) {
   const [imagePreview, setImagePreview] = useState<string | ArrayBuffer>("");
   const [featuredImage, setFeaturedImage] = useState("");
   const [uploadingImage, setUploadingImage] = useState(false);
+  const [isImageRemoved, setIsImageRemoved] = useState(false);
 
   const handleImageUpload = async (event: any) => {
     const imageFile = event.target.files[0];
@@ -48,6 +50,24 @@ export default function FeaturedImage() {
     }
   }, [setFeaturedImage, setImagePreview]);
 
+  const handleRemoveImage = async (imgUrl: string, id: string) => {
+    if (!imagePreview && !featuredImage) {
+      return;
+    }
+
+    // startTransition(async () => {});
+    await deleteFeaturedImageEverywhere(imgUrl, id, "/write");
+    setIsImageRemoved(true);
+  };
+
+  useEffect(() => {
+    localStorage.removeItem("imagePreview");
+    localStorage.removeItem("featuredImage");
+    setImagePreview("");
+    setFeaturedImage("");
+    setIsImageRemoved(false);
+  }, [isImageRemoved]);
+
   return (
     <div className="">
       {/*Selected Featured Image*/}
@@ -64,7 +84,7 @@ export default function FeaturedImage() {
         </figure>
       )}
 
-      <div className="mt-4 w-fit">
+      <div className="mt-4 w-full">
         <label
           htmlFor="featuredImage"
           className={`${uploadingImage && "disabled"}`}
@@ -75,18 +95,31 @@ export default function FeaturedImage() {
               <span>Uploading...</span>
             </p>
           ) : (
-            <p className="flex items-center space-x-2 rounded-lg bg-gray-100 px-4 py-2 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-600">
-              <FaImage className="size-5" />
+            <div className="flex items-center space-x-2 px-4 py-2">
               {imagePreview ? (
-                <span>Change Cover</span>
+                <div className="flex w-full items-center justify-between">
+                  <p className="flex items-center space-x-2 rounded-lg bg-gray-100 px-2 py-2 text-sm hover:bg-gray-200 md:px-4 dark:bg-gray-800 dark:hover:bg-gray-600">
+                    <FaImage className="size-5" />
+                    <span
+                      onClick={() => handleRemoveImage(featuredImage, userId)}
+                    >
+                      Change Cover
+                    </span>
+                  </p>
+                  <p className="flex items-center space-x-2 rounded-lg bg-gray-100 px-4 py-2 text-sm hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-600">
+                    <FaImage className="size-5" />
+                    <button
+                      onClick={() => handleRemoveImage(featuredImage, userId)}
+                    >
+                      Remove Cover
+                    </button>
+                  </p>
+                </div>
               ) : (
                 <span>Add Cover</span>
               )}
-            </p>
+            </div>
           )}
-
-          {/*<pre>{JSON.stringify(featuredImage, null, 4)}</pre>
-          <p>{featuredImage}</p>*/}
 
           <input
             id="featuredImage"
@@ -100,4 +133,8 @@ export default function FeaturedImage() {
       </div>
     </div>
   );
+}
+{
+  /*<pre>{JSON.stringify(featuredImage, null, 4)}</pre>
+          <p>{featuredImage}</p>*/
 }
