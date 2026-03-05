@@ -46,7 +46,9 @@ export async function createPost(data: {
         userId: user.id,
         title: data.title,
         content: data.content,
-        slug: `${slugify(data.title.toLowerCase())}-${randomString}`,
+        slug: encodeURIComponent(
+          `${slugify(data.title.toLowerCase())}-${randomString}`,
+        ),
         featuredImage: data.featuredImage,
         updatedAt: null,
       })
