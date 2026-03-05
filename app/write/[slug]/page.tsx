@@ -23,11 +23,9 @@ export default async function EditPage({
   if (!post) {
     return;
   }
-
   if (!user || post.userId !== user.id) {
     redirect(`/blog/${post.slug}`);
   }
-
   const authorisedPostAuthor = user.id;
 
   const submitForm = async (initialState: ActionState, formData: FormData) => {
@@ -53,16 +51,24 @@ export default async function EditPage({
             `${slugify(values.title.toLowerCase())}-${slug.slice(-6)}`,
           );
 
-    const updatedPost = await updatePost(post.id, values);
+    let hasPostChanged;
+    if (
+      values.title === post.title &&
+      values.content === post.content &&
+      values.featuredImage === post.featuredImage
+    ) {
+      hasPostChanged = false;
+    } else {
+      const updatedPost = await updatePost(post.id, values);
 
-    // I need to retrieve tagId from localStorage
-    if (updatedPost !== "Failed to update post") {
-      console.log(updatedPost);
-      redirect(`/blog/${updatedPost.slug}`);
+      // I need to retrieve tagId from localStorage
+      if (updatedPost !== "Failed to update post") {
+        // console.log(updatedPost);
+        redirect(`/blog/${updatedPost.slug}`);
+      }
     }
-
-    console.log(values);
-    return { values, errors: {} };
+    // console.log(values);
+    return { values, errors: {}, hasPostChanged: hasPostChanged };
   };
 
   return (

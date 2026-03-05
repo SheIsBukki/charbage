@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useActionState } from "react";
+import React, { useActionState, useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import Form from "next/form";
@@ -10,6 +10,7 @@ import MarkdownEditor from "@/components/editor/MarkdownEditor";
 import { ActionState, PostFormValues } from "@/app/write/page";
 import FeaturedImage from "@/components/editor/FeaturedImage";
 import TagFormModal from "@/components/tag/TagFormModal";
+import toast from "react-hot-toast";
 // import { Button } from "@/components/ui/button";
 // import TagSelectionModal from "@/components/tag/TagSelectionModal";
 
@@ -56,6 +57,14 @@ export default function ArticleForm({
   );
 
   // console.log(values.featuredImage);
+
+  const { hasPostChanged } = state;
+
+  useEffect(() => {
+    if (hasPostChanged === false) {
+      toast.error("No changes have been made to post");
+    }
+  }, [hasPostChanged]);
 
   return (
     <div className="mx-auto w-full">
