@@ -16,6 +16,7 @@ export type PostFormValues = {
 export type ActionState = {
   errors: Record<string, { message: string }>;
   values: PostFormValues;
+  hasPostChanged?: boolean;
 };
 
 const submitForm = async (initialState: ActionState, formData: FormData) => {
