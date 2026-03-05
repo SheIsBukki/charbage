@@ -13,7 +13,7 @@ export async function POST(req: Request) {
 
   try {
     const response = await cloudinary.uploader.upload(image, {
-      folder: "charbage",
+      folder: process.env.CLOUDINARY_FOLDER_NAME,
     });
     return NextResponse.json({ url: response.secure_url });
   } catch (err) {

@@ -8,9 +8,32 @@ import { revalidatePath } from "next/cache";
 
 export async function updatePost(
   id: Post["id"],
-  data: Partial<Omit<Post, "id">>,
+  data: {
+    title: string;
+    content: string;
+    featuredImage?: string;
+    slug?: string;
+  },
 ) {
-  await db.update(postTable).set(data).where(eq(postTable.id, id));
+  try {
+    const [post] = await db
+      .update(postTable)
+      .set({
+        title: data.title,
+        content: data.content,
+        featuredImage: data.featuredImage,
+        slug: data.slug,
+      })
+      .where(eq(postTable.id, id))
+      .returning();
+
+    revalidatePath("/write");
+
+    return post;
+  } catch (err) {
+    console.error(err);
+    return "Failed to update post";
+  }
 }
 
 export async function deleteFeaturedImage(
@@ -39,7 +62,7 @@ export async function deleteFeaturedImage(
   try {
     await db
       .update(postTable)
-      .set({ featuredImage: null })
+      .set({ featuredImage: "" })
       .where(
         and(
           eq(postTable.featuredImage, imageUrl),

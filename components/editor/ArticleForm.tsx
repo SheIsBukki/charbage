@@ -11,7 +11,7 @@ import { ActionState, PostFormValues } from "@/app/write/page";
 import FeaturedImage from "@/components/editor/FeaturedImage";
 import TagFormModal from "@/components/tag/TagFormModal";
 // import { Button } from "@/components/ui/button";
-import TagSelectionModal from "@/components/tag/TagSelectionModal";
+// import TagSelectionModal from "@/components/tag/TagSelectionModal";
 
 type ArticleFormProps = {
   action: (
@@ -20,12 +20,14 @@ type ArticleFormProps = {
   ) => Promise<ActionState>;
   values: PostFormValues;
   userId: string;
+  editorStatus: { updating: boolean; creating: boolean };
 };
 
 export default function ArticleForm({
   action,
   values,
   userId,
+  editorStatus,
 }: ArticleFormProps) {
   const [state, formAction, isPending] = useActionState(action, {
     values,
@@ -53,6 +55,8 @@ export default function ArticleForm({
     </p>
   );
 
+  // console.log(values.featuredImage);
+
   return (
     <div className="mx-auto w-full">
       {/*ARTICLE*/}
@@ -66,7 +70,10 @@ export default function ArticleForm({
               disabled={isPending}
               render={() => (
                 <>
-                  <FeaturedImage userId={userId} />
+                  <FeaturedImage
+                    updatedImageUrl={values.featuredImage}
+                    userId={userId}
+                  />
                 </>
               )}
             />
@@ -133,7 +140,11 @@ export default function ArticleForm({
               type="submit"
               className="w-full rounded-full bg-purple-500 px-4 py-2 text-white md:text-lg"
             >
-              {isPending ? "Publishing" : "Publish"}
+              {editorStatus.creating ? (
+                <>{isPending ? "Publishing" : "Publish"}</>
+              ) : (
+                <>{isPending ? "Updating" : "Update"}</>
+              )}
             </button>
           </div>
         </Form>

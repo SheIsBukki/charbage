@@ -5,7 +5,7 @@ import { regularDate } from "@/utils/helpers";
 import { Interweave } from "interweave";
 import md from "@/utils/md";
 import { PostType } from "@/components/articles/ArticleCards";
-import { redirect } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import { deleteFeaturedImageEverywhere } from "@/lib/deleteFeaturedImageEverywhere";
 
 export const dynamic = "force-dynamic";
@@ -44,6 +44,8 @@ export default function Article({
   authorisedPostAuthor: boolean;
 }) {
   // console.log(post.featuredImage);
+
+  const router = useRouter();
   return (
     <>
       <div className="mx-auto w-4/5">
@@ -95,7 +97,14 @@ export default function Article({
         </div>
 
         {authorisedPostAuthor && (
-          <div className="">
+          <div className="flex items-center space-x-4">
+            <button
+              onClick={() => {
+                router.push(`/write/${post.slug}`);
+              }}
+            >
+              Edit article
+            </button>
             <button
               onClick={async () => {
                 await deleteFeaturedImageEverywhere(

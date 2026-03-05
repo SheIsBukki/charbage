@@ -5,9 +5,17 @@ import { FaImage } from "react-icons/fa";
 import { uploadImage } from "@/utils/uploadImage";
 import { deleteFeaturedImageEverywhere } from "@/lib/deleteFeaturedImageEverywhere";
 
-export default function FeaturedImage({ userId }: { userId: string }) {
-  const [imagePreview, setImagePreview] = useState<string | ArrayBuffer>("");
-  const [featuredImage, setFeaturedImage] = useState("");
+export default function FeaturedImage({
+  userId,
+  updatedImageUrl,
+}: {
+  userId: string;
+  updatedImageUrl: string;
+}) {
+  const [imagePreview, setImagePreview] = useState<string | ArrayBuffer>(
+    updatedImageUrl || "",
+  );
+  const [featuredImage, setFeaturedImage] = useState(updatedImageUrl || "");
   const [uploadingImage, setUploadingImage] = useState(false);
   const [isImageRemoved, setIsImageRemoved] = useState(false);
 
@@ -38,7 +46,6 @@ export default function FeaturedImage({ userId }: { userId: string }) {
 
   useEffect(() => {
     const storedImagePreview = localStorage.getItem("imagePreview");
-
     const storedImageUrl = localStorage.getItem("featuredImage");
 
     if (storedImagePreview) {
@@ -51,20 +58,20 @@ export default function FeaturedImage({ userId }: { userId: string }) {
   }, [setFeaturedImage, setImagePreview]);
 
   const handleRemoveImage = async (imgUrl: string, id: string) => {
-    if (!imagePreview && !featuredImage) {
-      return;
-    }
+    if (!imagePreview && !featuredImage) return;
 
     await deleteFeaturedImageEverywhere(imgUrl, id, "/write");
     setIsImageRemoved(true);
   };
 
   useEffect(() => {
-    localStorage.removeItem("imagePreview");
-    localStorage.removeItem("featuredImage");
-    setImagePreview("");
-    setFeaturedImage("");
-    setIsImageRemoved(false);
+    if (isImageRemoved) {
+      localStorage.removeItem("imagePreview");
+      localStorage.removeItem("featuredImage");
+      setImagePreview("");
+      setFeaturedImage("");
+      setIsImageRemoved(false);
+    }
   }, [isImageRemoved]);
 
   return (

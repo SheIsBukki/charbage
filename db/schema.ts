@@ -47,7 +47,9 @@ export const postTable = pgTable("posts", {
   createdAt: timestamp("createdAt", { withTimezone: true, mode: "date" })
     .notNull()
     .defaultNow(),
-  updatedAt: timestamp("updatedAt").$onUpdate(() => new Date()),
+  updatedAt: timestamp("updatedAt", { mode: "date", precision: 3 })
+    .$onUpdate(() => new Date())
+    .defaultNow(),
 
   userId: uuid("userId")
     .notNull()

@@ -11,7 +11,6 @@ cloudinary.config({
 
 export async function POST(req: Request) {
   const { publicId } = await req.json();
-  console.log(publicId);
 
   try {
     const response = await cloudinary.uploader.destroy(
@@ -20,8 +19,6 @@ export async function POST(req: Request) {
         invalidate: true,
       },
     );
-
-    // console.log(response);
 
     return NextResponse.json({ url: response.secure_url });
   } catch (err) {

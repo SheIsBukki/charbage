@@ -68,6 +68,10 @@ export default async function WritePage() {
           userId={user.id}
           action={submitForm}
           values={{ title: "", content: "", featuredImage: "" }}
+          editorStatus={{
+            updating: false,
+            creating: true,
+          }}
         />
         {/*<TagFormModal />*/}
       </div>

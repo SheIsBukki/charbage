@@ -21,7 +21,7 @@ export async function generateMetadata({
   };
 }
 
-export default async function Page({
+export default async function BlogPage({
   params,
 }: {
   params: Promise<{ slug: string }>;
