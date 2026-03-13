@@ -7,6 +7,7 @@ import {
 import Article from "@/components/articles/Article";
 import { getCurrentSession } from "@/lib/session";
 import { deletePost } from "@/db/queries/delete";
+import MainNav from "@/app/ui/MainNav";
 
 export async function generateMetadata({
   params,
@@ -17,7 +18,8 @@ export async function generateMetadata({
 
   return {
     title: post?.title || "Blog post",
-    description: post?.content.substring(0, 100) || "Blog post",
+    description:
+      post?.content.substring(0, 100) || `Written by ${post?.author}`,
   };
 }
 
@@ -43,11 +45,14 @@ export default async function BlogPage({
   const { reactionCount } = await getPostReactionCountWithId(post.id);
 
   return (
-    <Article
-      authorisedPostAuthor={!!authorisedPostAuthor}
-      deletePostAction={deletePost}
-      reactionCount={reactionCount}
-      post={post}
-    />
+    <>
+      <MainNav user={user} />
+      <Article
+        authorisedPostAuthor={!!authorisedPostAuthor}
+        deletePostAction={deletePost}
+        reactionCount={reactionCount}
+        post={post}
+      />
+    </>
   );
 }

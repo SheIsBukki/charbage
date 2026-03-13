@@ -87,9 +87,9 @@ export default function ArticleCards({
             >
               <div className="col-span-4">
                 {/*Title*/}
-                <h1 className="mb-1 font-bold md:text-xl">
+                <p className="mb-1 font-bold md:text-xl">
                   <Link href={`/blog/${article.slug}`}>{article.title}</Link>
-                </h1>
+                </p>
 
                 <Interweave
                   className="line-clamp-3 dark:text-gray-400"
