@@ -15,7 +15,7 @@ export async function handleDatabaseOperation<T>(
 }
 
 export const regularDate = (dateValue: string | number | Date) => {
-  return new Date(dateValue).toLocaleDateString("en-uk", {
+  return new Date(dateValue).toLocaleDateString("en-ng", {
     year: "numeric",
     month: "short",
     day: "numeric",
@@ -38,3 +38,33 @@ export const createExcerpt = (content: string) => {
     excerpt.replace(/<[^>]*$/, "") + (htmlContent.length > 160 ? "..." : "")
   );
 };
+
+export const copyCurrentUrl = async () => {
+  if (navigator.clipboard && window.isSecureContext) {
+    return await navigator.clipboard.writeText(window.location.href);
+  }
+};
+
+// export const copyCurrentUrl = async () =>
+//   await navigator.clipboard.writeText(window.location.href);
+
+// export const copyCurrentUrl = async () => {
+//   if (navigator.clipboard && window.isSecureContext) {
+//     return await navigator.clipboard.writeText(window.location.href);
+//   } else {
+//     const fallbackCopyCurrentUrl = () => {
+//       const textarea = document.createElement("textarea");
+//       textarea.value = window.location.href;
+//       document.body.appendChild(textarea);
+//       textarea.select();
+//
+//       try {
+//         console.log(document.execCommand("copy"));
+//       } catch (e) {
+//         console.error(e);
+//       } finally {
+//         document.body.removeChild(textarea);
+//       }
+//     };
+//   }
+// };

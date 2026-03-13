@@ -2,6 +2,19 @@
 @tailwind utilities;
 @tailwind components;
 
+/*Rulesets for Interweave Code Block*/
+
+/*.hljs {*/
+/*  !*background: #23241f;*!*/
+/*}*/
+
+pre.hljs {
+  display: block;
+  overflow-x: auto;
+  padding: .5em;
+  margin-block: 2rem;
+}
+
 /*Rulesets for Markdown Editor*/
 
 body .w-md-editor {

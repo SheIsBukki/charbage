@@ -1,36 +1,27 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Image from "next/image";
-import { regularDate } from "@/utils/helpers";
 import { Interweave } from "interweave";
+
 import md from "@/utils/md";
+import { copyCurrentUrl, regularDate } from "@/utils/helpers";
+import { DeletePostActionType, ReactionCountType } from "@/lib/types";
 import { PostType } from "@/components/articles/ArticleCards";
-import { redirect, useRouter } from "next/navigation";
-import { deleteFeaturedImageEverywhere } from "@/lib/deleteFeaturedImageEverywhere";
+import CommentCard from "@/components/comments/CommentCard";
+import CommentForm from "@/components/comments/CommentForm";
+import ArticleSettings from "@/components/articles/ArticleSettings";
+import ReaderInteraction from "@/app/ui/ReaderInteraction";
 
-export const dynamic = "force-dynamic";
+import {
+  MdOutlineAddLink,
+  MdOutlineBookmarkAdd,
+  MdOutlineFavoriteBorder,
+} from "react-icons/md";
+import { BiCommentDetail } from "react-icons/bi";
+import { CiCircleChevDown, CiCircleChevUp, CiSettings } from "react-icons/ci";
 
-// export type PostDataType = {
-//   posts: PostType | null;
-//   error: null | string;
-// };
-
-export type ReactionCountType = {
-  comments: number;
-  bookmarks: number;
-  likes: number;
-} | null;
-
-export type DeletePostActionType = (id: string) => Promise<
-  | {
-      error: string;
-      result: null;
-    }
-  | {
-      result: string;
-      error: null;
-    }
->;
+// export const dynamic = "force-dynamic";
 
 export default function Article({
   post,
@@ -43,82 +34,171 @@ export default function Article({
   deletePostAction: DeletePostActionType;
   authorisedPostAuthor: boolean;
 }) {
-  // console.log(post.featuredImage);
+  const [copyUrl, setCopyUrl] = useState(false);
+  const [expandMore, setExpandMore] = useState(false);
 
-  const router = useRouter();
+  useEffect(() => {
+    copyCurrentUrl().then((r) => console.log(r));
+    // navigator.clipboard.writeText(window.location.href);
+  }, [copyUrl]);
+
   return (
     <>
-      <div className="mx-auto w-4/5">
-        {/*Title*/}
-        <h1 className="mb-1 font-bold md:text-xl">{post.title}</h1>
-        {/*Featured image*/}
-        {post.featuredImage && (
-          <div className="col-span-2 size-full rounded-lg">
-            <figure className="relative h-[150px] w-full">
-              <Image
-                width={0}
-                height={0}
-                alt="featured image"
-                src={post.featuredImage}
-                sizes="(min-width: 808px) 50vw, 100vw"
-                className="aspect-auto size-full rounded-lg object-cover"
+      <div className="bg-gay-100 darkbg-gray-900 mx-auto mb-24 w-4/5 py-12">
+        <div className="borer-2 relative mx-auto border-red-500 lg:grid lg:grid-cols-8 lg:gap-x-8">
+          {/*ARTICLE*/}
+          <div className="brder-2 border-red-500 lg:order-2 lg:col-span-6 lg:pe-16">
+            <div className="mb-8 flex flex-col space-y-8">
+              {/*Title*/}
+              <h1 className="text-2xl font-bold md:text-5xl">{post.title}</h1>
+              {/*Featured image*/}
+              {post.featuredImage && (
+                <div className="size-full rounded-lg">
+                  <figure className="relative h-full w-full">
+                    <Image
+                      width={0}
+                      height={0}
+                      alt="featured image"
+                      src={post.featuredImage}
+                      sizes="(min-width: 808px) 50vw, 100vw"
+                      className="aspect-auto size-full rounded-lg object-cover"
+                    />
+                  </figure>
+                </div>
+              )}
+              {/*Post and author data*/}
+              <div className="flex items-center space-x-4">
+                <figure className="">
+                  <Image
+                    sizes="(min-width: 808px) 50vw, 100vw"
+                    width={0}
+                    height={0}
+                    src="/"
+                    alt="author avatar"
+                    className="size-[40] rounded-full bg-gray-500"
+                  />
+                </figure>
+                <div className="text-sm">
+                  <p className="font-semibold">{post.author}</p>
+                  <p className="dark:text-gray-400">
+                    {post.updatedAt
+                      ? `Updated at: ${regularDate(post.updatedAt)}`
+                      : `Published at: ${regularDate(post.createdAt)}`}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/*Post content*/}
+            <article className="">
+              <Interweave
+                className="leading-relaxed dark:text-gray-400"
+                content={md.render(post.content)}
               />
-            </figure>
+            </article>
+
+            {/*STATIC TAGS*/}
+            <div className="boder-2 flex flex-wrap gap-2 border-red-500">
+              {["Static", "Tags", "Until", "Dynamic", "Tags"].map(
+                (tag, index) => (
+                  <span
+                    className="rounded-full bg-gray-200 px-4 py-2 text-[0.75em] dark:bg-gray-500"
+                    key={`${tag}-${index}`}
+                  >
+                    {tag}
+                  </span>
+                ),
+              )}
+            </div>
           </div>
-        )}
-        {/*Post and author data*/}
-        <div className="flex items-center space-x-4">
-          <figure className="">
-            <Image
-              sizes="(min-width: 808px) 50vw, 100vw"
-              width={0}
-              height={0}
-              src="/"
-              alt="author avatar"
-              className="size-[40] rounded-full bg-gray-500"
-            />
-          </figure>
-          <div className="text-sm">
-            <p className="font-semibold">{post.author}</p>
-            <p className="dark:text-gray-400"> {regularDate(post.createdAt)}</p>
+
+          {/*INTERACTIONS AND SETTINGS*/}
+          <div className="boder-red-500 fixed bottom-0 z-20 w-4/5 bg-white lg:static lg:bottom-auto lg:z-auto lg:order-1 lg:col-span-2 lg:flex lg:flex-col lg:items-center lg:space-y-4 lg:border-r-2 lg:border-t-0 lg:bg-inherit lg:pt-12 dark:bg-black lg:dark:bg-inherit">
+            <div className="brder mt-8 flex justify-between border-red-500 lg:mt-0 lg:block">
+              {/*I will later verify if the current reader has reacted; liked, commented, or bookmarked, the current article. I will use this information to decide on which icon to use. The page slug will provide the current user id
+
+                      hasReacted
+
+                      basically when I fetch a reaction table from the db, for e.g. comments, I will check if the current user's id is associated with any row in comments table
+                      */}
+              <div className="flex items-center space-x-4 lg:flex-col lg:space-x-0 lg:space-y-4">
+                <ReaderInteraction
+                  icon={<BiCommentDetail />}
+                  interactionCount={reactionCount?.comments}
+                  title="Comment"
+                />
+                <ReaderInteraction
+                  icon={<MdOutlineFavoriteBorder />}
+                  title="Like"
+                  interactionCount={reactionCount?.likes}
+                />
+                <ReaderInteraction
+                  icon={<MdOutlineBookmarkAdd />}
+                  title="Bookmark"
+                  interactionCount={reactionCount?.bookmarks}
+                />
+                <div
+                  title="Copy link"
+                  onClick={() => setCopyUrl(true)}
+                  className="items-center lg:my-4"
+                >
+                  <MdOutlineAddLink className="text-2xl" />
+                </div>
+              </div>
+
+              {authorisedPostAuthor && (
+                <button
+                  type="button"
+                  title="Settings"
+                  onClick={() => setExpandMore(!expandMore)}
+                  className="bordr-2 border-red-500 lg:mt-12"
+                >
+                  {window.outerWidth >= 1024 ? (
+                    expandMore ? (
+                      <CiCircleChevUp className="hidden text-3xl lg:block" />
+                    ) : (
+                      <CiCircleChevDown className="hidden text-3xl lg:block" />
+                    )
+                  ) : (
+                    <CiSettings className="text-3xl lg:hidden" />
+                  )}
+                </button>
+              )}
+            </div>
+
+            <div className="brder-2 mt-8 flex items-center justify-between border-red-500 lg:static lg:flex-col lg:space-x-0 lg:space-y-4">
+              {expandMore && authorisedPostAuthor && (
+                <div className="borer-red-500 brder-b-0 absolute bottom-[5rem] z-30 block h-[calc(100dvh/2)] w-full items-center space-y-6 border-2 border-b-0 bg-white p-4 md:p-8 lg:static lg:bottom-auto lg:z-auto lg:flex lg:h-auto lg:flex-col lg:border-0 lg:bg-inherit lg:p-0 dark:bg-[#0a0a0a] lg:dark:bg-inherit">
+                  <ArticleSettings
+                    postId={post.id}
+                    authorId={post.userId}
+                    postSlug={post.slug}
+                    featuredImage={post?.featuredImage}
+                    deletePostAction={deletePostAction}
+                  />
+                </div>
+              )}
+            </div>
           </div>
-        </div>
-        {/*Post content*/}
-        <div className="col-span-4">
-          <Interweave
-            className="dark:text-gray-400"
-            content={md.render(post.content)}
-          />
-        </div>
-        <div className="">
-          <p>{reactionCount?.comments} Comments</p>
-          <p>{reactionCount?.likes} Likes</p>
-          <p>{reactionCount?.bookmarks} Bookmarks</p>
         </div>
 
-        {authorisedPostAuthor && (
-          <div className="flex items-center space-x-4">
-            <button
-              onClick={() => {
-                router.push(`/write/${post.slug}`);
-              }}
-            >
-              Edit article
-            </button>
-            <button
-              onClick={async () => {
-                await deleteFeaturedImageEverywhere(
-                  post?.featuredImage || "",
-                  post.userId,
-                );
-                await deletePostAction(post.id);
-                redirect("/");
-              }}
-            >
-              Delete article
-            </button>
+        {/*STATIC INTERACTIONS UI UNTIL DYNAMIC COMMENTS*/}
+        <div className="brder-2 container mt-12 space-y-6 border-red-500 lg:mx-auto lg:w-3/5">
+          <p className="text-2xl font-semibold">
+            Responses ({reactionCount?.comments})
+          </p>
+
+          <CommentForm />
+          <div className="space-y-4">
+            {Array.from(
+              { length: 4 },
+              (_, i) =>
+                "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Asperiores deserunt distinctio, doloremque fugit id incidunt ipsa neque odio officiis possimus quam quo sapiente sed, unde voluptatibus. Animi dolorem enim in!",
+            ).map((lorem, index) => (
+              <CommentCard key={index} commentId={index} comment={lorem} />
+            ))}
           </div>
-        )}
+        </div>
       </div>
     </>
   );
