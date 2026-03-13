@@ -10,19 +10,21 @@ export default function CommentCard({
   commentId: null | number;
   comment: string;
 }) {
-  const [openNestedReplyBox, setOpenNestedReplyBox] = useState<
+  const [openNestedReply, setOpenNestedReply] = useState<
     { opened: boolean; key: null | number }[]
   >([]);
 
-  const innerReplyRef = useRef<HTMLTextAreaElement | null>(null);
+  const nestedReplyRef = useRef<HTMLTextAreaElement | null>(null);
 
   useEffect(() => {
-    openNestedReplyBox.map((item) => {
-      if (String(item.key) === innerReplyRef.current?.id) {
-        innerReplyRef.current?.focus();
+    openNestedReply.map((item) => {
+      if (String(item.key) === nestedReplyRef.current?.id) {
+        nestedReplyRef.current?.focus();
       }
+
+      return () => nestedReplyRef.current?.blur();
     });
-  }, [openNestedReplyBox]);
+  }, [openNestedReply]);
   return (
     <div className="space-y-8 rounded-md border-t-2 px-4 pb-2 pt-6 text-sm dark:text-gray-300">
       <div className="flex items-center space-x-2">
@@ -50,18 +52,18 @@ export default function CommentCard({
         <button
           key={commentId}
           onClick={() => {
-            const isReplyClicked = openNestedReplyBox.findIndex(
+            const isReplyButtonClicked = openNestedReply.findIndex(
               (item) => item.key === commentId,
             );
 
-            if (isReplyClicked === -1) {
-              setOpenNestedReplyBox((prev) => [
+            if (isReplyButtonClicked === -1) {
+              setOpenNestedReply((prev) => [
                 ...prev,
                 { opened: true, key: commentId },
               ]);
             } else {
-              setOpenNestedReplyBox(
-                openNestedReplyBox.filter((item) => item.key !== commentId),
+              setOpenNestedReply(
+                openNestedReply.filter((item) => item.key !== commentId),
               );
             }
           }}
@@ -71,13 +73,13 @@ export default function CommentCard({
         </button>
       </div>
 
-      {openNestedReplyBox.some((item) => item.key === commentId) && (
+      {openNestedReply.some((item) => item.key === commentId) && (
         <div className="borde-2 border-red-500 py-4">
           {/*Will place current user avatar and name*/}
           <form className="space-y-4" action="">
             <textarea
               id={`${commentId}`}
-              ref={innerReplyRef}
+              ref={nestedReplyRef}
               className="border-1 w-full rounded-lg bg-gray-100 outline outline-1 dark:bg-gray-900"
               rows={5}
               cols={100}
