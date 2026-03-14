@@ -113,7 +113,7 @@ export default function Article({
           </div>
 
           {/*INTERACTIONS AND SETTINGS*/}
-          <div className="boder-red-500 fixed bottom-0 z-20 w-4/5 bg-white lg:static lg:bottom-auto lg:z-auto lg:order-1 lg:col-span-2 lg:flex lg:flex-col lg:items-center lg:space-y-4 lg:border-r-2 lg:border-t-0 lg:bg-inherit lg:pt-12 dark:bg-black lg:dark:bg-inherit">
+          <div className="boder-red-500 fixed bottom-0 z-20 w-4/5 bg-white lg:static lg:bottom-auto lg:z-auto lg:order-1 lg:col-span-2 lg:flex lg:flex-col lg:items-center lg:space-y-4 lg:border-r-2 lg:border-t-0 lg:bg-inherit lg:pt-12 dark:bg-[#0a0a0a] lg:dark:bg-inherit">
             <div className="brder mt-8 flex justify-between border-red-500 lg:mt-0 lg:block">
               {/*I will later verify if the current reader has reacted; liked, commented, or bookmarked, the current article. I will use this information to decide on which icon to use. The page slug will provide the current user id
 
