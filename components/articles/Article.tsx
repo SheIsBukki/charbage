@@ -155,9 +155,11 @@ export default function Article({
                 <button
                   name="likeButton"
                   onClick={async () => {
-                    currentUserLiked
-                      ? await removeLike(post.id, currentUser || "")
-                      : await addLike(post.id, currentUser || "");
+                    if (currentUserLiked) {
+                      await removeLike(post.id, currentUser || "");
+                    } else {
+                      await addLike(post.id, currentUser || "");
+                    }
                     router.refresh();
                   }}
                   type="button"
@@ -178,9 +180,11 @@ export default function Article({
                 <button
                   name="bookmarkButton"
                   onClick={async () => {
-                    currentUserbookmarked
-                      ? await removeBookmark(post.id, currentUser || "")
-                      : await addBookmark(post.id, currentUser || "");
+                    if (currentUserbookmarked) {
+                      await removeBookmark(post.id, currentUser || "");
+                    } else {
+                      await addBookmark(post.id, currentUser || "");
+                    }
 
                     router.refresh();
                   }}
