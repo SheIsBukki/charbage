@@ -3,44 +3,69 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { Interweave } from "interweave";
+import { useRouter } from "next/navigation";
+import { clsx } from "clsx";
 
 import md from "@/utils/md";
 import { copyCurrentUrl, regularDate } from "@/utils/helpers";
-import { DeletePostActionType, ReactionCountType } from "@/lib/types";
+import { DbActionType, ReactionsType } from "@/lib/types";
+import { removeBookmark, removeLike } from "@/db/queries/delete";
+import { addBookmark, addLike } from "@/db/queries/insert";
+import { Bookmark, Like, Comment } from "@/db/schema";
+
 import { PostType } from "@/components/articles/ArticleCards";
 import CommentCard from "@/components/comments/CommentCard";
 import CommentForm from "@/components/comments/CommentForm";
 import ArticleSettings from "@/components/articles/ArticleSettings";
 import ReaderInteraction from "@/app/ui/ReaderInteraction";
 
-import {
-  MdOutlineAddLink,
-  MdOutlineBookmarkAdd,
-  MdOutlineFavoriteBorder,
-} from "react-icons/md";
+import { MdOutlineAddLink, MdOutlineBookmarkAdd } from "react-icons/md";
 import { BiCommentDetail } from "react-icons/bi";
 import { CiCircleChevDown, CiCircleChevUp, CiSettings } from "react-icons/ci";
+import { BsFillBookmarkCheckFill, BsHeartFill } from "react-icons/bs";
 
 // export const dynamic = "force-dynamic";
 
 export default function Article({
   post,
-  reactionCount,
+
   deletePostAction,
   authorisedPostAuthor,
+  reactions,
+  currentUser,
 }: {
   post: PostType;
-  reactionCount: ReactionCountType;
-  deletePostAction: DeletePostActionType;
+  deletePostAction: DbActionType;
   authorisedPostAuthor: boolean;
+  reactions: ReactionsType;
+  currentUser: string | undefined;
 }) {
+  const router = useRouter();
+
   const [copyUrl, setCopyUrl] = useState(false);
   const [expandMore, setExpandMore] = useState(false);
+
+  const likeCount = reactions?.likes.length;
+  const commentCount = reactions?.comments.length;
+  const bookmarkCount = reactions?.bookmarks.length;
 
   useEffect(() => {
     copyCurrentUrl().then((r) => console.log(r));
     // navigator.clipboard.writeText(window.location.href);
+
+    const timeoutId = setTimeout(() => setCopyUrl(false), 2000);
+    return () => clearTimeout(timeoutId);
   }, [copyUrl]);
+
+  const currentUserLiked = reactions?.likes.some(
+    (like: Like) => like.userId === currentUser,
+  );
+  const currentUserbookmarked = reactions?.bookmarks.some(
+    (bookmark: Bookmark) => bookmark.userId === currentUser,
+  );
+  const currentUserCommented = reactions?.comments.some(
+    (comment: Comment) => comment.userId === currentUser,
+  );
 
   return (
     <>
@@ -113,7 +138,7 @@ export default function Article({
           </div>
 
           {/*INTERACTIONS AND SETTINGS*/}
-          <div className="boder-red-500 fixed bottom-0 z-20 w-4/5 bg-white lg:static lg:bottom-auto lg:z-auto lg:order-1 lg:col-span-2 lg:flex lg:flex-col lg:items-center lg:space-y-4 lg:border-r-2 lg:border-t-0 lg:bg-inherit lg:pt-12 dark:bg-[#0a0a0a] lg:dark:bg-inherit">
+          <div className="boder-red-500 fixed bottom-0 z-20 w-4/5 border-t-2 bg-white lg:static lg:bottom-auto lg:z-auto lg:order-1 lg:col-span-2 lg:flex lg:flex-col lg:items-center lg:space-y-4 lg:border-r-2 lg:border-t-0 lg:bg-inherit lg:pt-12 dark:bg-[#0a0a0a] lg:dark:bg-inherit">
             <div className="brder mt-8 flex justify-between border-red-500 lg:mt-0 lg:block">
               {/*I will later verify if the current reader has reacted; liked, commented, or bookmarked, the current article. I will use this information to decide on which icon to use. The page slug will provide the current user id
 
@@ -124,25 +149,67 @@ export default function Article({
               <div className="flex items-center space-x-4 lg:flex-col lg:space-x-0 lg:space-y-4">
                 <ReaderInteraction
                   icon={<BiCommentDetail />}
-                  interactionCount={reactionCount?.comments}
+                  interactionCount={commentCount}
                   title="Comment"
                 />
-                <ReaderInteraction
-                  icon={<MdOutlineFavoriteBorder />}
-                  title="Like"
-                  interactionCount={reactionCount?.likes}
-                />
-                <ReaderInteraction
-                  icon={<MdOutlineBookmarkAdd />}
-                  title="Bookmark"
-                  interactionCount={reactionCount?.bookmarks}
-                />
+                <button
+                  name="likeButton"
+                  onClick={async () => {
+                    currentUserLiked
+                      ? await removeLike(post.id, currentUser || "")
+                      : await addLike(post.id, currentUser || "");
+                    router.refresh();
+                  }}
+                  type="button"
+                  className="hover:scale-125"
+                >
+                  <ReaderInteraction
+                    icon={
+                      <BsHeartFill
+                        className={
+                          currentUserLiked ? "fill-red-500" : "fill-red-200"
+                        }
+                      />
+                    }
+                    title="Like"
+                    interactionCount={likeCount}
+                  />
+                </button>
+                <button
+                  name="bookmarkButton"
+                  onClick={async () => {
+                    currentUserbookmarked
+                      ? await removeBookmark(post.id, currentUser || "")
+                      : await addBookmark(post.id, currentUser || "");
+
+                    router.refresh();
+                  }}
+                  type="button"
+                  className="hover:scale-125"
+                >
+                  <ReaderInteraction
+                    icon={
+                      currentUserbookmarked ? (
+                        <BsFillBookmarkCheckFill className="fill-purple-500" />
+                      ) : (
+                        <MdOutlineBookmarkAdd />
+                      )
+                    }
+                    title="Bookmark"
+                    interactionCount={bookmarkCount}
+                  />
+                </button>
                 <div
                   title="Copy link"
                   onClick={() => setCopyUrl(true)}
                   className="items-center lg:my-4"
                 >
-                  <MdOutlineAddLink className="text-2xl" />
+                  <MdOutlineAddLink
+                    className={clsx(
+                      "text-2xl hover:scale-125",
+                      copyUrl && "text-purple-500",
+                    )}
+                  />
                 </div>
               </div>
 
@@ -160,7 +227,7 @@ export default function Article({
                       <CiCircleChevDown className="hidden text-3xl lg:block" />
                     )
                   ) : (
-                    <CiSettings className="text-3xl lg:hidden" />
+                    <CiSettings className={`text-3xl lg:hidden`} />
                   )}
                 </button>
               )}
@@ -168,7 +235,7 @@ export default function Article({
 
             <div className="brder-2 mt-8 flex items-center justify-between border-red-500 lg:static lg:flex-col lg:space-x-0 lg:space-y-4">
               {expandMore && authorisedPostAuthor && (
-                <div className="borer-red-500 brder-b-0 absolute bottom-[5rem] z-30 block h-[calc(100dvh/2)] w-full items-center space-y-6 border-2 border-b-0 bg-white p-4 md:p-8 lg:static lg:bottom-auto lg:z-auto lg:flex lg:h-auto lg:flex-col lg:border-0 lg:bg-inherit lg:p-0 dark:bg-[#0a0a0a] lg:dark:bg-inherit">
+                <div className="borer-red-500 brder-b-0 bordr-b-0 absolute bottom-[6rem] z-30 block h-[calc(100dvh/2)] w-full items-center space-y-6 border-2 bg-white p-4 md:p-8 lg:static lg:bottom-auto lg:z-auto lg:flex lg:h-auto lg:flex-col lg:border-0 lg:bg-inherit lg:p-0 dark:bg-[#0a0a0a] lg:dark:bg-inherit">
                   <ArticleSettings
                     postId={post.id}
                     authorId={post.userId}
@@ -184,9 +251,7 @@ export default function Article({
 
         {/*STATIC INTERACTIONS UI UNTIL DYNAMIC COMMENTS*/}
         <div className="brder-2 container mt-12 space-y-6 border-red-500 lg:mx-auto lg:w-3/5">
-          <p className="text-2xl font-semibold">
-            Responses ({reactionCount?.comments})
-          </p>
+          <p className="text-2xl font-semibold">Responses ({commentCount})</p>
 
           <CommentForm />
           <div className="space-y-4">

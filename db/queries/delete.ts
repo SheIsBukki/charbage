@@ -1,8 +1,10 @@
 "use server";
 
 import {
+  bookmarkTable,
   Comment,
   commentTable,
+  likeTable,
   Post,
   postTable,
   Tag,
@@ -37,6 +39,77 @@ export async function deletePost(id: Post["id"]) {
       error: "Failed to delete post",
       result: null,
     };
+  }
+}
+
+export async function removeLike(postId: Post["id"], userId: User["id"]) {
+  if (!userId) {
+    return {
+      error: "User must be logged in to remove a like on a post",
+      result: null,
+    };
+  }
+
+  try {
+    const [likeExist] = await db
+      .select()
+      .from(likeTable)
+      .where(and(eq(likeTable.userId, userId), eq(likeTable.postId, postId)))
+      .execute();
+
+    // console.log(likeExist);
+
+    if (!likeExist) {
+      return {
+        error: "Can't delete your like because you never liked the post",
+        result: null,
+      };
+    }
+
+    await db.delete(likeTable).where(eq(likeTable.id, likeExist.id));
+    revalidatePath("/blog");
+    return { result: "Successfully removed like", error: null };
+  } catch (error) {
+    console.error(error);
+    return { error: "Failed to remove like", result: null };
+  }
+}
+
+export async function removeBookmark(postId: Post["id"], userId: User["id"]) {
+  if (!userId) {
+    return {
+      error: "User must be logged in to remove a like on a post",
+      result: null,
+    };
+  }
+
+  try {
+    const [bookmarkExist] = await db
+      .select()
+      .from(bookmarkTable)
+      .where(
+        and(eq(bookmarkTable.userId, userId), eq(bookmarkTable.postId, postId)),
+      )
+      .execute();
+
+    // console.log(bookmarkExist);
+
+    if (!bookmarkExist) {
+      return {
+        error:
+          "Can't delete your bookmark because you never bookmarked the post",
+        result: null,
+      };
+    }
+
+    await db
+      .delete(bookmarkTable)
+      .where(eq(bookmarkTable.id, bookmarkExist.id));
+    revalidatePath("/blog");
+    return { result: "Successfully removed bookmark", error: null };
+  } catch (error) {
+    console.error(error);
+    return { error: "Failed to remove bookmark", result: null };
   }
 }
 

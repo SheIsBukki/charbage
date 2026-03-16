@@ -1,9 +1,6 @@
 "use server";
 
-import {
-  getPostReactionCountWithId,
-  getPostWithSlug,
-} from "@/db/queries/select";
+import { getPostReactionsWithId, getPostWithSlug } from "@/db/queries/select";
 import Article from "@/components/articles/Article";
 import { getCurrentSession } from "@/lib/session";
 import { deletePost } from "@/db/queries/delete";
@@ -42,15 +39,29 @@ export default async function BlogPage({
     authorisedPostAuthor = user.id;
   }
 
-  const { reactionCount } = await getPostReactionCountWithId(post.id);
+  const { reactions } = await getPostReactionsWithId(post.id);
+
+  // const reactionCount =
+  //   reactions !== null
+  //     ? {
+  //         likes: reactions.likes.length,
+  //         comments: reactions.comments.length,
+  //         bookmarks: reactions.bookmarks.length,
+  //       }
+  //     : null;
+
+  // console.log(reactions);
+  // console.log(user?.id);
 
   return (
     <>
       <MainNav user={user} />
       <Article
         authorisedPostAuthor={!!authorisedPostAuthor}
+        currentUser={user?.id}
         deletePostAction={deletePost}
-        reactionCount={reactionCount}
+        // reactionCount={reactionCount}
+        reactions={reactions}
         post={post}
       />
     </>
