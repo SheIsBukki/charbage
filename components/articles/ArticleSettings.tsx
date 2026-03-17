@@ -1,6 +1,6 @@
 import { redirect, useRouter } from "next/navigation";
 import { deleteFeaturedImageEverywhere } from "@/lib/deleteFeaturedImageEverywhere";
-import { DeletePostActionType } from "@/lib/types";
+import { DbActionType } from "@/lib/types";
 import { FiEdit } from "react-icons/fi";
 import { RiDeleteBinLine } from "react-icons/ri";
 
@@ -15,7 +15,7 @@ export default function ArticleSettings({
   authorId: string;
   postSlug: string;
   featuredImage: string | null;
-  deletePostAction: DeletePostActionType;
+  deletePostAction: DbActionType;
 }) {
   const router = useRouter();
 

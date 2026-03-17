@@ -10,7 +10,6 @@ import { TfiCommentAlt } from "react-icons/tfi";
 import md from "@/utils/md";
 import { regularDate } from "@/utils/helpers";
 import Link from "next/link";
-import { getPostReactionCountWithId } from "@/db/queries/select";
 // import { Post } from "@/db/schema";
 
 // export type ArticlesType = { author: string } & Post;
@@ -44,8 +43,6 @@ export default function ArticleCards({
     return;
   }
   const latestArticles: PostType[] = posts;
-  // const getReactionCount = async (postId: string) =>
-  //   await getPostReactionCountWithId(postId);
   return (
     <div className="">
       {latestArticles &&

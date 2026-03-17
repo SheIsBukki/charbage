@@ -14,6 +14,7 @@ import {
 } from "@/db/schema";
 import { db } from "@/db";
 import {
+  and,
   asc,
   between,
   count,
@@ -24,6 +25,7 @@ import {
   sql,
 } from "drizzle-orm";
 import { handleDatabaseOperation } from "@/utils/helpers";
+import { getCurrentSession } from "@/lib/session";
 
 export async function getUserWithId(id: User["id"]) {
   try {
@@ -123,25 +125,41 @@ export async function getPostWithSlug(slug: Post["slug"]) {
   }
 }
 
-export async function getPostReactionCountWithId(id: Post["id"]) {
+export async function getPostReactionsWithId(postId: Post["id"]) {
   try {
-    const [reactionCount] = await db
-      .select({
-        comments: count(commentTable),
-        likes: count(likeTable),
-        bookmarks: count(bookmarkTable),
-      })
-      .from(postTable)
-      .leftJoin(commentTable, eq(commentTable.postId, postTable.id))
-      .leftJoin(likeTable, eq(likeTable.postId, postTable.id))
-      .leftJoin(bookmarkTable, eq(bookmarkTable.postId, postTable.id))
-      .where(eq(postTable.id, id))
+    const likes = await db
+      .select()
+      .from(likeTable)
+      .where(eq(likeTable.postId, postId))
+      .orderBy(desc(likeTable.createdAt))
       .execute();
 
-    return { reactionCount, error: null };
+    const comments = await db
+      .select({ ...getTableColumns(commentTable), author: userTable.name })
+      .from(commentTable)
+      .innerJoin(userTable, eq(commentTable.userId, userTable.id))
+      .where(eq(commentTable.postId, postId))
+      .orderBy(desc(commentTable.createdAt))
+      .execute();
+
+    const bookmarks = await db
+      .select()
+      .from(bookmarkTable)
+      .where(eq(bookmarkTable.postId, postId))
+      .orderBy(desc(bookmarkTable.createdAt))
+      .execute();
+
+    return {
+      reactions: {
+        likes: likes,
+        comments: comments,
+        bookmarks: bookmarks,
+      },
+      error: null,
+    };
   } catch (error) {
     console.error(error);
-    return { reactionCount: null, error: "Failed to fetch reaction count" };
+    return { reactions: null, error: "Failed to fetch post reactions" };
   }
 }
 
@@ -159,26 +177,6 @@ export async function getPostsByTag(id: Tag["id"], page = 1, pageSize = 5) {
 
   return posts;
 }
-
-// export async function getTags1(
-//   page = 1,
-//   pageSize = 10,
-// ): Promise<{ data: Tag[] | null; error: string | null }> {
-//   try {
-//     const tags = await db
-//       .select()
-//       .from(tagTable)
-//       .orderBy(asc(tagTable.name))
-//       .limit(pageSize)
-//       .offset((page - 1) * pageSize)
-//       .execute();
-
-//     return { data: tags, error: null };
-//   } catch (error) {
-//     console.error(error);
-//     return { data: null, error: "Something went wrong with getting all tags" };
-//   }
-// }
 
 export async function getTags(
   page = 1,
@@ -211,6 +209,26 @@ export const searchTags = async (keyword: string) => {
     throw new Error("Something went wrong with searching for tag");
   }
 };
+
+// export async function getTags1(
+//   page = 1,
+//   pageSize = 10,
+// ): Promise<{ data: Tag[] | null; error: string | null }> {
+//   try {
+//     const tags = await db
+//       .select()
+//       .from(tagTable)
+//       .orderBy(asc(tagTable.name))
+//       .limit(pageSize)
+//       .offset((page - 1) * pageSize)
+//       .execute();
+
+//     return { data: tags, error: null };
+//   } catch (error) {
+//     console.error(error);
+//     return { data: null, error: "Something went wrong with getting all tags" };
+//   }
+// }
 
 // export async function getTags3() {
 //   try {
@@ -257,7 +275,78 @@ export const searchTags = async (keyword: string) => {
     .where(tagsToPostsTable.tagId.equals(tagId))
     .limit(pageSize)
     .offset((page - 1) * pageSize);
-  
+
   return posts;
 }
  * */
+
+/*
+export async function findLike(postId: Post["id"]) {
+  try {
+    const { user } = await getCurrentSession();
+    if (!user) {
+      return {
+        error: "User must be logged in to remove a like on a post",
+        result: null,
+      };
+    }
+
+    const userId = user.id;
+
+    const [likeExist] = await db
+      .select()
+      .from(likeTable)
+      .where(and(eq(likeTable.userId, userId), eq(likeTable.postId, postId)))
+      .execute();
+
+    console.log(likeExist);
+
+    return { result: "Successfully found like", error: null };
+  } catch (error) {
+    console.error(error);
+    return { error: "Failed to find like", result: null };
+  }
+}
+* */
+
+/*
+export async function getPostLikes(postId: Post["id"]) {
+  try {
+    const likes = await db
+      .select()
+      .from(likeTable)
+      .where(eq(likeTable.postId, postId))
+      .orderBy(desc(likeTable.createdAt))
+      .execute();
+
+    return { likes: likes, error: null };
+  } catch (error) {
+    console.error(error);
+    return { likes: null, error: "Failed to fetch post likes" };
+  }
+}
+* */
+
+/*
+export async function getPostReactionCountWithId(id: Post["id"]) {
+  try {
+    const [reactionCount] = await db
+      .select({
+        comments: count(commentTable),
+        likes: count(likeTable),
+        bookmarks: count(bookmarkTable),
+      })
+      .from(postTable)
+      .leftJoin(commentTable, eq(commentTable.postId, postTable.id))
+      .leftJoin(likeTable, eq(likeTable.postId, postTable.id))
+      .leftJoin(bookmarkTable, eq(bookmarkTable.postId, postTable.id))
+      .where(eq(postTable.id, id))
+      .execute();
+
+    return { reactionCount, error: null };
+  } catch (error) {
+    console.error(error);
+    return { reactionCount: null, error: "Failed to fetch reaction count" };
+  }
+}
+* */

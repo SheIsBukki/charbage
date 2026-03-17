@@ -7,20 +7,16 @@ export const ArticleFormSchema = z.object({
   content: z
     .string()
     .min(100, { message: "Content must be at least 100 characters" }),
-  // featuredImage: z
-  //   .string()
-  //   .url({ message: "Image should not exceed 10MB" })
-  //   .optional(),
   featuredImage: z
     .string({ message: "Image should not exceed 10MB" })
     .optional(),
 });
 
 export const CommentFormSchema = z.object({
-  content: z
+  comment: z
     .string()
-    .min(5, { message: "Comment must be at least 5 characters" })
-    .max(300, { message: "Comment cannot exceed 300 characters" }),
+    .min(2, { message: "Comment must be at least 2 characters" }),
+  // .max(300, { message: "Comment cannot exceed 300 characters" }),
 });
 
 // This is for any user who wants to create a tag — using tags will simply fetch available tags for the user to select up to three from for a post
@@ -28,7 +24,7 @@ export const TagFormSchema = z.object({
   name: z
     .string()
     .min(2, { message: "Tag name must be at least 2 characters" })
-    .max(20, { message: "Tag name cannot exceed 10 characters" }),
+    .max(20, { message: "Tag name cannot exceed 20 characters" }),
   description: z
     .string()
     .min(5, { message: "Tag description must be at least 5 characters" })

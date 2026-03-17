@@ -2,8 +2,10 @@
 
 import { db } from "@/db";
 import {
+  bookmarkTable,
   Comment,
   commentTable,
+  likeTable,
   Post,
   postTable,
   TagsToPosts,
@@ -59,6 +61,62 @@ export async function createPost(data: {
 
     return post;
   }, "Failed to create post");
+}
+
+export async function addLike(postId: string, userId: string) {
+  try {
+    // const { user } = await getCurrentSession();
+    // if (!user) {
+    //   return { error: "User must be logged in to like a post", result: null };
+    // }
+    //
+    // const userId = user.id;
+
+    if (!userId) {
+      return { error: "User must be logged in to like a post", result: null };
+    }
+
+    await db.insert(likeTable).values({ postId, userId }).returning().execute();
+
+    revalidatePath("/blog");
+    return { result: "Successfully liked post", error: null };
+  } catch (error) {
+    console.error(error);
+    return { error: "Failed to like post", result: null };
+  }
+}
+
+export async function addBookmark(postId: string, userId: string) {
+  try {
+    // const { user } = await getCurrentSession();
+    // if (!user) {
+    //   return {
+    //     error: "User must be logged in to bookmark a post",
+    //     result: null,
+    //   };
+    // }
+    //
+    // const userId = user.id;
+
+    if (!userId) {
+      return {
+        error: "User must be logged in to bookmark a post",
+        result: null,
+      };
+    }
+
+    await db
+      .insert(bookmarkTable)
+      .values({ postId, userId })
+      .returning()
+      .execute();
+
+    revalidatePath("/blog");
+    return { result: "Successfully bookmarked post", error: null };
+  } catch (error) {
+    console.error(error);
+    return { error: "Failed to bookmark post", result: null };
+  }
 }
 
 export async function createTag(name: string, description: string) {
@@ -122,10 +180,9 @@ export async function addTag(
 export async function createComment(
   content: string,
   postId: string,
+  userId: string,
 ): Promise<{ data: Comment | null; error: string | null }> {
-  const { user } = await getCurrentSession();
-
-  if (!user) {
+  if (!userId) {
     return {
       data: null,
       error: "User must be logged in to create a comment",
@@ -135,7 +192,7 @@ export async function createComment(
   return handleDatabaseOperation(async () => {
     const [comment] = await db
       .insert(commentTable)
-      .values({ content, userId: user.id, postId }) // TO DO — decide how to collect postId
+      .values({ content, userId, postId }) // TO DO — decide how to collect postId
       .returning()
       .execute();
 

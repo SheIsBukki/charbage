@@ -2,13 +2,15 @@
 
 import { EditorContext } from "@uiw/react-md-editor";
 import dynamic from "next/dynamic";
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useLayoutEffect } from "react";
 import { ControllerRenderProps } from "react-hook-form";
 import rehypeSanitize from "rehype-sanitize";
 import Link from "next/link";
 import { FaEye, FaImage } from "react-icons/fa";
 import { MdHelpOutline, MdOutlineEdit } from "react-icons/md";
 import { uploadImage } from "@/utils/uploadImage";
+import { usePathname } from "next/navigation";
+import { clsx } from "clsx";
 
 const MDEditor = dynamic(() => import("@uiw/react-md-editor"), { ssr: false });
 
@@ -131,6 +133,26 @@ export default function MarkdownEditor({ ...field }: ControllerRenderProps) {
     }
   };
 
+  const pathname = usePathname();
+  const onEditorPage = pathname.startsWith("/write");
+
+  // useEffect(() => {
+  //   if (onEditorPage) {
+  //     const onLoad = () => {
+  //       const editor = document.getElementById("editorTextArea");
+  //       if (editor) {
+  //         editor.classList.add("dynamicEditorHeight");
+  //       }
+  //     };
+  //     if (document.readyState === "complete") {
+  //       onLoad();
+  //     } else {
+  //       window.addEventListener("load", onLoad);
+  //       return () => window.removeEventListener("load", onLoad);
+  //     }
+  //   }
+  // }, []);
+
   return (
     <>
       <MDEditor
@@ -142,15 +164,17 @@ export default function MarkdownEditor({ ...field }: ControllerRenderProps) {
         previewOptions={{ rehypePlugins: [[rehypeSanitize]] }}
         aria-describedby="markdown-error"
         visibleDragbar={false}
-        className="!rounded-lg"
+        className={clsx("!rounded-lg")}
         {...field}
         value={field.value}
         onChange={(value) => field.onChange(value)}
         // onPaste={}
-        style={{ height: "80vh", whiteSpace: "pre-wrap" }}
+        style={{ whiteSpace: "pre-wrap" }}
         aria-placeholder="Start writing markdown..."
         textareaProps={{
-          placeholder: "Start writing markdown...",
+          placeholder: onEditorPage
+            ? "Start writing markdown..."
+            : "Share your opinion...",
           onPaste: handlePaste,
         }}
       />

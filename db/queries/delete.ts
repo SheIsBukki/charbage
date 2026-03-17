@@ -1,8 +1,10 @@
 "use server";
 
 import {
+  bookmarkTable,
   Comment,
   commentTable,
+  likeTable,
   Post,
   postTable,
   Tag,
@@ -40,16 +42,88 @@ export async function deletePost(id: Post["id"]) {
   }
 }
 
-export async function deleteComment(id: Comment["id"]) {
-  const { user } = await getCurrentSession();
-  if (!user) {
+export async function removeLike(postId: Post["id"], userId: User["id"]) {
+  if (!userId) {
     return {
-      user: null,
-      error: "You are not authorised to delete this comment",
+      error: "User must be logged in to remove a like on a post",
+      result: null,
     };
   }
 
-  await db.delete(commentTable).where(eq(commentTable.id, id));
+  try {
+    const [likeExist] = await db
+      .select()
+      .from(likeTable)
+      .where(and(eq(likeTable.userId, userId), eq(likeTable.postId, postId)))
+      .execute();
+
+    // console.log(likeExist);
+
+    if (!likeExist) {
+      return {
+        error: "Can't delete your like because you never liked the post",
+        result: null,
+      };
+    }
+
+    await db.delete(likeTable).where(eq(likeTable.id, likeExist.id));
+    revalidatePath("/blog");
+    return { result: "Successfully removed like", error: null };
+  } catch (error) {
+    console.error(error);
+    return { error: "Failed to remove like", result: null };
+  }
+}
+
+export async function removeBookmark(postId: Post["id"], userId: User["id"]) {
+  if (!userId) {
+    return {
+      error: "User must be logged in to remove a like on a post",
+      result: null,
+    };
+  }
+
+  try {
+    const [bookmarkExist] = await db
+      .select()
+      .from(bookmarkTable)
+      .where(
+        and(eq(bookmarkTable.userId, userId), eq(bookmarkTable.postId, postId)),
+      )
+      .execute();
+
+    // console.log(bookmarkExist);
+
+    if (!bookmarkExist) {
+      return {
+        error:
+          "Can't delete your bookmark because you never bookmarked the post",
+        result: null,
+      };
+    }
+
+    await db
+      .delete(bookmarkTable)
+      .where(eq(bookmarkTable.id, bookmarkExist.id));
+    revalidatePath("/blog");
+    return { result: "Successfully removed bookmark", error: null };
+  } catch (error) {
+    console.error(error);
+    return { error: "Failed to remove bookmark", result: null };
+  }
+}
+
+export async function deleteComment(id: Comment["id"]) {
+  try {
+    await db.delete(commentTable).where(eq(commentTable.id, id));
+    return { result: "Comment deleted successfully.", error: null };
+  } catch (err) {
+    console.log(err);
+    return {
+      error: "Failed to delete comment",
+      result: null,
+    };
+  }
 }
 
 // This is only going to remove the relationship between a tag and a post, not actually delete the tag. Tags can only be deleted by tag author if the tag is not associated with any post

@@ -11,12 +11,12 @@ export default function ReaderInteraction({
   title?: string;
 }) {
   return (
-    <div
+    <p
       title={title}
-      className="flex items-center space-x-1 lg:flex-col lg:justify-center lg:space-x-0 lg:space-y-1"
+      className="flex items-center space-x-1 lg:flex-col lg:justify-center lg:space-x-0 lg:space-y-[0.15rem]"
     >
       <span className="opaity-80 text-2xl">{icon}</span>
       <span className="text-sm lg:text-base">{interactionCount}</span>
-    </div>
+    </p>
   );
 }
