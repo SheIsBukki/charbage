@@ -7,7 +7,7 @@ import Form from "next/form";
 
 import { ArticleFormSchema } from "@/lib/definitions";
 import MarkdownEditor from "@/components/editor/MarkdownEditor";
-import { ActionState, PostFormValues } from "@/app/write/page";
+import { PostActionState, PostFormValues } from "@/app/write/page";
 import FeaturedImage from "@/components/editor/FeaturedImage";
 import TagFormModal from "@/components/tag/TagFormModal";
 import toast from "react-hot-toast";
@@ -16,9 +16,9 @@ import toast from "react-hot-toast";
 
 type ArticleFormProps = {
   action: (
-    initialState: ActionState,
+    initialState: PostActionState,
     formData: FormData,
-  ) => Promise<ActionState>;
+  ) => Promise<PostActionState>;
   values: PostFormValues;
   userId: string;
   editorStatus: { updating: boolean; creating: boolean };

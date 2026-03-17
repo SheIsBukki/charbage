@@ -14,8 +14,6 @@ import { addBookmark, addLike } from "@/db/queries/insert";
 import { Bookmark, Like, Comment } from "@/db/schema";
 
 import { PostType } from "@/components/articles/ArticleCards";
-import CommentCard from "@/components/comments/CommentCard";
-import CommentForm from "@/components/comments/CommentForm";
 import ArticleSettings from "@/components/articles/ArticleSettings";
 import ReaderInteraction from "@/app/ui/ReaderInteraction";
 
@@ -63,209 +61,182 @@ export default function Article({
   const currentUserbookmarked = reactions?.bookmarks.some(
     (bookmark: Bookmark) => bookmark.userId === currentUser,
   );
-  const currentUserCommented = reactions?.comments.some(
-    (comment: Comment) => comment.userId === currentUser,
-  );
 
   return (
     <>
-      <div className="bg-gay-100 darkbg-gray-900 mx-auto mb-24 w-4/5 py-12">
-        <div className="borer-2 relative mx-auto border-red-500 lg:grid lg:grid-cols-8 lg:gap-x-8">
-          {/*ARTICLE*/}
-          <div className="brder-2 border-red-500 lg:order-2 lg:col-span-6 lg:pe-16">
-            <div className="mb-8 flex flex-col space-y-8">
-              {/*Title*/}
-              <h1 className="text-2xl font-bold md:text-5xl">{post.title}</h1>
-              {/*Featured image*/}
-              {post.featuredImage && (
-                <div className="size-full rounded-lg">
-                  <figure className="relative h-full w-full">
-                    <Image
-                      width={0}
-                      height={0}
-                      alt="featured image"
-                      src={post.featuredImage}
-                      sizes="(min-width: 808px) 50vw, 100vw"
-                      className="aspect-auto size-full rounded-lg object-cover"
-                    />
-                  </figure>
-                </div>
-              )}
-              {/*Post and author data*/}
-              <div className="flex items-center space-x-4">
-                <figure className="">
+      <div className="brder-2 container relative mx-auto border-red-500 lg:grid lg:grid-cols-8 lg:gap-x-8">
+        {/*ARTICLE*/}
+        <div className="boder-2 border-red-500 px-6 lg:order-2 lg:col-span-6 lg:pe-16">
+          <div className="mb-8 flex flex-col space-y-8">
+            {/*Title*/}
+            <h1 className="text-2xl font-bold md:text-5xl">{post.title}</h1>
+            {/*Featured image*/}
+            {post.featuredImage && (
+              <div className="size-full rounded-lg">
+                <figure className="relative h-full w-full">
                   <Image
-                    sizes="(min-width: 808px) 50vw, 100vw"
                     width={0}
                     height={0}
-                    src="/"
-                    alt="author avatar"
-                    className="size-[40] rounded-full bg-gray-500"
+                    alt="featured image"
+                    src={post.featuredImage}
+                    sizes="(min-width: 808px) 50vw, 100vw"
+                    className="aspect-auto size-full rounded-lg object-cover"
                   />
                 </figure>
-                <div className="text-sm">
-                  <p className="font-semibold">{post.author}</p>
-                  <p className="dark:text-gray-400">
-                    {post.updatedAt
-                      ? `Updated at: ${regularDate(post.updatedAt)}`
-                      : `Published at: ${regularDate(post.createdAt)}`}
-                  </p>
-                </div>
               </div>
-            </div>
-
-            {/*Post content*/}
-            <article className="">
-              <Interweave
-                className="leading-relaxed dark:text-gray-400"
-                content={md.render(post.content)}
-              />
-            </article>
-
-            {/*STATIC TAGS*/}
-            <div className="boder-2 flex flex-wrap gap-2 border-red-500">
-              {["Static", "Tags", "Until", "Dynamic", "Tags"].map(
-                (tag, index) => (
-                  <span
-                    className="rounded-full bg-gray-200 px-4 py-2 text-[0.75em] dark:bg-gray-500"
-                    key={`${tag}-${index}`}
-                  >
-                    {tag}
-                  </span>
-                ),
-              )}
+            )}
+            {/*Post and author data*/}
+            <div className="flex items-center space-x-4">
+              <figure className="">
+                <Image
+                  sizes="(min-width: 808px) 50vw, 100vw"
+                  width={0}
+                  height={0}
+                  src="/"
+                  alt="author avatar"
+                  className="size-[40] rounded-full bg-gray-500"
+                />
+              </figure>
+              <div className="text-sm">
+                <p className="font-semibold">{post.author}</p>
+                <p className="dark:text-gray-400">
+                  {post.updatedAt
+                    ? `Updated at: ${regularDate(post.updatedAt)}`
+                    : `Published at: ${regularDate(post.createdAt)}`}
+                </p>
+              </div>
             </div>
           </div>
 
-          {/*INTERACTIONS AND SETTINGS*/}
-          <div className="boder-red-500 fixed bottom-0 z-20 w-4/5 border-t-2 bg-white lg:static lg:bottom-auto lg:z-auto lg:order-1 lg:col-span-2 lg:flex lg:flex-col lg:items-center lg:space-y-4 lg:border-r-2 lg:border-t-0 lg:bg-inherit lg:pt-12 dark:bg-[#0a0a0a] lg:dark:bg-inherit">
-            <div className="brder mt-8 flex justify-between border-red-500 lg:mt-0 lg:block">
-              {/*I will later verify if the current reader has reacted; liked, commented, or bookmarked, the current article. I will use this information to decide on which icon to use. The page slug will provide the current user id
+          {/*Post content*/}
+          <article className="">
+            <Interweave
+              className="leading-relaxed dark:text-gray-400"
+              content={md.render(post.content)}
+            />
+          </article>
 
-                      hasReacted
-
-                      basically when I fetch a reaction table from the db, for e.g. comments, I will check if the current user's id is associated with any row in comments table
-                      */}
-              <div className="flex items-center space-x-4 lg:flex-col lg:space-x-0 lg:space-y-4">
-                <ReaderInteraction
-                  icon={<BiCommentDetail />}
-                  interactionCount={commentCount}
-                  title="Comment"
-                />
-                <button
-                  name="likeButton"
-                  onClick={async () => {
-                    if (currentUserLiked) {
-                      await removeLike(post.id, currentUser || "");
-                    } else {
-                      await addLike(post.id, currentUser || "");
-                    }
-                    router.refresh();
-                  }}
-                  type="button"
-                  className="hover:scale-125"
+          {/*STATIC TAGS*/}
+          <div className="boder-2 flex flex-wrap gap-2 border-red-500">
+            {["Static", "Tags", "Until", "Dynamic", "Tags"].map(
+              (tag, index) => (
+                <span
+                  className="rounded-full bg-gray-200 px-4 py-2 text-[0.75em] dark:bg-gray-500"
+                  key={`${tag}-${index}`}
                 >
-                  <ReaderInteraction
-                    icon={
-                      <BsHeartFill
-                        className={
-                          currentUserLiked ? "fill-red-500" : "fill-red-200"
-                        }
-                      />
-                    }
-                    title="Like"
-                    interactionCount={likeCount}
-                  />
-                </button>
-                <button
-                  name="bookmarkButton"
-                  onClick={async () => {
-                    if (currentUserbookmarked) {
-                      await removeBookmark(post.id, currentUser || "");
-                    } else {
-                      await addBookmark(post.id, currentUser || "");
-                    }
-
-                    router.refresh();
-                  }}
-                  type="button"
-                  className="hover:scale-125"
-                >
-                  <ReaderInteraction
-                    icon={
-                      currentUserbookmarked ? (
-                        <BsFillBookmarkCheckFill className="fill-purple-500" />
-                      ) : (
-                        <MdOutlineBookmarkAdd />
-                      )
-                    }
-                    title="Bookmark"
-                    interactionCount={bookmarkCount}
-                  />
-                </button>
-                <div
-                  title="Copy link"
-                  onClick={() => setCopyUrl(true)}
-                  className="items-center lg:my-4"
-                >
-                  <MdOutlineAddLink
-                    className={clsx(
-                      "text-2xl hover:scale-125",
-                      copyUrl && "text-purple-500",
-                    )}
-                  />
-                </div>
-              </div>
-
-              {authorisedPostAuthor && (
-                <button
-                  type="button"
-                  title="Settings"
-                  onClick={() => setExpandMore(!expandMore)}
-                  className="bordr-2 border-red-500 lg:mt-12"
-                >
-                  {window.outerWidth >= 1024 ? (
-                    expandMore ? (
-                      <CiCircleChevUp className="hidden text-3xl lg:block" />
-                    ) : (
-                      <CiCircleChevDown className="hidden text-3xl lg:block" />
-                    )
-                  ) : (
-                    <CiSettings className={`text-3xl lg:hidden`} />
-                  )}
-                </button>
-              )}
-            </div>
-
-            <div className="brder-2 mt-8 flex items-center justify-between border-red-500 lg:static lg:flex-col lg:space-x-0 lg:space-y-4">
-              {expandMore && authorisedPostAuthor && (
-                <div className="borer-red-500 brder-b-0 bordr-b-0 absolute bottom-[6rem] z-30 block h-[calc(100dvh/2)] w-full items-center space-y-6 border-2 bg-white p-4 md:p-8 lg:static lg:bottom-auto lg:z-auto lg:flex lg:h-auto lg:flex-col lg:border-0 lg:bg-inherit lg:p-0 dark:bg-[#0a0a0a] lg:dark:bg-inherit">
-                  <ArticleSettings
-                    postId={post.id}
-                    authorId={post.userId}
-                    postSlug={post.slug}
-                    featuredImage={post?.featuredImage}
-                    deletePostAction={deletePostAction}
-                  />
-                </div>
-              )}
-            </div>
+                  {tag}
+                </span>
+              ),
+            )}
           </div>
         </div>
 
-        {/*STATIC INTERACTIONS UI UNTIL DYNAMIC COMMENTS*/}
-        <div className="brder-2 container mt-12 space-y-6 border-red-500 lg:mx-auto lg:w-3/5">
-          <p className="text-2xl font-semibold">Responses ({commentCount})</p>
+        {/*INTERACTIONS AND SETTINGS*/}
+        <div className="boder-red-500 fixed bottom-0 z-20 w-full border-t-2 bg-white lg:static lg:bottom-auto lg:z-auto lg:order-1 lg:col-span-1 lg:flex lg:flex-col lg:items-center lg:space-y-4 lg:border-r-2 lg:border-t-0 lg:bg-inherit lg:pt-12 dark:bg-[#0a0a0a] lg:dark:bg-inherit">
+          <div className="brder mt-8 flex justify-between border-red-500 px-4 lg:mt-0 lg:block">
+            <div className="flex items-center space-x-4 lg:flex-col lg:space-x-0 lg:space-y-4">
+              <ReaderInteraction
+                icon={<BiCommentDetail />}
+                interactionCount={commentCount}
+                title="Comment"
+              />
+              <button
+                name="likeButton"
+                onClick={async () => {
+                  if (currentUserLiked) {
+                    await removeLike(post.id, currentUser || "");
+                  } else {
+                    await addLike(post.id, currentUser || "");
+                  }
+                  router.refresh();
+                }}
+                type="button"
+                className="hover:scale-125"
+              >
+                <ReaderInteraction
+                  icon={
+                    <BsHeartFill
+                      className={
+                        currentUserLiked ? "fill-red-500" : "fill-red-200"
+                      }
+                    />
+                  }
+                  title="Like"
+                  interactionCount={likeCount}
+                />
+              </button>
+              <button
+                name="bookmarkButton"
+                onClick={async () => {
+                  if (currentUserbookmarked) {
+                    await removeBookmark(post.id, currentUser || "");
+                  } else {
+                    await addBookmark(post.id, currentUser || "");
+                  }
 
-          <CommentForm />
-          <div className="space-y-4">
-            {Array.from(
-              { length: 4 },
-              (_, i) =>
-                "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Asperiores deserunt distinctio, doloremque fugit id incidunt ipsa neque odio officiis possimus quam quo sapiente sed, unde voluptatibus. Animi dolorem enim in!",
-            ).map((lorem, index) => (
-              <CommentCard key={index} commentId={index} comment={lorem} />
-            ))}
+                  router.refresh();
+                }}
+                type="button"
+                className="hover:scale-125"
+              >
+                <ReaderInteraction
+                  icon={
+                    currentUserbookmarked ? (
+                      <BsFillBookmarkCheckFill className="fill-purple-500" />
+                    ) : (
+                      <MdOutlineBookmarkAdd />
+                    )
+                  }
+                  title="Bookmark"
+                  interactionCount={bookmarkCount}
+                />
+              </button>
+              <div
+                title="Copy link"
+                onClick={() => setCopyUrl(true)}
+                className="items-center lg:my-4"
+              >
+                <MdOutlineAddLink
+                  className={clsx(
+                    "text-2xl hover:scale-125",
+                    copyUrl && "text-purple-500",
+                  )}
+                />
+              </div>
+            </div>
+
+            {authorisedPostAuthor && (
+              <button
+                type="button"
+                title="Settings"
+                onClick={() => setExpandMore(!expandMore)}
+                className="bordr-2 border-red-500 lg:mt-12"
+              >
+                {window.outerWidth >= 1024 ? (
+                  expandMore ? (
+                    <CiCircleChevUp className="hidden text-3xl lg:block" />
+                  ) : (
+                    <CiCircleChevDown className="hidden text-3xl lg:block" />
+                  )
+                ) : (
+                  <CiSettings className={`text-3xl lg:hidden`} />
+                )}
+              </button>
+            )}
+          </div>
+
+          <div className="brder-2 mt-8 flex items-center justify-between border-red-500 lg:static lg:flex-col lg:space-x-0 lg:space-y-4">
+            {expandMore && authorisedPostAuthor && (
+              <div className="borer-red-500 brder-b-0 bordr-b-0 absolute bottom-[6rem] z-30 block h-[calc(100dvh/2)] w-full items-center space-y-6 border-2 bg-white p-4 md:p-8 lg:static lg:bottom-auto lg:z-auto lg:flex lg:h-auto lg:flex-col lg:border-0 lg:bg-inherit lg:p-0 dark:bg-[#0a0a0a] lg:dark:bg-inherit">
+                <ArticleSettings
+                  postId={post.id}
+                  authorId={post.userId}
+                  postSlug={post.slug}
+                  featuredImage={post?.featuredImage}
+                  deletePostAction={deletePostAction}
+                />
+              </div>
+            )}
           </div>
         </div>
       </div>

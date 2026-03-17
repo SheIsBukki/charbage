@@ -114,15 +114,16 @@ export async function removeBookmark(postId: Post["id"], userId: User["id"]) {
 }
 
 export async function deleteComment(id: Comment["id"]) {
-  const { user } = await getCurrentSession();
-  if (!user) {
+  try {
+    await db.delete(commentTable).where(eq(commentTable.id, id));
+    return { result: "Comment deleted successfully.", error: null };
+  } catch (err) {
+    console.log(err);
     return {
-      user: null,
-      error: "You are not authorised to delete this comment",
+      error: "Failed to delete comment",
+      result: null,
     };
   }
-
-  await db.delete(commentTable).where(eq(commentTable.id, id));
 }
 
 // This is only going to remove the relationship between a tag and a post, not actually delete the tag. Tags can only be deleted by tag author if the tag is not associated with any post

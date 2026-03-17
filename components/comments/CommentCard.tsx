@@ -1,17 +1,33 @@
+"use client";
+
 import { useEffect, useRef, useState } from "react";
 import { MdOutlineFavoriteBorder } from "react-icons/md";
 import { BiCommentDetail } from "react-icons/bi";
+import { regularDate } from "@/utils/helpers";
+import { BsThreeDots } from "react-icons/bs";
+import { FiEdit } from "react-icons/fi";
+import { RiDeleteBinLine } from "react-icons/ri";
+import { DbActionType } from "@/lib/types";
+import { useRouter } from "next/navigation";
 
 // THE ACTUAL commentId will be string type, not number
 export default function CommentCard({
   commentId,
   comment,
+  createdAt,
+  author,
+  authorisedCommentAuthor,
+  deleteCommentAction,
 }: {
-  commentId: null | number;
+  commentId: string;
   comment: string;
+  createdAt: Date;
+  author: string;
+  authorisedCommentAuthor: boolean;
+  deleteCommentAction: DbActionType;
 }) {
   const [openNestedReply, setOpenNestedReply] = useState<
-    { opened: boolean; key: null | number }[]
+    { opened: boolean; key: string }[]
   >([]);
 
   const nestedReplyRef = useRef<HTMLTextAreaElement | null>(null);
@@ -25,16 +41,33 @@ export default function CommentCard({
       return () => nestedReplyRef.current?.blur();
     });
   }, [openNestedReply]);
+
+  const router = useRouter();
+
   return (
-    <div className="space-y-8 rounded-md border-t-2 px-4 pb-2 pt-6 text-sm dark:text-gray-300">
-      <div className="flex items-center space-x-2">
-        <figure className="">
-          <div className="h-8 w-8 rounded-full bg-gray-500"></div>
-        </figure>
-        <p className="flex flex-col space-y-[0.5px]">
-          <span className="">Janette Dough</span>
-          <span className="">23 Nov, 2015</span>
-        </p>
+    <div className="w-full space-y-8 rounded-md border-t-2 pb-2 pt-6 text-sm dark:text-gray-300">
+      <div className="flex justify-between">
+        <div className="flex items-center space-x-2">
+          <figure className="">
+            <div className="h-8 w-8 rounded-full bg-gray-500"></div>
+          </figure>
+          <p className="flex flex-col space-y-[0.5px]">
+            <span className="">{author}</span>
+            <span className="">{regularDate(createdAt)}</span>
+          </p>
+        </div>
+        {/*COMMENT SETTINGS SIMILAR TO ARTICLE SETTINGS WITH TWO FEATURES, EDIT AND DELETE*/}
+        {authorisedCommentAuthor && (
+          <button
+            onClick={async () => {
+              await deleteCommentAction(commentId);
+              router.refresh();
+            }}
+            className=""
+          >
+            <RiDeleteBinLine />
+          </button>
+        )}
       </div>
       <p className="text-pretty leading-relaxed dark:text-gray-400">
         {comment}
@@ -83,7 +116,7 @@ export default function CommentCard({
               className="border-1 w-full rounded-lg bg-gray-100 outline outline-1 dark:bg-gray-900"
               rows={5}
               cols={100}
-              placeholder="Replying to Janette Dough"
+              placeholder={`Replying to ${author}`}
             />
             <button
               className="rounded-full bg-purple-600 px-4 py-2 text-white"

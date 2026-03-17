@@ -180,10 +180,9 @@ export async function addTag(
 export async function createComment(
   content: string,
   postId: string,
+  userId: string,
 ): Promise<{ data: Comment | null; error: string | null }> {
-  const { user } = await getCurrentSession();
-
-  if (!user) {
+  if (!userId) {
     return {
       data: null,
       error: "User must be logged in to create a comment",
@@ -193,7 +192,7 @@ export async function createComment(
   return handleDatabaseOperation(async () => {
     const [comment] = await db
       .insert(commentTable)
-      .values({ content, userId: user.id, postId }) // TO DO — decide how to collect postId
+      .values({ content, userId, postId }) // TO DO — decide how to collect postId
       .returning()
       .execute();
 

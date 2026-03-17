@@ -135,8 +135,9 @@ export async function getPostReactionsWithId(postId: Post["id"]) {
       .execute();
 
     const comments = await db
-      .select()
+      .select({ ...getTableColumns(commentTable), author: userTable.name })
       .from(commentTable)
+      .innerJoin(userTable, eq(commentTable.userId, userTable.id))
       .where(eq(commentTable.postId, postId))
       .orderBy(desc(commentTable.createdAt))
       .execute();

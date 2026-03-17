@@ -2,7 +2,7 @@ import { getCurrentSession } from "@/lib/session";
 import { getPostWithSlug } from "@/db/queries/select";
 import { ArticleFormSchema } from "@/lib/definitions";
 import { redirect } from "next/navigation";
-import { ActionState, PostFormValues } from "@/app/write/page";
+import { PostActionState, PostFormValues } from "@/app/write/page";
 import { updatePost } from "@/db/queries/update";
 import ArticleForm from "@/components/editor/ArticleForm";
 import slugify from "slugify";
@@ -28,7 +28,10 @@ export default async function EditPage({
   }
   const authorisedPostAuthor = user.id;
 
-  const submitForm = async (initialState: ActionState, formData: FormData) => {
+  const submitForm = async (
+    initialState: PostActionState,
+    formData: FormData,
+  ) => {
     "use server";
 
     const values: updatedPostType = {
@@ -38,7 +41,7 @@ export default async function EditPage({
     };
 
     const { error: parseError } = ArticleFormSchema.safeParse(values);
-    const errors: ActionState["errors"] = {};
+    const errors: PostActionState["errors"] = {};
 
     for (const { path, message } of parseError?.issues || []) {
       errors[path.join(".")] = { message };

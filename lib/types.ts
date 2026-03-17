@@ -4,6 +4,7 @@
 // };
 
 import { Bookmark, Like, Comment } from "@/db/schema";
+import { PostActionState, PostFormValues } from "@/app/write/page";
 
 export type ReactionCountType = {
   comments: number;
@@ -37,3 +38,26 @@ export type ReactionsType = {
   comments: Comment[];
   bookmarks: Bookmark[];
 } | null;
+
+export type CommentFormValue = {
+  comment: string;
+};
+
+export type CommentActionState = {
+  error: Record<string, { message: string }>;
+  value: CommentFormValue;
+  hasCommentChanged?: boolean;
+  serverError?: boolean;
+  isSubmitSuccessful?: boolean;
+};
+
+export type CommentFormProps = {
+  action: (
+    initialState: CommentActionState,
+    formData: FormData,
+  ) => Promise<CommentActionState>;
+  value: CommentFormValue;
+  // userId: string;
+  // postId: string;
+  editorStatus: { updating: boolean; creating: boolean };
+};

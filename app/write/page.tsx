@@ -13,13 +13,16 @@ export type PostFormValues = {
   featuredImage: string;
 };
 
-export type ActionState = {
+export type PostActionState = {
   errors: Record<string, { message: string }>;
   values: PostFormValues;
   hasPostChanged?: boolean;
 };
 
-const submitForm = async (initialState: ActionState, formData: FormData) => {
+const submitForm = async (
+  initialState: PostActionState,
+  formData: FormData,
+) => {
   "use server";
 
   const values: PostFormValues = {
@@ -29,7 +32,7 @@ const submitForm = async (initialState: ActionState, formData: FormData) => {
   };
 
   const { error: parseError } = ArticleFormSchema.safeParse(values);
-  const errors: ActionState["errors"] = {};
+  const errors: PostActionState["errors"] = {};
 
   for (const { path, message } of parseError?.issues || []) {
     errors[path.join(".")] = { message };
