@@ -71,7 +71,7 @@ export default async function BlogPage({
     let serverError = false;
     let isSubmitSuccessful;
 
-    if (value.comment.trim() !== "" && user?.id) {
+    if (value.comment.trim() !== "" && user) {
       const comment = await createComment(value.comment, post.id, user.id);
 
       if (comment.error) {
