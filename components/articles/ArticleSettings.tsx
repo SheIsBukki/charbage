@@ -1,3 +1,5 @@
+"use client";
+
 import { redirect, useRouter } from "next/navigation";
 import { deleteFeaturedImageEverywhere } from "@/lib/deleteFeaturedImageEverywhere";
 import { DbActionType } from "@/lib/types";

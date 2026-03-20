@@ -7,7 +7,7 @@ import Image from "next/image";
 import { FaGithub } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 import { redirect, useRouter } from "next/navigation";
-import { usePreviousPath } from "@/utils/usePreviousPath";
+import { usePreviousPath } from "@/components/auth/usePreviousPath";
 
 const initialState = { message: "", successful: false };
 

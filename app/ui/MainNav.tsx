@@ -11,7 +11,7 @@ import ThemeSwitcher from "@/app/ui/ThemeSwitcher";
 import { usePathname, useRouter } from "next/navigation";
 import { User } from "@/db/schema";
 import { logoutUser } from "@/app/actions/auth";
-import { usePreviousPath } from "@/utils/usePreviousPath";
+import { usePreviousPath } from "@/components/auth/usePreviousPath";
 
 type MainNavProps = { user: Omit<User, "password"> | null };
 

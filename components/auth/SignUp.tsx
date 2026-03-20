@@ -3,7 +3,7 @@
 import React, { useActionState, useEffect } from "react";
 import Form from "next/form";
 import Link from "next/link";
-import { usePreviousPath } from "@/utils/usePreviousPath";
+import { usePreviousPath } from "@/components/auth/usePreviousPath";
 import { redirect, useRouter } from "next/navigation";
 
 const initialState = { message: "" };
