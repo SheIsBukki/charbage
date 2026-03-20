@@ -5,8 +5,8 @@ import { Toaster } from "react-hot-toast";
 import "./globals.css";
 import { ThemeProvider } from "@/context/ThemeProvider";
 import Script from "next/script";
-// import MainNav from "@/app/ui/MainNav";
-// import { getCurrentSession } from "@/lib/session";
+import MainNav from "@/app/ui/MainNav";
+import { getCurrentSession } from "@/lib/session";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -28,7 +28,7 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // const { user } = await getCurrentSession();
+  const { user } = await getCurrentSession();
 
   return (
     <html lang="en" suppressHydrationWarning className="scroll-smooth">
@@ -48,7 +48,7 @@ export default async function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <ThemeProvider>
-          {/*<MainNav user={user} />*/}
+          <MainNav user={user} />
           <Toaster />
           {children}
         </ThemeProvider>
