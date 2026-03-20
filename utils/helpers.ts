@@ -72,3 +72,18 @@ export const copyCurrentUrl = async () => {
 export function validateRedirect(redirectUrl: string) {
   return redirectUrl.startsWith("/") && !redirectUrl.startsWith("//");
 }
+
+export function setPreviousPath(pathname = "/") {
+  const current = sessionStorage.getItem("currentPath");
+
+  if (current !== pathname) {
+    sessionStorage.setItem("prevPath", current || "/");
+    sessionStorage.setItem("currentPath", pathname);
+  }
+
+  return {
+    current: pathname,
+    previous:
+      typeof window !== "undefined" ? sessionStorage.getItem("prevPath") : null,
+  };
+}

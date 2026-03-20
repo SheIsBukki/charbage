@@ -3,7 +3,7 @@
 import React, { useActionState, useEffect } from "react";
 import Form from "next/form";
 import Link from "next/link";
-import { usePreviousPath } from "@/components/auth/usePreviousPath";
+// import { usePreviousPath } from "@/components/auth/usePreviousPath";
 import { redirect, useRouter } from "next/navigation";
 
 const initialState = { message: "" };
@@ -24,10 +24,11 @@ export default function SignUp({ userAlreadyLoggedIn, action }: SignUpProps) {
 
   const [state, formAction, isPending] = useActionState(action, initialState);
 
-  const { previous } = usePreviousPath();
+  // const { previous } = usePreviousPath();
 
   useEffect(() => {
     if (state?.successful) {
+      const previous = sessionStorage.getItem("currentPath") || "/";
       // console.log("Successfully signed up successfully.");
 
       redirect(previous || "/");

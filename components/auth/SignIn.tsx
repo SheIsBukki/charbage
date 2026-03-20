@@ -7,7 +7,7 @@ import Image from "next/image";
 import { FaGithub } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 import { redirect, useRouter } from "next/navigation";
-import { usePreviousPath } from "@/components/auth/usePreviousPath";
+// import { usePreviousPath } from "@/components/auth/usePreviousPath";
 
 const initialState = { message: "", successful: false };
 
@@ -36,11 +36,12 @@ export default function SignIn({
 
   // console.log(userAlreadyLoggedIn);
 
-  const { previous } = usePreviousPath();
+  // const { previous } = usePreviousPath();
 
   useEffect(() => {
     if (state?.successful) {
       // console.log("Successfully logged in successfully.");
+      const previous = sessionStorage.getItem("currentPath") || "/";
 
       redirect(previous || "/");
     }
