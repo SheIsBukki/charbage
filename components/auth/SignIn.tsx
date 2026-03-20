@@ -42,7 +42,7 @@ export default function SignIn({
     if (state?.successful) {
       // console.log("Successfully logged in successfully.");
 
-      redirect(previous || "");
+      redirect(previous || "/");
     }
   }, [state?.successful, userAlreadyLoggedIn]);
 

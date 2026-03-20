@@ -30,7 +30,7 @@ export default function SignUp({ userAlreadyLoggedIn, action }: SignUpProps) {
     if (state?.successful) {
       // console.log("Successfully signed up successfully.");
 
-      redirect(previous || "");
+      redirect(previous || "/");
     }
   }, [state?.successful, userAlreadyLoggedIn]);
 
