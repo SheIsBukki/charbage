@@ -1,8 +1,10 @@
 "use client";
 
-import React, { useActionState } from "react";
+import React, { useActionState, useEffect } from "react";
 import Form from "next/form";
 import Link from "next/link";
+import { usePreviousPath } from "@/utils/usePreviousPath";
+import { redirect, useRouter } from "next/navigation";
 
 const initialState = { message: "" };
 
@@ -10,11 +12,30 @@ type SignUpProps = {
   action: (
     prevState: any,
     formData: FormData,
-  ) => Promise<{ message: string } | undefined>;
+  ) => Promise<{ message?: string; successful?: boolean } | undefined>;
+  userAlreadyLoggedIn: boolean;
 };
 
-export default function SignUp({ action }: SignUpProps) {
+export default function SignUp({ userAlreadyLoggedIn, action }: SignUpProps) {
+  const router = useRouter();
+  if (userAlreadyLoggedIn) {
+    router.push("/");
+  }
+
   const [state, formAction, isPending] = useActionState(action, initialState);
+
+  const { previous } = usePreviousPath();
+
+  useEffect(() => {
+    if (state?.successful) {
+      // console.log("Successfully signed up successfully.");
+
+      redirect(previous || "");
+    }
+  }, [state?.successful, userAlreadyLoggedIn]);
+
+  // console.log(previous);
+  // console.log(usePreviousPath());
 
   return (
     <div className="container mx-auto md:w-[70%] md:p-12 lg:w-[50%] lg:p-16">

@@ -16,9 +16,9 @@ const SignUpSchema = z.object({
 export default async function SignUpPage() {
   const { user } = await getCurrentSession();
 
-  if (user) {
-    return redirect("/");
-  }
+  // if (user) {
+  //   return redirect("/");
+  // }
 
   const action = async (prevState: any, formData: FormData) => {
     "use server";
@@ -45,9 +45,10 @@ export default async function SignUpPage() {
       return { message: error };
     } else if (user) {
       await loginUser(email, password);
-      return redirect("/");
+      // return redirect("/");
+      return { successful: true };
     }
   };
 
-  return <SignUp action={action} />;
+  return <SignUp userAlreadyLoggedIn={!!user} action={action} />;
 }

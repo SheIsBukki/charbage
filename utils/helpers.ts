@@ -68,3 +68,7 @@ export const copyCurrentUrl = async () => {
 //     };
 //   }
 // };
+
+export function validateRedirect(redirectUrl: string) {
+  return redirectUrl.startsWith("/") && !redirectUrl.startsWith("//");
+}

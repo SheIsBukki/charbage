@@ -1,23 +1,53 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
 import Form from "next/form";
 import Link from "next/link";
 import Image from "next/image";
 import { FaGithub } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
+import { redirect, useRouter } from "next/navigation";
+import { usePreviousPath } from "@/utils/usePreviousPath";
 
-const initialState = { message: "" };
+const initialState = { message: "", successful: false };
 
 type SignInProps = {
-  action: (
+  signInAction: (
     prevState: any,
     formData: FormData,
-  ) => Promise<{ message: string } | undefined>;
+  ) => Promise<{ message?: string; successful?: boolean } | undefined>;
+  userAlreadyLoggedIn: boolean;
 };
 
-export default function SignIn({ action }: SignInProps) {
-  const [state, formAction, isPending] = useActionState(action, initialState);
+export default function SignIn({
+  signInAction,
+  userAlreadyLoggedIn,
+}: SignInProps) {
+  const router = useRouter();
+
+  if (userAlreadyLoggedIn) {
+    router.push("/");
+  }
+
+  const [state, formAction, isPending] = useActionState(
+    signInAction,
+    initialState,
+  );
+
+  // console.log(userAlreadyLoggedIn);
+
+  const { previous } = usePreviousPath();
+
+  useEffect(() => {
+    if (state?.successful) {
+      // console.log("Successfully logged in successfully.");
+
+      redirect(previous || "");
+    }
+  }, [state?.successful, userAlreadyLoggedIn]);
+
+  // console.log(previous);
+  // console.log(useRouteHistory());
 
   return (
     <>
@@ -103,6 +133,7 @@ export default function SignIn({ action }: SignInProps) {
                 </div>
 
                 {/*  Submit button*/}
+
                 <button
                   className="w-full rounded-lg border border-gray-500 py-2 font-medium md:text-lg"
                   type="submit"

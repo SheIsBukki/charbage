@@ -8,15 +8,20 @@ import { FcMenu } from "react-icons/fc";
 import { MdClose } from "react-icons/md";
 import { clsx } from "clsx";
 import ThemeSwitcher from "@/app/ui/ThemeSwitcher";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { User } from "@/db/schema";
 import { logoutUser } from "@/app/actions/auth";
+import { usePreviousPath } from "@/utils/usePreviousPath";
 
 type MainNavProps = { user: Omit<User, "password"> | null };
 
 export default function MainNav({ user }: MainNavProps) {
   const router = useRouter();
   const [open, setOpen] = useState<boolean>(false);
+  const pathname = usePathname();
+
+  usePreviousPath();
+  // console.log(usePreviousPath());
 
   return (
     <nav className="flex items-center justify-between px-4 py-4 shadow md:px-8">
@@ -26,16 +31,17 @@ export default function MainNav({ user }: MainNavProps) {
           <span className="hidden md:block">Home</span>
           <GiCabbage className="size-6 rounded-full border md:hidden" />
         </Link>
-
-        <button
-          type="button"
-          onClick={() =>
-            user ? router.push("/write") : router.replace("/sign-in")
-          }
-        >
-          <span className="hidden md:block">Write</span>
-          <CiEdit className="size-6 md:hidden" />
-        </button>
+        {!pathname.startsWith("/write") && (
+          <button
+            type="button"
+            onClick={() =>
+              user ? router.push("/write") : router.replace("/sign-in")
+            }
+          >
+            <span className="hidden md:block">Write</span>
+            <CiEdit className="size-6 md:hidden" />
+          </button>
+        )}
       </div>
 
       <div className="flex items-center justify-between space-x-2 md:space-x-4">
@@ -88,10 +94,12 @@ export default function MainNav({ user }: MainNavProps) {
                   Log out
                 </button>
               ) : (
-                <Link href="/sign-in">Log in</Link>
+                !pathname.startsWith("/sign-in") && (
+                  <Link href="/sign-in">Log in</Link>
+                )
               )}
             </li>
-            {!user && (
+            {!user && !pathname.startsWith("/sign-up") && (
               <li onClick={() => setOpen(false)} className="">
                 <Link href="/sign-up">Sign up</Link>
               </li>
@@ -122,7 +130,9 @@ export default function MainNav({ user }: MainNavProps) {
               </button>
             </div>
           ) : (
-            <Link href="/sign-in">Log in</Link>
+            !pathname.startsWith("/sign-in") && (
+              <Link href="/sign-in">Log in</Link>
+            )
           )}
         </div>
 
