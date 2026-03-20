@@ -19,21 +19,21 @@ type SignUpProps = {
 export default function SignUp({ userAlreadyLoggedIn, action }: SignUpProps) {
   const router = useRouter();
   if (userAlreadyLoggedIn) {
-    router.push("/");
+    router.replace("/");
   }
 
   const [state, formAction, isPending] = useActionState(action, initialState);
 
   // const { previous } = usePreviousPath();
 
-  useEffect(() => {
-    if (state?.successful) {
-      const previous = sessionStorage.getItem("currentPath") || "/";
-      // console.log("Successfully signed up successfully.");
-
-      redirect(previous || "/");
-    }
-  }, [state?.successful, userAlreadyLoggedIn]);
+  // useEffect(() => {
+  //   if (state?.successful) {
+  //     const previous = sessionStorage.getItem("currentPath") || "/";
+  //     // console.log("Successfully signed up successfully.");
+  //
+  //     redirect(previous || "/");
+  //   }
+  // }, [state?.successful, userAlreadyLoggedIn]);
 
   // console.log(previous);
   // console.log(usePreviousPath());

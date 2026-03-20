@@ -73,7 +73,7 @@ export function validateRedirect(redirectUrl: string) {
   return redirectUrl.startsWith("/") && !redirectUrl.startsWith("//");
 }
 
-export function setPreviousPath(pathname = "/") {
+export function setPreviousPath(pathname: string) {
   const current = sessionStorage.getItem("currentPath");
 
   if (current !== pathname) {

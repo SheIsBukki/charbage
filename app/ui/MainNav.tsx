@@ -12,7 +12,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { User } from "@/db/schema";
 import { logoutUser } from "@/app/actions/auth";
 // import { usePreviousPath } from "@/components/auth/usePreviousPath";
-import { setPreviousPath } from "@/utils/helpers";
+// import { setPreviousPath } from "@/utils/helpers";
 
 type MainNavProps = { user: Omit<User, "password"> | null };
 
@@ -21,12 +21,12 @@ export default function MainNav({ user }: MainNavProps) {
   const [open, setOpen] = useState<boolean>(false);
   const pathname = usePathname();
 
-  useEffect(() => {
-    const { current, previous } = setPreviousPath(pathname);
-
-    console.log(current);
-    console.log(previous);
-  }, [pathname]);
+  // useEffect(() => {
+  //   const { current, previous } = setPreviousPath(pathname);
+  //
+  //   console.log(current);
+  //   console.log(previous);
+  // }, [pathname]);
   // usePreviousPath();
 
   // console.log(usePreviousPath());

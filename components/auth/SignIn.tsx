@@ -26,7 +26,7 @@ export default function SignIn({
   const router = useRouter();
 
   if (userAlreadyLoggedIn) {
-    router.push("/");
+    router.replace("/");
   }
 
   const [state, formAction, isPending] = useActionState(
@@ -38,14 +38,14 @@ export default function SignIn({
 
   // const { previous } = usePreviousPath();
 
-  useEffect(() => {
-    if (state?.successful) {
-      // console.log("Successfully logged in successfully.");
-      const previous = sessionStorage.getItem("currentPath") || "/";
-
-      redirect(previous || "/");
-    }
-  }, [state?.successful, userAlreadyLoggedIn]);
+  // useEffect(() => {
+  //   if (state?.successful) {
+  //     // console.log("Successfully logged in successfully.");
+  //     const previous = sessionStorage.getItem("currentPath") || "/";
+  //
+  //     redirect(previous || "/");
+  //   }
+  // }, [state?.successful, userAlreadyLoggedIn]);
 
   // console.log(previous);
   // console.log(useRouteHistory());
