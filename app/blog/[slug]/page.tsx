@@ -2,7 +2,7 @@ import { getPostReactionsWithId, getPostWithSlug } from "@/db/queries/select";
 import Article from "@/components/articles/Article";
 import { getCurrentSession } from "@/lib/session";
 import { deleteComment, deletePost } from "@/db/queries/delete";
-import MainNav from "@/app/ui/MainNav";
+// import MainNav from "@/app/ui/MainNav";
 import { CommentActionState, CommentFormValue } from "@/lib/types";
 import { CommentFormSchema } from "@/lib/definitions";
 import CommentForm from "@/components/comments/CommentForm";
@@ -102,7 +102,7 @@ export default async function BlogPage({
 
   return (
     <>
-      <MainNav user={user} />
+      {/*<MainNav user={user} />*/}
       <div className="bg-gay-100 darkbg-gray-900 mx-auto mb-24 w-full py-12">
         <Article
           authorisedPostAuthor={!!authorisedPostAuthor}
