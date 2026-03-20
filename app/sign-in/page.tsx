@@ -30,7 +30,6 @@ const signInAction = async (prevState: any, formData: FormData) => {
   if (error) {
     return { message: error };
   } else if (user) {
-    // return { successful: true};
     return { successful: true };
   }
 };

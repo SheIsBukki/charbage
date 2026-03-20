@@ -4,7 +4,7 @@
 // };
 
 import { Bookmark, Like, Comment } from "@/db/schema";
-import { PostActionState, PostFormValues } from "@/app/write/page";
+import { PostActionStateType, PostFormValues } from "@/app/write/page";
 
 export type ReactionCountType = {
   comments: number;

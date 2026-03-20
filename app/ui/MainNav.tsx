@@ -11,7 +11,7 @@ import ThemeSwitcher from "@/app/ui/ThemeSwitcher";
 import { usePathname, useRouter } from "next/navigation";
 import { User } from "@/db/schema";
 import { logoutUser } from "@/app/actions/auth";
-// import { usePreviousPath } from "@/components/auth/usePreviousPath";
+import { usePreviousPath } from "@/components/auth/usePreviousPath";
 // import { setPreviousPath } from "@/utils/helpers";
 
 type MainNavProps = { user: Omit<User, "password"> | null };
@@ -27,9 +27,9 @@ export default function MainNav({ user }: MainNavProps) {
   //   console.log(current);
   //   console.log(previous);
   // }, [pathname]);
-  // usePreviousPath();
 
-  // console.log(usePreviousPath());
+  usePreviousPath();
+  console.log(usePreviousPath());
 
   return (
     <nav className="flex items-center justify-between px-4 py-4 shadow md:px-8">
