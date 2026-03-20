@@ -7,7 +7,8 @@ import Image from "next/image";
 import { FaGithub } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 import { redirect, useRouter } from "next/navigation";
-// import { usePreviousPath } from "@/components/auth/usePreviousPath";
+import { usePreviousPath } from "@/components/auth/usePreviousPath";
+import { validateRedirect } from "@/utils/helpers";
 
 const initialState = { message: "", successful: false };
 
@@ -25,27 +26,34 @@ export default function SignIn({
 }: SignInProps) {
   const router = useRouter();
 
-  if (userAlreadyLoggedIn) {
-    router.replace("/");
-  }
-
   const [state, formAction, isPending] = useActionState(
     signInAction,
     initialState,
   );
 
+  useEffect(() => {
+    if (userAlreadyLoggedIn) {
+      redirect("/");
+    }
+  }, []);
+
   // console.log(userAlreadyLoggedIn);
 
-  // const { previous } = usePreviousPath();
+  const { previous } = usePreviousPath();
 
-  // useEffect(() => {
-  //   if (state?.successful) {
-  //     // console.log("Successfully logged in successfully.");
-  //     const previous = sessionStorage.getItem("currentPath") || "/";
-  //
-  //     redirect(previous || "/");
-  //   }
-  // }, [state?.successful, userAlreadyLoggedIn]);
+  useEffect(() => {
+    if (state?.successful) {
+      // console.log("Successfully logged in successfully.");
+      // const previous = sessionStorage.getItem("currentPath") || "/";
+
+      if (validateRedirect(previous)) {
+        redirect(previous || "/");
+      }
+    }
+  }, [state?.successful]);
+
+  // console.log(state?.successful);
+  // console.log(state);
 
   // console.log(previous);
   // console.log(useRouteHistory());
