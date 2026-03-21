@@ -117,7 +117,9 @@ export const commentTable = pgTable("comments", {
   })
     .defaultNow()
     .notNull(),
-
+  // updatedAt: timestamp("updatedAt", { mode: "date", precision: 3 })
+  //   .$onUpdate(() => new Date())
+  //   .defaultNow(),
   postId: uuid("postId")
     .notNull()
     .references(() => postTable.id, { onDelete: "cascade" }),

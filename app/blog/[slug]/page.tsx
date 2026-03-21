@@ -2,14 +2,10 @@ import { getPostReactionsWithId, getPostWithSlug } from "@/db/queries/select";
 import Article from "@/components/articles/Article";
 import { getCurrentSession } from "@/lib/session";
 import { deleteComment, deletePost } from "@/db/queries/delete";
-// import MainNav from "@/app/ui/MainNav";
-import { CommentActionState, CommentFormValue } from "@/lib/types";
-import { CommentFormSchema } from "@/lib/definitions";
 import CommentForm from "@/components/comments/CommentForm";
 import CommentCard from "@/components/comments/CommentCard";
 import { Comment } from "@/db/schema";
-import { createComment } from "@/db/queries/insert";
-import { revalidatePath } from "next/cache";
+import { createOrEditCommentAction } from "@/app/actions/createOrEditCommentAction";
 
 export async function generateMetadata({
   params,
@@ -45,53 +41,6 @@ export default async function BlogPage({
   }
 
   const { reactions } = await getPostReactionsWithId(post.id);
-
-  const submitForm = async (
-    initialState: CommentActionState,
-    formData: FormData,
-  ) => {
-    "use server";
-
-    const value: CommentFormValue = {
-      comment: String(formData.get("comment") || ""),
-    };
-
-    const { error: parseError } = CommentFormSchema.safeParse(value);
-
-    const error: CommentActionState["error"] = {};
-
-    if (parseError) {
-      error["message"] = parseError;
-    }
-
-    // I WILL WORRY ABOUT WHEN IT'S TIME TO ENABLE EDITING OF COMMENTS
-    const hasCommentChanged = false;
-    // const hasCommentChanged = value.content !== comment.content;
-
-    let serverError = false;
-    let isSubmitSuccessful;
-
-    if (value.comment.trim() !== "" && user) {
-      const comment = await createComment(value.comment, post.id, user.id);
-
-      if (comment.error) {
-        serverError = true;
-      } else if (comment.data) {
-        isSubmitSuccessful = true;
-      }
-
-      // console.log(comment);
-      // console.log(comment.data);
-      revalidatePath("/blog");
-    }
-
-    return {
-      value,
-      error: {},
-      serverError: serverError,
-      isSubmitSuccessful: isSubmitSuccessful,
-    };
-  };
 
   const commentCount = reactions?.comments.length;
   const currentUserCommented = reactions?.comments.some(
@@ -132,14 +81,8 @@ export default async function BlogPage({
             <div className="w-full">
               {/*<span className="">{user?.name}</span>*/}
               <CommentForm
-                // postId={post.id}
-                // userId={user?.id || ""}
-                action={submitForm}
-                value={{ comment: "" }}
-                editorStatus={{
-                  updating: currentUserCommented === true,
-                  creating: currentUserCommented === false,
-                }}
+                action={createOrEditCommentAction}
+                value={{ comment: "", postId: post.id, userId: user?.id || "" }}
               />
             </div>
           </div>

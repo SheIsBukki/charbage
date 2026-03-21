@@ -5,10 +5,11 @@ import { MdOutlineFavoriteBorder } from "react-icons/md";
 import { BiCommentDetail } from "react-icons/bi";
 import { regularDate } from "@/utils/helpers";
 import { BsThreeDots } from "react-icons/bs";
-import { FiEdit } from "react-icons/fi";
-import { RiDeleteBinLine } from "react-icons/ri";
 import { DbActionType } from "@/lib/types";
 import { useRouter } from "next/navigation";
+import CommentForm from "@/components/comments/CommentForm";
+import { createOrEditCommentAction } from "@/app/actions/createOrEditCommentAction";
+import CommentSettings from "@/components/comments/CommentSettings";
 
 // THE ACTUAL commentId will be string type, not number
 export default function CommentCard({
@@ -29,6 +30,9 @@ export default function CommentCard({
   const [openNestedReply, setOpenNestedReply] = useState<
     { opened: boolean; key: string }[]
   >([]);
+
+  const [isEditing, setIsEditing] = useState(false);
+  const [openSettings, setOpenSettings] = useState(false);
 
   const nestedReplyRef = useRef<HTMLTextAreaElement | null>(null);
 
@@ -53,22 +57,34 @@ export default function CommentCard({
           </figure>
           <p className="flex flex-col space-y-[0.5px]">
             <span className="">{author}</span>
-            <span className="">{regularDate(createdAt)}</span>
+            <span className="text-xs">{regularDate(createdAt)}</span>
           </p>
         </div>
         {/*COMMENT SETTINGS SIMILAR TO ARTICLE SETTINGS WITH TWO FEATURES, EDIT AND DELETE*/}
         {authorisedCommentAuthor && (
-          <button
-            onClick={async () => {
-              await deleteCommentAction(commentId);
-              router.refresh();
-            }}
-            className=""
-          >
-            <RiDeleteBinLine />
-          </button>
+          <div onClick={() => setOpenSettings(!openSettings)} className="">
+            <BsThreeDots />
+          </div>
+        )}
+        {/*COMMENT SETTINGS*/}
+        {openSettings && (
+          <div className="">
+            <CommentSettings
+              commentId={commentId}
+              deleteCommentAction={deleteCommentAction}
+              isEditing={isEditing}
+              setIsEditing={setIsEditing}
+            />
+          </div>
         )}
       </div>
+      {openSettings && isEditing && (
+        <CommentForm
+          action={createOrEditCommentAction}
+          value={{ comment: comment, commentId: commentId }}
+          setIsEditing={setIsEditing}
+        />
+      )}
       <p className="text-pretty leading-relaxed dark:text-gray-400">
         {comment}
       </p>

@@ -3,9 +3,10 @@
 import React, { useActionState, useEffect } from "react";
 import Form from "next/form";
 import Link from "next/link";
-import { usePreviousPath } from "@/components/auth/usePreviousPath";
+// import { usePreviousPath } from "@/components/auth/usePreviousPath";
 import { redirect, useRouter } from "next/navigation";
-import { validateRedirect } from "@/utils/helpers";
+// import { validateRedirect } from "@/utils/helpers";
+import { useRedirect } from "@/components/auth/useRedirect";
 
 const initialState = { message: "" };
 
@@ -21,24 +22,24 @@ export default function SignUp({ userAlreadyLoggedIn, action }: SignUpProps) {
   const router = useRouter();
 
   const [state, formAction, isPending] = useActionState(action, initialState);
+  useRedirect({ userAlreadyLoggedIn, state });
+  // const { previous } = usePreviousPath();
 
-  const { previous } = usePreviousPath();
+  // useEffect(() => {
+  //   if (userAlreadyLoggedIn) {
+  //     redirect("/");
+  //   }
+  // }, []);
 
-  useEffect(() => {
-    if (userAlreadyLoggedIn) {
-      redirect("/");
-    }
-  }, []);
-
-  useEffect(() => {
-    if (state?.successful) {
-      // const previous = sessionStorage.getItem("currentPath") || "/";
-      // console.log("Successfully signed up successfully.");
-      if (validateRedirect(previous)) {
-        redirect(previous || "/");
-      }
-    }
-  }, [state?.successful]);
+  // useEffect(() => {
+  //   if (state?.successful) {
+  //     const previous = sessionStorage.getItem("prevPath") || "/";
+  //     // console.log("Successfully signed up successfully.");
+  //     if (validateRedirect(previous)) {
+  //       redirect(previous || "/");
+  //     }
+  //   }
+  // }, [state?.successful]);
 
   // console.log(previous);
   // console.log(usePreviousPath());

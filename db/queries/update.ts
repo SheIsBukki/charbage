@@ -1,6 +1,6 @@
 "use server";
 
-import { Post, postTable, User } from "@/db/schema";
+import { commentTable, Post, postTable, User } from "@/db/schema";
 import { db } from "@/db";
 import { and, eq } from "drizzle-orm";
 import { getCurrentSession } from "@/lib/session";
@@ -77,5 +77,22 @@ export async function deleteFeaturedImage(
       error: "Failed to delete featured image due to server/database error",
       result: null,
     };
+  }
+}
+
+export async function updateComment(commentId: string, content: string) {
+  try {
+    const [comment] = await db
+      .update(commentTable)
+      .set({ content: content })
+      .where(eq(commentTable.id, commentId))
+      .returning();
+
+    // console.log("comment", comment);
+
+    return { result: "Comment updated successfully", error: null };
+  } catch (error) {
+    console.error(error);
+    return { result: null, error: "Failed to update comment" };
   }
 }

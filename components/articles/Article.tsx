@@ -11,7 +11,7 @@ import { copyCurrentUrl, regularDate } from "@/utils/helpers";
 import { DbActionType, ReactionsType } from "@/lib/types";
 import { removeBookmark, removeLike } from "@/db/queries/delete";
 import { addBookmark, addLike } from "@/db/queries/insert";
-import { Bookmark, Like, Comment } from "@/db/schema";
+import { Bookmark, Like } from "@/db/schema";
 
 import { PostType } from "@/components/articles/ArticleCards";
 import ArticleSettings from "@/components/articles/ArticleSettings";
@@ -26,7 +26,6 @@ import { BsFillBookmarkCheckFill, BsHeartFill } from "react-icons/bs";
 
 export default function Article({
   post,
-
   deletePostAction,
   authorisedPostAuthor,
   reactions,
@@ -49,7 +48,6 @@ export default function Article({
 
   useEffect(() => {
     copyCurrentUrl().then((r) => console.log(r));
-    // navigator.clipboard.writeText(window.location.href);
 
     const timeoutId = setTimeout(() => setCopyUrl(false), 2000);
     return () => clearTimeout(timeoutId);

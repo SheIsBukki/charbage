@@ -11,8 +11,8 @@ import ThemeSwitcher from "@/app/ui/ThemeSwitcher";
 import { usePathname, useRouter } from "next/navigation";
 import { User } from "@/db/schema";
 import { logoutUser } from "@/app/actions/auth";
-import { usePreviousPath } from "@/components/auth/usePreviousPath";
-// import { setPreviousPath } from "@/utils/helpers";
+// import { usePreviousPath } from "@/components/auth/usePreviousPath";
+import { getPreviousPath } from "@/utils/helpers";
 
 type MainNavProps = { user: Omit<User, "password"> | null };
 
@@ -21,15 +21,16 @@ export default function MainNav({ user }: MainNavProps) {
   const [open, setOpen] = useState<boolean>(false);
   const pathname = usePathname();
 
-  // useEffect(() => {
-  //   const { current, previous } = setPreviousPath(pathname);
-  //
-  //   console.log(current);
-  //   console.log(previous);
-  // }, [pathname]);
+  useEffect(() => {
+    // const { current, previous } = getPreviousPath(pathname);
+    getPreviousPath(pathname);
 
-  usePreviousPath();
-  console.log(usePreviousPath());
+    // console.log(current);
+    // console.log(previous);
+  }, [pathname]);
+
+  // usePreviousPath();
+  // console.log(usePreviousPath());
 
   return (
     <nav className="flex items-center justify-between px-4 py-4 shadow md:px-8">
