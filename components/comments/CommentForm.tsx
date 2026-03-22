@@ -1,9 +1,6 @@
 "use client";
 
-/*
-I will give this user props and other props I think...
-* */
-import { useActionState, useEffect, useState } from "react";
+import { useActionState, useEffect } from "react";
 import { CommentFormProps } from "@/lib/types";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -13,11 +10,10 @@ import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 
 export default function CommentForm({
-  // postId,
-  // userId,
   action,
   value,
-  editorStatus,
+  setOpenSettings,
+  setIsEditing,
 }: CommentFormProps) {
   const [state, formAction, isPending] = useActionState(action, {
     value,
@@ -35,7 +31,14 @@ export default function CommentForm({
     mode: "onBlur",
   });
 
-  const { hasCommentChanged, serverError, isSubmitSuccessful } = state;
+  const router = useRouter();
+  // const { hasCommentChanged, serverError, isSubmitSuccessful } = state;
+  const { serverError, isSubmitSuccessful } = state;
+
+  const editorStatus = {
+    updating: value.comment !== "",
+    creating: value.comment === "",
+  };
 
   useEffect(() => {
     if (serverError) {
@@ -45,15 +48,34 @@ export default function CommentForm({
 
   useEffect(() => {
     if (isSubmitSuccessful === true) {
-      toast.success("Comment added!");
+      toast.success(
+        editorStatus.updating ? "Comment updated!" : "Comment added!",
+      );
+
       reset({ comment: "" });
+
+      if (setOpenSettings && setIsEditing) {
+        setOpenSettings(false);
+        setIsEditing(false);
+      }
+      router.refresh();
     }
-  }, [isSubmitSuccessful, reset]);
+  }, [isSubmitSuccessful, reset, editorStatus.updating]);
 
   return (
     <div className="pb-4">
       {/*Will place current user's avatar and name*/}
-      <form className="space-y-2" action={formAction}>
+      <form
+        onFocus={() => {
+          if (setOpenSettings) setOpenSettings(false);
+        }}
+        className="space-y-2"
+        action={formAction}
+      >
+        <input name="postId" value={value.postId} type="hidden" />
+        <input name="userId" value={value.userId} type="hidden" />
+        <input name="commentId" value={value.commentId} type="hidden" />
+        <input name="oldComment" value={value.comment} type="hidden" />
         <div className="hello">
           <Controller
             name="comment"

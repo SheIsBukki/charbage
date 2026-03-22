@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import React from "react";
-import SidebarNav from "@/components/editor/SidebarNav";
+// import SidebarNav from "@/components/editor/SidebarNav";
 
 export const metadata: Metadata = {
   title: "Editor Page",
@@ -14,7 +14,7 @@ export default function Layout({
 }>) {
   return (
     <main>
-      <SidebarNav />
+      {/*<SidebarNav />*/}
       {children}
     </main>
   );

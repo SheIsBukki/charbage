@@ -11,7 +11,7 @@ import { copyCurrentUrl, regularDate } from "@/utils/helpers";
 import { DbActionType, ReactionsType } from "@/lib/types";
 import { removeBookmark, removeLike } from "@/db/queries/delete";
 import { addBookmark, addLike } from "@/db/queries/insert";
-import { Bookmark, Like, Comment } from "@/db/schema";
+import { Bookmark, Like } from "@/db/schema";
 
 import { PostType } from "@/components/articles/ArticleCards";
 import ArticleSettings from "@/components/articles/ArticleSettings";
@@ -26,7 +26,6 @@ import { BsFillBookmarkCheckFill, BsHeartFill } from "react-icons/bs";
 
 export default function Article({
   post,
-
   deletePostAction,
   authorisedPostAuthor,
   reactions,
@@ -49,7 +48,6 @@ export default function Article({
 
   useEffect(() => {
     copyCurrentUrl().then((r) => console.log(r));
-    // navigator.clipboard.writeText(window.location.href);
 
     const timeoutId = setTimeout(() => setCopyUrl(false), 2000);
     return () => clearTimeout(timeoutId);
@@ -227,7 +225,7 @@ export default function Article({
 
           <div className="brder-2 mt-8 flex items-center justify-between border-red-500 lg:static lg:flex-col lg:space-x-0 lg:space-y-4">
             {expandMore && authorisedPostAuthor && (
-              <div className="borer-red-500 brder-b-0 bordr-b-0 absolute bottom-[6rem] z-30 block h-[calc(100dvh/2)] w-full items-center space-y-6 border-2 bg-white p-4 md:p-8 lg:static lg:bottom-auto lg:z-auto lg:flex lg:h-auto lg:flex-col lg:border-0 lg:bg-inherit lg:p-0 dark:bg-[#0a0a0a] lg:dark:bg-inherit">
+              <div className="borer-red-500 brder-b-0 absolute bottom-[6rem] z-30 block h-[calc(100dvh/2)] w-full items-center space-y-6 border-2 bg-white p-4 md:p-8 lg:static lg:bottom-auto lg:z-auto lg:flex lg:h-auto lg:flex-col lg:border-0 lg:bg-inherit lg:p-0 dark:bg-[#0a0a0a] lg:dark:bg-inherit">
                 <ArticleSettings
                   postId={post.id}
                   authorId={post.userId}

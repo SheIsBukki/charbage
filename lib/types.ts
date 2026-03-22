@@ -4,7 +4,7 @@
 // };
 
 import { Bookmark, Like, Comment } from "@/db/schema";
-import { PostActionStateType, PostFormValues } from "@/app/write/page";
+import { Dispatch, SetStateAction } from "react";
 
 export type ReactionCountType = {
   comments: number;
@@ -41,6 +41,10 @@ export type ReactionsType = {
 
 export type CommentFormValue = {
   comment: string;
+  commentId?: string;
+  oldComment?: string;
+  userId?: string;
+  postId?: string;
 };
 
 export type CommentActionState = {
@@ -57,7 +61,6 @@ export type CommentFormProps = {
     formData: FormData,
   ) => Promise<CommentActionState>;
   value: CommentFormValue;
-  // userId: string;
-  // postId: string;
-  editorStatus: { updating: boolean; creating: boolean };
+  setOpenSettings?: Dispatch<SetStateAction<boolean>>;
+  setIsEditing?: Dispatch<SetStateAction<boolean>>;
 };
