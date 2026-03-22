@@ -61,5 +61,6 @@ export type CommentFormProps = {
     formData: FormData,
   ) => Promise<CommentActionState>;
   value: CommentFormValue;
+  setOpenSettings?: Dispatch<SetStateAction<boolean>>;
   setIsEditing?: Dispatch<SetStateAction<boolean>>;
 };

@@ -225,7 +225,7 @@ export default function Article({
 
           <div className="brder-2 mt-8 flex items-center justify-between border-red-500 lg:static lg:flex-col lg:space-x-0 lg:space-y-4">
             {expandMore && authorisedPostAuthor && (
-              <div className="borer-red-500 brder-b-0 bordr-b-0 absolute bottom-[6rem] z-30 block h-[calc(100dvh/2)] w-full items-center space-y-6 border-2 bg-white p-4 md:p-8 lg:static lg:bottom-auto lg:z-auto lg:flex lg:h-auto lg:flex-col lg:border-0 lg:bg-inherit lg:p-0 dark:bg-[#0a0a0a] lg:dark:bg-inherit">
+              <div className="borer-red-500 brder-b-0 absolute bottom-[6rem] z-30 block h-[calc(100dvh/2)] w-full items-center space-y-6 border-2 bg-white p-4 md:p-8 lg:static lg:bottom-auto lg:z-auto lg:flex lg:h-auto lg:flex-col lg:border-0 lg:bg-inherit lg:p-0 dark:bg-[#0a0a0a] lg:dark:bg-inherit">
                 <ArticleSettings
                   postId={post.id}
                   authorId={post.userId}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useEffect, useState } from "react";
+import { useActionState, useEffect } from "react";
 import { CommentFormProps } from "@/lib/types";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -12,6 +12,7 @@ import { useRouter } from "next/navigation";
 export default function CommentForm({
   action,
   value,
+  setOpenSettings,
   setIsEditing,
 }: CommentFormProps) {
   const [state, formAction, isPending] = useActionState(action, {
@@ -53,7 +54,8 @@ export default function CommentForm({
 
       reset({ comment: "" });
 
-      if (setIsEditing) {
+      if (setOpenSettings && setIsEditing) {
+        setOpenSettings(false);
         setIsEditing(false);
       }
       router.refresh();
@@ -63,7 +65,13 @@ export default function CommentForm({
   return (
     <div className="pb-4">
       {/*Will place current user's avatar and name*/}
-      <form className="space-y-2" action={formAction}>
+      <form
+        onFocus={() => {
+          if (setOpenSettings) setOpenSettings(false);
+        }}
+        className="space-y-2"
+        action={formAction}
+      >
         <input name="postId" value={value.postId} type="hidden" />
         <input name="userId" value={value.userId} type="hidden" />
         <input name="commentId" value={value.commentId} type="hidden" />

@@ -1,17 +1,17 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { Interweave } from "interweave";
 import { MdOutlineFavoriteBorder } from "react-icons/md";
+import { BsThreeDots } from "react-icons/bs";
 import { BiCommentDetail } from "react-icons/bi";
 import { regularDate } from "@/utils/helpers";
-import { BsThreeDots } from "react-icons/bs";
 import { DbActionType } from "@/lib/types";
-import { useRouter } from "next/navigation";
 import CommentForm from "@/components/comments/CommentForm";
 import { createOrEditCommentAction } from "@/app/actions/createOrEditCommentAction";
 import CommentSettings from "@/components/comments/CommentSettings";
+import md from "@/utils/md";
 
-// THE ACTUAL commentId will be string type, not number
 export default function CommentCard({
   commentId,
   comment,
@@ -46,11 +46,10 @@ export default function CommentCard({
     });
   }, [openNestedReply]);
 
-  const router = useRouter();
-
   return (
-    <div className="w-full space-y-8 rounded-md border-t-2 pb-2 pt-6 text-sm dark:text-gray-300">
-      <div className="flex justify-between">
+    <div className="relativ w-full space-y-8 rounded-md border-t-2 pb-2 pt-6 text-sm dark:text-gray-300">
+      <div className="relative flex justify-between">
+        {/*COMMENT AUTHOR AND COMMENT INFO*/}
         <div className="flex items-center space-x-2">
           <figure className="">
             <div className="h-8 w-8 rounded-full bg-gray-500"></div>
@@ -60,15 +59,21 @@ export default function CommentCard({
             <span className="text-xs">{regularDate(createdAt)}</span>
           </p>
         </div>
-        {/*COMMENT SETTINGS SIMILAR TO ARTICLE SETTINGS WITH TWO FEATURES, EDIT AND DELETE*/}
+        {/*COMMENT SETTINGS BUTTON*/}
         {authorisedCommentAuthor && (
-          <div onClick={() => setOpenSettings(!openSettings)} className="">
+          <button
+            type="button"
+            onClick={() => {
+              setOpenSettings(!openSettings);
+            }}
+            className=""
+          >
             <BsThreeDots />
-          </div>
+          </button>
         )}
         {/*COMMENT SETTINGS*/}
         {openSettings && (
-          <div className="">
+          <div className="boder-red-500 absolute right-0 top-10 z-30 flex flex-col space-y-2 rounded-lg border-2 bg-white py-1 text-base dark:bg-gray-900">
             <CommentSettings
               commentId={commentId}
               deleteCommentAction={deleteCommentAction}
@@ -78,16 +83,20 @@ export default function CommentCard({
           </div>
         )}
       </div>
-      {openSettings && isEditing && (
+      {/*COMMENT FORM OR COMMENT*/}
+      {isEditing ? (
         <CommentForm
           action={createOrEditCommentAction}
           value={{ comment: comment, commentId: commentId }}
+          setOpenSettings={setOpenSettings}
           setIsEditing={setIsEditing}
         />
+      ) : (
+        <Interweave
+          className="leading-relaxed dark:text-gray-400"
+          content={md.render(comment)}
+        />
       )}
-      <p className="text-pretty leading-relaxed dark:text-gray-400">
-        {comment}
-      </p>
 
       {/*REACTIONS TO COMMENTS*/}
       <div className="flex items-center space-x-6">
