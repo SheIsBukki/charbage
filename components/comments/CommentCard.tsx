@@ -27,24 +27,17 @@ export default function CommentCard({
   authorisedCommentAuthor: boolean;
   deleteCommentAction: DbActionType;
 }) {
-  const [openNestedReply, setOpenNestedReply] = useState<
-    { opened: boolean; key: string }[]
-  >([]);
-
-  const [isEditing, setIsEditing] = useState(false);
+  const [isNestedReplyOpen, setIsNestedReplyOpen] = useState(false);
   const [openSettings, setOpenSettings] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
 
   const nestedReplyRef = useRef<HTMLTextAreaElement | null>(null);
 
   useEffect(() => {
-    openNestedReply.map((item) => {
-      if (String(item.key) === nestedReplyRef.current?.id) {
-        nestedReplyRef.current?.focus();
-      }
-
-      return () => nestedReplyRef.current?.blur();
-    });
-  }, [openNestedReply]);
+    if (isNestedReplyOpen && nestedReplyRef.current) {
+      nestedReplyRef.current.focus();
+    }
+  }, [isNestedReplyOpen]);
 
   return (
     <div className="relativ w-full space-y-8 rounded-md border-t-2 pb-2 pt-6 text-sm dark:text-gray-300">
@@ -109,29 +102,14 @@ export default function CommentCard({
         </p>
         <button
           key={commentId}
-          onClick={() => {
-            const isReplyButtonClicked = openNestedReply.findIndex(
-              (item) => item.key === commentId,
-            );
-
-            if (isReplyButtonClicked === -1) {
-              setOpenNestedReply((prev) => [
-                ...prev,
-                { opened: true, key: commentId },
-              ]);
-            } else {
-              setOpenNestedReply(
-                openNestedReply.filter((item) => item.key !== commentId),
-              );
-            }
-          }}
+          onClick={() => setIsNestedReplyOpen(!isNestedReplyOpen)}
           className="rounded-full bg-gray-200 px-4 py-1 dark:bg-gray-700"
         >
           Reply
         </button>
       </div>
 
-      {openNestedReply.some((item) => item.key === commentId) && (
+      {isNestedReplyOpen && (
         <div className="borde-2 border-red-500 py-4">
           {/*Will place current user avatar and name*/}
           <form className="space-y-4" action="">
