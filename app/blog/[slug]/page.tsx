@@ -68,7 +68,7 @@ export default async function BlogPage({
             Responses ({commentCount})
           </p>
 
-          <div className="items-strt borer flex space-x-4 border-red-500 px-6">
+          <div className="items-strt boder flex space-x-2 border-red-500 px-2">
             <figure className="h-8 w-8 rounded-full bg-gray-500">
               <img
                 width={100}
@@ -78,7 +78,7 @@ export default async function BlogPage({
                 className=""
               />
             </figure>
-            <div className="w-full">
+            <div className="mb mb-4 w-full">
               {/*<span className="">{user?.name}</span>*/}
               <CommentForm
                 action={createOrEditCommentAction}
@@ -90,13 +90,14 @@ export default async function BlogPage({
           {/*  COMMENT CARDS */}
           <div className="boder container mx-auto w-full space-y-4 border-red-500 px-8">
             {reactions?.comments.map(
-              ({ id, content, createdAt, author, userId }) => (
+              ({ id, content, createdAt, author, userId, updatedAt }) => (
                 <CommentCard
                   key={id}
                   commentId={id}
                   comment={content}
                   createdAt={createdAt}
                   author={author}
+                  updatedAt={updatedAt}
                   authorisedCommentAuthor={user?.id === userId}
                   deleteCommentAction={deleteComment}
                 />

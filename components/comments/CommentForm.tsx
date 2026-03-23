@@ -32,8 +32,7 @@ export default function CommentForm({
   });
 
   const router = useRouter();
-  // const { hasCommentChanged, serverError, isSubmitSuccessful } = state;
-  const { serverError, isSubmitSuccessful } = state;
+  const { hasCommentChanged, serverError, isSubmitSuccessful } = state;
 
   const editorStatus = {
     updating: value.comment !== "",
@@ -58,9 +57,17 @@ export default function CommentForm({
         setOpenSettings(false);
         setIsEditing(false);
       }
+
       router.refresh();
     }
   }, [isSubmitSuccessful, reset, editorStatus.updating]);
+
+  useEffect(() => {
+    if (hasCommentChanged !== undefined) {
+      if (editorStatus.updating && !hasCommentChanged)
+        toast.error("No changes made to comment");
+    }
+  }, [hasCommentChanged]);
 
   return (
     <div className="pb-4">

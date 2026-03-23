@@ -8,6 +8,20 @@
       "when": 1772142949412,
       "tag": "0000_large_luckman",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1774269502449,
+      "tag": "0001_vengeful_the_order",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1774278998341,
+      "tag": "0002_concerned_sinister_six",
+      "breakpoints": true
     }
   ]
 }

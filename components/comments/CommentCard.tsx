@@ -16,6 +16,7 @@ export default function CommentCard({
   commentId,
   comment,
   createdAt,
+  updatedAt,
   author,
   authorisedCommentAuthor,
   deleteCommentAction,
@@ -23,6 +24,7 @@ export default function CommentCard({
   commentId: string;
   comment: string;
   createdAt: Date;
+  updatedAt: Date | null;
   author: string;
   authorisedCommentAuthor: boolean;
   deleteCommentAction: DbActionType;
@@ -40,7 +42,7 @@ export default function CommentCard({
   }, [isNestedReplyOpen]);
 
   return (
-    <div className="relativ w-full space-y-8 rounded-md border-t-2 pb-2 pt-6 text-sm dark:text-gray-300">
+    <div className="relativ w-full space-y-6 rounded-md border-t-2 pb-2 pt-6 text-sm dark:text-gray-300">
       <div className="relative flex justify-between">
         {/*COMMENT AUTHOR AND COMMENT INFO*/}
         <div className="flex items-center space-x-2">
@@ -49,7 +51,17 @@ export default function CommentCard({
           </figure>
           <p className="flex flex-col space-y-[0.5px]">
             <span className="">{author}</span>
-            <span className="text-xs">{regularDate(createdAt)}</span>
+            <span className="text-xs">
+              {regularDate(createdAt)}{" "}
+              {updatedAt && (
+                <>
+                  &#124; Edited{" "}
+                  <span className="hidden md:inline-block">
+                    on {regularDate(updatedAt)}{" "}
+                  </span>
+                </>
+              )}
+            </span>
           </p>
         </div>
         {/*COMMENT SETTINGS BUTTON*/}
@@ -77,19 +89,21 @@ export default function CommentCard({
         )}
       </div>
       {/*COMMENT FORM OR COMMENT*/}
-      {isEditing ? (
-        <CommentForm
-          action={createOrEditCommentAction}
-          value={{ comment: comment, commentId: commentId }}
-          setOpenSettings={setOpenSettings}
-          setIsEditing={setIsEditing}
-        />
-      ) : (
-        <Interweave
-          className="leading-relaxed dark:text-gray-400"
-          content={md.render(comment)}
-        />
-      )}
+      <div className="boder border-red-500 px-2">
+        {isEditing ? (
+          <CommentForm
+            action={createOrEditCommentAction}
+            value={{ comment: comment, commentId: commentId }}
+            setOpenSettings={setOpenSettings}
+            setIsEditing={setIsEditing}
+          />
+        ) : (
+          <Interweave
+            className="leading-relaxed dark:text-gray-400"
+            content={md.render(comment)}
+          />
+        )}
+      </div>
 
       {/*REACTIONS TO COMMENTS*/}
       <div className="flex items-center space-x-6">
@@ -110,7 +124,7 @@ export default function CommentCard({
       </div>
 
       {isNestedReplyOpen && (
-        <div className="borde-2 border-red-500 py-4">
+        <div className="borde-2 border-red-500 px-6 py-4">
           {/*Will place current user avatar and name*/}
           <form className="space-y-4" action="">
             <textarea
