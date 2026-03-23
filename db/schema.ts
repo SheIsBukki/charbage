@@ -117,13 +117,12 @@ export const commentTable = pgTable("comments", {
   })
     .defaultNow()
     .notNull(),
-  // updatedAt: timestamp("updatedAt", { mode: "date", precision: 3 })
-  //   .$onUpdate(() => new Date())
-  //   .defaultNow(),
+  updatedAt: timestamp("updatedAt", { mode: "date", precision: 3 })
+    .$onUpdate(() => new Date())
+    .defaultNow(),
   postId: uuid("postId")
     .notNull()
     .references(() => postTable.id, { onDelete: "cascade" }),
-
   userId: uuid("userId")
     .notNull()
     .references(() => userTable.id, { onDelete: "cascade" }),
@@ -146,7 +145,6 @@ export const likeTable = pgTable("likes", {
 });
 
 export const bookmarkTable = pgTable("bookmarks", {
-  serialNumber: serial("serialNumber").notNull(),
   id: uuid("id").defaultRandom().primaryKey(),
   userId: uuid("userId")
     .notNull()

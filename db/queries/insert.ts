@@ -192,7 +192,7 @@ export async function createComment(
   return handleDatabaseOperation(async () => {
     const [comment] = await db
       .insert(commentTable)
-      .values({ content, userId, postId }) // TO DO — decide how to collect postId
+      .values({ content, userId, postId, updatedAt: null }) // TO DO — decide how to collect postId
       .returning()
       .execute();
 

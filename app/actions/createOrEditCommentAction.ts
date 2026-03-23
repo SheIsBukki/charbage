@@ -27,7 +27,11 @@ export const createOrEditCommentAction = async (
   }
 
   const hasCommentChanged =
-    !!value.commentId && !value.userId && value.comment !== value.oldComment;
+    value.oldComment === undefined
+      ? undefined
+      : !!value.commentId &&
+        !value.userId &&
+        value.comment !== value.oldComment;
 
   let serverError = false;
   let isSubmitSuccessful;
@@ -65,5 +69,6 @@ export const createOrEditCommentAction = async (
     error: {},
     serverError: serverError,
     isSubmitSuccessful: isSubmitSuccessful,
+    hasCommentChanged: hasCommentChanged,
   };
 };
