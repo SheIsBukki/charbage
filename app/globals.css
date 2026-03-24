@@ -17,11 +17,11 @@ pre.hljs {
 
 /*Rulesets for Markdown Editor*/
 
-body .w-md-editor {
-  height: 100% !important;
+/*body .w-md-editor {*/
+  /*height: 100% !important;*/
   /*min-height: 80vh !important;*/
-  min-height: 12rem !important;
-}
+  /*min-height: 12rem !important;*/
+/*}*/
 
 /*#editorTextArea {*/
 /*  height: 100% !important;*/
