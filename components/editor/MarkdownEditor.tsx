@@ -2,7 +2,7 @@
 
 import { EditorContext } from "@uiw/react-md-editor";
 import dynamic from "next/dynamic";
-import React, { useContext, useEffect, useLayoutEffect } from "react";
+import React, { useContext } from "react";
 import { ControllerRenderProps } from "react-hook-form";
 import rehypeSanitize from "rehype-sanitize";
 import Link from "next/link";
@@ -136,26 +136,10 @@ export default function MarkdownEditor({ ...field }: ControllerRenderProps) {
   const pathname = usePathname();
   const onEditorPage = pathname.startsWith("/write");
 
-  // useEffect(() => {
-  //   if (onEditorPage) {
-  //     const onLoad = () => {
-  //       const editor = document.getElementById("editorTextArea");
-  //       if (editor) {
-  //         editor.classList.add("dynamicEditorHeight");
-  //       }
-  //     };
-  //     if (document.readyState === "complete") {
-  //       onLoad();
-  //     } else {
-  //       window.addEventListener("load", onLoad);
-  //       return () => window.removeEventListener("load", onLoad);
-  //     }
-  //   }
-  // }, []);
-
   return (
     <>
       <MDEditor
+        height={onEditorPage ? 700 : 300}
         id="editorTextArea"
         preview="edit"
         commands={[customHelp, customUpload]}
