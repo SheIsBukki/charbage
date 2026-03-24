@@ -47,7 +47,9 @@ export default function Article({
   const bookmarkCount = reactions?.bookmarks.length;
 
   useEffect(() => {
-    copyCurrentUrl().then((r) => console.log(r));
+    if (copyUrl) {
+      copyCurrentUrl().then((r) => console.log(r));
+    }
 
     const timeoutId = setTimeout(() => setCopyUrl(false), 2000);
     return () => clearTimeout(timeoutId);
