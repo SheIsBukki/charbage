@@ -63,4 +63,5 @@ export type CommentFormProps = {
   value: CommentFormValue;
   setOpenSettings?: Dispatch<SetStateAction<boolean>>;
   setIsEditing?: Dispatch<SetStateAction<boolean>>;
+  currentUser?: string;
 };

@@ -21,6 +21,7 @@ import { MdOutlineAddLink, MdOutlineBookmarkAdd } from "react-icons/md";
 import { BiCommentDetail } from "react-icons/bi";
 import { CiCircleChevDown, CiCircleChevUp, CiSettings } from "react-icons/ci";
 import { BsFillBookmarkCheckFill, BsHeartFill } from "react-icons/bs";
+import AuthenticationDialogue from "@/components/auth/AuthenticationDialogue";
 
 // export const dynamic = "force-dynamic";
 
@@ -41,6 +42,8 @@ export default function Article({
 
   const [copyUrl, setCopyUrl] = useState(false);
   const [expandMore, setExpandMore] = useState(false);
+  const [showAuthenticationDialogue, setShowAuthenticationDialogue] =
+    useState(false);
 
   const likeCount = reactions?.likes.length;
   const commentCount = reactions?.comments.length;
@@ -135,14 +138,20 @@ export default function Article({
         <div className="boder-red-500 fixed bottom-0 z-20 w-full border-t-2 bg-white lg:static lg:bottom-auto lg:z-auto lg:order-1 lg:col-span-1 lg:flex lg:flex-col lg:items-center lg:space-y-4 lg:border-r-2 lg:border-t-0 lg:bg-inherit lg:pt-12 dark:bg-[#0a0a0a] lg:dark:bg-inherit">
           <div className="brder mt-8 flex justify-between border-red-500 px-4 lg:mt-0 lg:block">
             <div className="flex items-center space-x-4 lg:flex-col lg:space-x-0 lg:space-y-4">
-              <ReaderInteraction
-                icon={<BiCommentDetail />}
-                interactionCount={commentCount}
-                title="Comment"
-              />
+              <a href="#responses" className="">
+                <ReaderInteraction
+                  icon={<BiCommentDetail />}
+                  interactionCount={commentCount}
+                  title="Comment"
+                />
+              </a>
               <button
                 name="likeButton"
-                onClick={async () => {
+                onClick={async (event) => {
+                  if (currentUser === undefined) {
+                    setShowAuthenticationDialogue(true);
+                  }
+
                   if (currentUserLiked) {
                     await removeLike(post.id, currentUser || "");
                   } else {
@@ -168,6 +177,10 @@ export default function Article({
               <button
                 name="bookmarkButton"
                 onClick={async () => {
+                  if (currentUser === undefined) {
+                    setShowAuthenticationDialogue(true);
+                  }
+
                   if (currentUserbookmarked) {
                     await removeBookmark(post.id, currentUser || "");
                   } else {
@@ -240,6 +253,10 @@ export default function Article({
           </div>
         </div>
       </div>
+      <AuthenticationDialogue
+        setShowAuthenticationDialogue={setShowAuthenticationDialogue}
+        showDialogue={showAuthenticationDialogue}
+      />
     </>
   );
 }

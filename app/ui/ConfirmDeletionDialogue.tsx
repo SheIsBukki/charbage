@@ -7,7 +7,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 
-export function ConfirmDeletionDialog({
+export function ConfirmDeletionDialogue({
   itemToDelete,
   deleteItemAction,
 }: {

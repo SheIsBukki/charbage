@@ -1,19 +1,21 @@
 "use client";
 
-import { useActionState, useEffect } from "react";
+import { useActionState, useEffect, useState } from "react";
 import { CommentFormProps } from "@/lib/types";
+import { useRouter } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import toast from "react-hot-toast";
 import { CommentFormSchema } from "@/lib/definitions";
 import MarkdownEditor from "@/components/editor/MarkdownEditor";
-import toast from "react-hot-toast";
-import { useRouter } from "next/navigation";
+import AuthenticationDialogue from "@/components/auth/AuthenticationDialogue";
 
 export default function CommentForm({
   action,
   value,
   setOpenSettings,
   setIsEditing,
+  currentUser,
 }: CommentFormProps) {
   const [state, formAction, isPending] = useActionState(action, {
     value,
@@ -31,7 +33,11 @@ export default function CommentForm({
     mode: "onBlur",
   });
 
+  const [showAuthenticationDialogue, setShowAuthenticationDialogue] =
+    useState(false);
+
   const router = useRouter();
+
   const { hasCommentChanged, serverError, isSubmitSuccessful } = state;
 
   const editorStatus = {
@@ -70,44 +76,60 @@ export default function CommentForm({
   }, [hasCommentChanged]);
 
   return (
-    <div className="pb-4">
-      {/*Will place current user's avatar and name*/}
-      <form
-        onFocus={() => {
-          if (setOpenSettings) setOpenSettings(false);
-        }}
-        className="space-y-2"
-        action={formAction}
-      >
-        <input name="postId" value={value.postId} type="hidden" />
-        <input name="userId" value={value.userId} type="hidden" />
-        <input name="commentId" value={value.commentId} type="hidden" />
-        <input name="oldComment" value={value.comment} type="hidden" />
-        <div className="hello">
-          <Controller
-            name="comment"
-            control={control}
-            disabled={isPending}
-            render={({ field }) => (
-              <>
-                <MarkdownEditor {...field} />
-                <input type="hidden" name="comment" value={field.value || ""} />
-              </>
-            )}
-          />
-        </div>
-
-        <p role="alert" className="mt-1 text-xs text-red-500 md:text-base">
-          {errors.comment?.message}
-        </p>
-        <button
-          type="submit"
-          disabled={isPending}
-          className="rounded-full bg-purple-600 px-4 py-2 text-white"
+    <>
+      <div className="pb-4">
+        {/*Will place current user's avatar and name*/}
+        <form
+          onFocus={() => {
+            if (currentUser === undefined) {
+              setShowAuthenticationDialogue(true);
+            }
+            if (setOpenSettings) {
+              setOpenSettings(false);
+            }
+          }}
+          className="space-y-2"
+          action={formAction}
         >
-          Submit
-        </button>
-      </form>
-    </div>
+          <input name="postId" value={value.postId} type="hidden" />
+          <input name="userId" value={value.userId} type="hidden" />
+          <input name="commentId" value={value.commentId} type="hidden" />
+          <input name="oldComment" value={value.comment} type="hidden" />
+          <div className="hello">
+            <Controller
+              name="comment"
+              control={control}
+              disabled={isPending}
+              render={({ field }) => (
+                <>
+                  <MarkdownEditor {...field} />
+                  <input
+                    type="hidden"
+                    name="comment"
+                    value={field.value || ""}
+                  />
+                </>
+              )}
+            />
+          </div>
+          {currentUser !== undefined && (
+            <p role="alert" className="mt-1 text-xs text-red-500 md:text-base">
+              {errors.comment?.message}
+            </p>
+          )}
+          <button
+            type="submit"
+            disabled={isPending}
+            className="rounded-full bg-purple-600 px-4 py-2 text-white"
+          >
+            Submit
+          </button>
+        </form>
+      </div>
+      <AuthenticationDialogue
+        setShowAuthenticationDialogue={setShowAuthenticationDialogue}
+        showDialogue={showAuthenticationDialogue}
+      />
+    </>
   );
 }
