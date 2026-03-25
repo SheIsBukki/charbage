@@ -1,6 +1,6 @@
 import toast from "react-hot-toast";
 
-export const destroyImage = async (imagePublicId: string) => {
+export const destroyImage = async (imagePublicId: string, path: string) => {
   return new Promise(async (resolve, reject) => {
     try {
       const response = await fetch("/api/cloudinary/destroy", {
@@ -16,7 +16,9 @@ export const destroyImage = async (imagePublicId: string) => {
         const data = await response.json();
 
         resolve(data.url);
-        toast.success("Image deleted successfully");
+        if (path === "/write") {
+          toast.success("Image deleted successfully");
+        }
       }
     } catch (error) {
       reject(error);

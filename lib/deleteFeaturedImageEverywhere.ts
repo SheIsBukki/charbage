@@ -13,7 +13,7 @@ export async function deleteFeaturedImageEverywhere(
 
   try {
     if (imagePublicId) {
-      await destroyImage(imagePublicId[0]);
+      await destroyImage(imagePublicId[0], path);
     }
 
     await deleteFeaturedImage(imageUrl, userId);
