@@ -5,6 +5,8 @@ import { deleteFeaturedImageEverywhere } from "@/lib/deleteFeaturedImageEverywhe
 import { DbActionType } from "@/lib/types";
 import { FiEdit } from "react-icons/fi";
 import { RiDeleteBinLine } from "react-icons/ri";
+import { ConfirmDeletionDialog } from "@/app/ui/ConfirmDeletionDialog";
+import { AlertDialog, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 
 export default function ArticleSettings({
   postId,
@@ -21,6 +23,12 @@ export default function ArticleSettings({
 }) {
   const router = useRouter();
 
+  const handleDeletePost = async () => {
+    await deleteFeaturedImageEverywhere(featuredImage || "", authorId);
+    await deletePostAction(postId);
+    redirect("/");
+  };
+
   return (
     <>
       <button
@@ -32,17 +40,18 @@ export default function ArticleSettings({
         <FiEdit />
         <span className="">Edit</span>
       </button>
-      <button
-        className="flex items-center space-x-1 rounded-full bg-red-500 px-4 py-1 text-white"
-        onClick={async () => {
-          await deleteFeaturedImageEverywhere(featuredImage || "", authorId);
-          await deletePostAction(postId);
-          redirect("/");
-        }}
-      >
-        <RiDeleteBinLine className="" />
-        <span className="">Delete</span>
-      </button>
+      <AlertDialog>
+        <AlertDialogTrigger asChild>
+          <button className="flex items-center space-x-1 rounded-full bg-red-500 px-4 py-1 text-white">
+            <RiDeleteBinLine className="" />
+            <span className="">Delete</span>
+          </button>
+        </AlertDialogTrigger>
+        <ConfirmDeletionDialog
+          itemToDelete={"post"}
+          deleteItemAction={handleDeletePost}
+        />
+      </AlertDialog>
     </>
   );
 }

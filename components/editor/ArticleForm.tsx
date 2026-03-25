@@ -61,8 +61,9 @@ export default function ArticleForm({
   const { hasPostChanged } = state;
 
   useEffect(() => {
-    if (hasPostChanged === false) {
-      toast.error("No changes have been made to post");
+    if (hasPostChanged !== undefined) {
+      if (editorStatus.updating && !hasPostChanged)
+        toast.error("No changes have been made to post");
     }
   }, [hasPostChanged]);
 
