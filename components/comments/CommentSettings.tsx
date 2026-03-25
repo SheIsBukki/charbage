@@ -3,7 +3,7 @@ import { FiEdit } from "react-icons/fi";
 import { DbActionType } from "@/lib/types";
 import { useRouter } from "next/navigation";
 import { Dispatch, SetStateAction } from "react";
-import { ConfirmDeletionDialog } from "@/app/ui/ConfirmDeletionDialog";
+import { ConfirmDeletionDialogue } from "@/app/ui/ConfirmDeletionDialogue";
 import { AlertDialog, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 
 export default function CommentSettings({
@@ -40,7 +40,7 @@ export default function CommentSettings({
             <span className="">Delete</span>
           </button>
         </AlertDialogTrigger>
-        <ConfirmDeletionDialog
+        <ConfirmDeletionDialogue
           deleteItemAction={handleDeleteComment}
           itemToDelete={"comment"}
         />

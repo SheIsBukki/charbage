@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { GiCabbage } from "react-icons/gi";
 import { CiEdit } from "react-icons/ci";
 import { FcMenu } from "react-icons/fc";
@@ -11,7 +11,6 @@ import ThemeSwitcher from "@/app/ui/ThemeSwitcher";
 import { usePathname, useRouter } from "next/navigation";
 import { User } from "@/db/schema";
 import { logoutUser } from "@/app/actions/auth";
-// import { usePreviousPath } from "@/components/auth/usePreviousPath";
 import { getPreviousPath } from "@/utils/helpers";
 
 type MainNavProps = { user: Omit<User, "password"> | null };
@@ -22,15 +21,8 @@ export default function MainNav({ user }: MainNavProps) {
   const pathname = usePathname();
 
   useEffect(() => {
-    // const { current, previous } = getPreviousPath(pathname);
     getPreviousPath(pathname);
-
-    // console.log(current);
-    // console.log(previous);
   }, [pathname]);
-
-  // usePreviousPath();
-  // console.log(usePreviousPath());
 
   return (
     <nav className="flex items-center justify-between px-4 py-4 shadow md:px-8">

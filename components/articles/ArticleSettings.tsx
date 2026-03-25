@@ -5,7 +5,7 @@ import { deleteFeaturedImageEverywhere } from "@/lib/deleteFeaturedImageEverywhe
 import { DbActionType } from "@/lib/types";
 import { FiEdit } from "react-icons/fi";
 import { RiDeleteBinLine } from "react-icons/ri";
-import { ConfirmDeletionDialog } from "@/app/ui/ConfirmDeletionDialog";
+import { ConfirmDeletionDialogue } from "@/app/ui/ConfirmDeletionDialogue";
 import { AlertDialog, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 
 export default function ArticleSettings({
@@ -47,7 +47,7 @@ export default function ArticleSettings({
             <span className="">Delete</span>
           </button>
         </AlertDialogTrigger>
-        <ConfirmDeletionDialog
+        <ConfirmDeletionDialogue
           itemToDelete={"post"}
           deleteItemAction={handleDeletePost}
         />

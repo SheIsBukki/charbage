@@ -64,7 +64,10 @@ export default async function BlogPage({
         {/*STATIC INTERACTIONS UI UNTIL DYNAMIC COMMENTS*/}
         <hr className="border-1 my-12" />
         <div className="brder-2 container mx-auto mt-12 space-y-[0.05rem] border-red-500 lg:mx-auto lg:w-3/5">
-          <p className="boder-t-2 mb-12 px-6 text-2xl font-semibold">
+          <p
+            id="responses"
+            className="boder-t-2 mb-12 px-6 text-2xl font-semibold"
+          >
             Responses ({commentCount})
           </p>
 
@@ -81,6 +84,7 @@ export default async function BlogPage({
             <div className="mb mb-4 w-full">
               {/*<span className="">{user?.name}</span>*/}
               <CommentForm
+                currentUser={user?.id}
                 action={createOrEditCommentAction}
                 value={{ comment: "", postId: post.id, userId: user?.id || "" }}
               />
