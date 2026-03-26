@@ -6,17 +6,14 @@ import "highlight.js/styles/shades-of-purple.css";
 import { BsBookmark } from "react-icons/bs";
 import { BiLike } from "react-icons/bi";
 import { TfiCommentAlt } from "react-icons/tfi";
-
-import md from "@/utils/md";
-import { regularDate } from "@/utils/helpers";
+import { createExcerpt, regularDate } from "@/utils/helpers";
 import Link from "next/link";
-// import { Post } from "@/db/schema";
 
-// export type ArticlesType = { author: string } & Post;
 export type PostType = {
   author: string;
   id: string;
   title: string;
+  description: string | null;
   content: string;
   featuredImage: string | null;
   slug: string;
@@ -43,6 +40,7 @@ export default function ArticleCards({
     return;
   }
   const latestArticles: PostType[] = posts;
+
   return (
     <div className="">
       {latestArticles &&
@@ -88,13 +86,18 @@ export default function ArticleCards({
                   <Link href={`/blog/${article.slug}`}>{article.title}</Link>
                 </p>
 
-                <Interweave
-                  className="line-clamp-3 dark:text-gray-400"
-                  // content={createExcerpt(post.content)}
-                  content={md.render(article.content)}
-                />
+                {/*EXCERPT*/}
+                {article.description ? (
+                  <p className="dark:text-gray-400">{article.description}</p>
+                ) : (
+                  <Interweave
+                    className="dark:text-gray-400"
+                    content={createExcerpt(article.content)}
+                  />
+                )}
               </div>
 
+              {/*FEATURED IMAGE*/}
               {article.featuredImage && (
                 <div className="col-span-2 size-full rounded-lg">
                   <figure className="relative h-[150px] w-full">

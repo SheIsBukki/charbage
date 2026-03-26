@@ -11,7 +11,6 @@ import { PostActionStateType, PostFormValues } from "@/app/write/page";
 import FeaturedImage from "@/components/editor/FeaturedImage";
 import TagFormModal from "@/components/tag/TagFormModal";
 import toast from "react-hot-toast";
-// import { Button } from "@/components/ui/button";
 // import TagSelectionModal from "@/components/tag/TagSelectionModal";
 
 type ArticleFormProps = {
@@ -107,6 +106,23 @@ export default function ArticleForm({
             />
 
             {errors.title && <ErrorMessage message={errors.title.message} />}
+          </div>
+
+          {/*Description*/}
+          <div className="my-2 w-full px-2">
+            <textarea
+              id="description"
+              aria-describedby="description-error"
+              className="h-full w-full px-1 py-2 text-lg outline-0 focus:outline-0 md:text-3xl"
+              placeholder="Optional meta description..."
+              {...register("description")}
+              rows={3}
+              disabled={isPending}
+            />
+
+            {errors.description && (
+              <ErrorMessage message={errors.description.message} />
+            )}
           </div>
 
           {/*TAG CREATE FORM MODAL AND TAG SEARCH MODAL*/}

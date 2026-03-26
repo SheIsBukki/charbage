@@ -36,6 +36,7 @@ export default async function EditPage({
 
     const values: updatedPostType = {
       title: String(formData.get("title") || ""),
+      description: String(formData.get("description") || ""),
       content: String(formData.get("content") || ""),
       featuredImage: String(formData.get("featuredImage") || ""),
     };
@@ -57,6 +58,7 @@ export default async function EditPage({
     let hasPostChanged;
     if (
       values.title === post.title &&
+      values.description === post.description &&
       values.content === post.content &&
       values.featuredImage === post.featuredImage
     ) {
@@ -81,6 +83,7 @@ export default async function EditPage({
         action={submitForm}
         values={{
           title: post.title,
+          description: post.description || "",
           content: post.content,
           featuredImage: post.featuredImage || "",
         }}

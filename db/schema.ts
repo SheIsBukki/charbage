@@ -41,6 +41,7 @@ export const postTable = pgTable("posts", {
   serialNumber: serial("serialNumber").notNull(),
   id: uuid("id").defaultRandom().primaryKey(),
   title: text("title").notNull(),
+  description: text("description"),
   content: text("content").notNull(),
   featuredImage: text("featuredImage"),
   slug: text("slug").notNull(),

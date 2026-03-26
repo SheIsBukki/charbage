@@ -124,7 +124,7 @@ export default function FeaturedImage({
                   </p>
                 </div>
               ) : (
-                <span>Add Cover</span>
+                <button className="p-2 ring-2">Add Cover</button>
               )}
             </div>
           )}

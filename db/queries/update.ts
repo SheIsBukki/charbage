@@ -10,6 +10,7 @@ export async function updatePost(
   id: Post["id"],
   data: {
     title: string;
+    description: string;
     content: string;
     featuredImage?: string;
     slug?: string;
@@ -20,6 +21,7 @@ export async function updatePost(
       .update(postTable)
       .set({
         title: data.title,
+        description: data.description,
         content: data.content,
         featuredImage: data.featuredImage,
         slug: data.slug,

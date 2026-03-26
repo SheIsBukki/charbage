@@ -225,7 +225,7 @@ export default function Article({
                 onClick={() => setExpandMore(!expandMore)}
                 className="bordr-2 border-red-500 lg:mt-12"
               >
-                {window.outerWidth >= 1024 ? (
+                {window !== undefined && window.outerWidth >= 1024 ? (
                   expandMore ? (
                     <CiCircleChevUp className="hidden text-3xl lg:block" />
                   ) : (
