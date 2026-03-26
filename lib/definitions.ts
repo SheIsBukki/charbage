@@ -4,6 +4,11 @@ export const ArticleFormSchema = z.object({
   title: z
     .string()
     .min(20, { message: "Title must be at least 20 characters" }),
+  description: z
+    .string()
+    .min(120, { message: "Description must be at least 120 characters" })
+    .max(300, { message: "Description must not exceed 300 characters" })
+    .optional(),
   content: z
     .string()
     .min(100, { message: "Content must be at least 100 characters" }),

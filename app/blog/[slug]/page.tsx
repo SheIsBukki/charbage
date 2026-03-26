@@ -16,8 +16,7 @@ export async function generateMetadata({
 
   return {
     title: post?.title || "Blog post",
-    description:
-      post?.content.substring(0, 100) || `Written by ${post?.author}`,
+    description: post?.description || post?.content.substring(0, 160),
   };
 }
 

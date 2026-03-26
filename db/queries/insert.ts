@@ -29,6 +29,7 @@ for (let i = 0; i < byte.length; i++) {
 
 export async function createPost(data: {
   title: string;
+  description: string;
   content: string;
   featuredImage?: string | undefined;
 }): Promise<{ data: Post | null; error: string | null }> {
@@ -47,6 +48,7 @@ export async function createPost(data: {
       .values({
         userId: user.id,
         title: data.title,
+        description: data.description,
         content: data.content,
         slug: encodeURIComponent(
           `${slugify(data.title.toLowerCase())}-${randomString}`,

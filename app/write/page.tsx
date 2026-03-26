@@ -9,6 +9,7 @@ import { addTag, createPost } from "@/db/queries/insert";
 
 export type PostFormValues = {
   title: string;
+  description: string;
   content: string;
   featuredImage: string;
 };
@@ -27,6 +28,7 @@ const submitForm = async (
 
   const values: PostFormValues = {
     title: String(formData.get("title") || ""),
+    description: String(formData.get("description") || ""),
     content: String(formData.get("content") || ""),
     featuredImage: String(formData.get("featuredImage") || ""),
   };
@@ -71,7 +73,12 @@ export default async function WritePage() {
         <ArticleForm
           userId={user.id}
           action={submitForm}
-          values={{ title: "", content: "", featuredImage: "" }}
+          values={{
+            title: "",
+            description: "",
+            content: "",
+            featuredImage: "",
+          }}
           editorStatus={{
             updating: false,
             creating: true,
