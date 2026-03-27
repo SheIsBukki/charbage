@@ -59,7 +59,7 @@ export async function createPost(data: {
       .returning()
       .execute();
 
-    revalidatePath("/write");
+    // revalidatePath("/write");
 
     return post;
   }, "Failed to create post");

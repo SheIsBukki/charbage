@@ -4,14 +4,14 @@ import React, { useActionState, useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import Form from "next/form";
+import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 import { ArticleFormSchema } from "@/lib/definitions";
+import { PostActionStateType, PostFormValues } from "@/lib/types";
 import MarkdownEditor from "@/components/editor/MarkdownEditor";
-import { PostActionStateType, PostFormValues } from "@/app/write/page";
 import FeaturedImage from "@/components/editor/FeaturedImage";
 import TagFormModal from "@/components/tag/TagFormModal";
-import toast from "react-hot-toast";
-import { useRouter } from "next/navigation";
 // import TagSelectionModal from "@/components/tag/TagSelectionModal";
 
 type ArticleFormProps = {
@@ -74,7 +74,7 @@ export default function ArticleForm({
     if (isSubmitSuccessful === true) {
       localStorage.removeItem("imagePreview");
       localStorage.removeItem("featuredImage");
-      console.log(isSubmitSuccessful);
+      // console.log(isSubmitSuccessful);
       router.push(`/blog/${state.values.slug}`);
     }
   }, [isSubmitSuccessful]);

@@ -65,3 +65,29 @@ export type CommentFormProps = {
   setIsEditing?: Dispatch<SetStateAction<boolean>>;
   currentUser?: string;
 };
+
+export type OldValues = {
+  postId: string;
+  featuredImage?: string;
+  description?: string;
+  slug: string;
+  title: string;
+  content: string;
+};
+
+export type PostFormValues = {
+  title: string;
+  description: string;
+  content: string;
+  featuredImage: string;
+  slug?: string;
+  postId?: string;
+};
+
+export type PostActionStateType = {
+  errors: Record<string, { message: string }>;
+  values: PostFormValues;
+  serverError?: boolean;
+  hasPostChanged?: boolean;
+  isSubmitSuccessful?: boolean;
+};
