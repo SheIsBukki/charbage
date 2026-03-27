@@ -1,69 +1,11 @@
 import { redirect } from "next/navigation";
 import { getCurrentSession } from "@/lib/session";
 import ArticleForm from "@/components/editor/ArticleForm";
-import { ArticleFormSchema } from "@/lib/definitions";
-import { addTag, createPost } from "@/db/queries/insert";
+// import { addTag } from "@/db/queries/insert";
+import { createOrEditPostAction } from "@/app/actions/createOrEditPostAction";
 // import TagFormModal from "@/components/tag/TagFormModal";
 // import PostForm from "@/components/editor/PostForm";
 // import toast from "react-hot-toast";
-
-export type PostFormValues = {
-  title: string;
-  description: string;
-  content: string;
-  featuredImage: string;
-  slug?: string;
-  postId?: string;
-};
-
-export type PostActionStateType = {
-  errors: Record<string, { message: string }>;
-  values: PostFormValues;
-  hasPostChanged?: boolean;
-  isSubmitSuccessful?: boolean;
-};
-
-const submitForm = async (
-  initialState: PostActionStateType,
-  formData: FormData,
-) => {
-  "use server";
-
-  const values: PostFormValues = {
-    title: String(formData.get("title")),
-    description: String(formData.get("description") || ""),
-    content: String(formData.get("content")),
-    featuredImage: String(formData.get("featuredImage") || ""),
-  };
-
-  const { error: parseError } = ArticleFormSchema.safeParse(values);
-  const errors: PostActionStateType["errors"] = {};
-
-  for (const { path, message } of parseError?.issues || []) {
-    errors[path.join(".")] = { message };
-  }
-
-  // await createPost(values);
-  // Uncomment this and use when the TagSelection component is functional — I also need to console log the data to see what it returns
-  const post = await createPost(values);
-  const publishedArticle = post.data;
-  let isSubmitSuccessful;
-  // I need to retrieve tagId from localStorage
-  if (publishedArticle) {
-    isSubmitSuccessful = true;
-
-    // await addTag(publishedArticle.id, tagId);
-    // revalidatePath("/write");
-  }
-
-  values.slug = publishedArticle?.slug;
-
-  return {
-    values,
-    errors: {},
-    isSubmitSuccessful: isSubmitSuccessful,
-  };
-};
 
 export default async function WritePage() {
   const { user } = await getCurrentSession();
@@ -81,7 +23,7 @@ export default async function WritePage() {
         {/*<PostForm />*/}
         <ArticleForm
           userId={user.id}
-          action={submitForm}
+          action={createOrEditPostAction}
           values={{
             title: "",
             description: "",
