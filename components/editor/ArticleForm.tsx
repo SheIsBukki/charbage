@@ -94,7 +94,7 @@ export default function ArticleForm({
           <input name="oldValues" value={oldValues} type="hidden" />
 
           {/*Featured Image*/}
-          <div className="">
+          <div className="my-6 w-fit px-3">
             <Controller
               name="featuredImage"
               control={control}
