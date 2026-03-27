@@ -6,6 +6,8 @@ import { BiLoaderAlt } from "react-icons/bi";
 import { FaImage } from "react-icons/fa";
 import { uploadImage } from "@/utils/uploadImage";
 import { deleteFeaturedImageEverywhere } from "@/lib/deleteFeaturedImageEverywhere";
+import { FcRemoveImage } from "react-icons/fc";
+import toast from "react-hot-toast";
 
 export default function FeaturedImage({
   userId,
@@ -92,53 +94,44 @@ export default function FeaturedImage({
         </figure>
       )}
 
-      <div className="mt-4 w-full">
-        <label
-          htmlFor="featuredImage"
-          className={`${uploadingImage && "disabled"}`}
-        >
-          {uploadingImage ? (
-            <p className="flex w-fit items-center space-x-2 p-2">
-              <BiLoaderAlt className="size-5 animate-spin" />
-              <span>Uploading...</span>
-            </p>
-          ) : (
-            <div className="flex items-center space-x-2 px-4 py-2">
-              {imagePreview ? (
-                <div className="flex w-full items-center justify-between">
-                  <p className="flex items-center space-x-2 rounded-lg bg-gray-100 px-2 py-2 text-sm hover:bg-gray-200 md:px-4 dark:bg-gray-800 dark:hover:bg-gray-600">
-                    <FaImage className="size-5" />
-                    <span
-                      onClick={() => handleRemoveImage(featuredImage, userId)}
-                    >
-                      Change Cover
-                    </span>
-                  </p>
-                  <p className="flex items-center space-x-2 rounded-lg bg-gray-100 px-4 py-2 text-sm hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-600">
-                    <FaImage className="size-5" />
-                    <span
-                      onClick={() => handleRemoveImage(featuredImage, userId)}
-                    >
-                      Remove Cover
-                    </span>
-                  </p>
-                </div>
-              ) : (
-                <span className="p-2 ring-2">Add Cover</span>
-              )}
-            </div>
-          )}
+      <div className="mt-4">
+        {!featuredImage ? (
+          <label
+            htmlFor="featuredImage"
+            className={`${uploadingImage && "disabled"}`}
+          >
+            {uploadingImage ? (
+              <p className="flex w-fit items-center space-x-2 p-2">
+                <BiLoaderAlt className="size-5 animate-spin" />
+                <span>Uploading...</span>
+              </p>
+            ) : (
+              <p className="rig-2 flex w-fit items-center space-x-2 rounded-lg bg-gray-100 p-2 text-sm hover:bg-gray-200 md:px-4 dark:bg-gray-800 dark:hover:bg-gray-600">
+                <FaImage className="size-5" />
+                <span className="">Add Cover</span>
+              </p>
+            )}
 
-          <input
-            id="featuredImage"
-            onChange={(e) => handleImageUpload(e)}
-            type="file"
-            accept="image/*"
-            hidden
-          />
-          <input value={featuredImage} type="hidden" name="featuredImage" />
-        </label>
+            <input
+              id="featuredImage"
+              onChange={(e) => handleImageUpload(e)}
+              type="file"
+              accept="image/*"
+              hidden
+            />
+          </label>
+        ) : (
+          <button
+            type="button"
+            onClick={() => handleRemoveImage(featuredImage, userId)}
+            className="rng-2 flex w-fit items-center space-x-2 rounded-lg bg-gray-100 p-2 text-sm hover:bg-gray-200 md:px-4 dark:bg-gray-800 dark:hover:bg-gray-600"
+          >
+            <FcRemoveImage className="size-5" />
+            <span className="">Remove cover</span>
+          </button>
+        )}
       </div>
+      <input value={featuredImage} type="hidden" name="featuredImage" />
     </div>
   );
 }
