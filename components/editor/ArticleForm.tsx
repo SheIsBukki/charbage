@@ -11,6 +11,7 @@ import { PostActionStateType, PostFormValues } from "@/app/write/page";
 import FeaturedImage from "@/components/editor/FeaturedImage";
 import TagFormModal from "@/components/tag/TagFormModal";
 import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
 // import TagSelectionModal from "@/components/tag/TagSelectionModal";
 
 type ArticleFormProps = {
@@ -20,6 +21,7 @@ type ArticleFormProps = {
   ) => Promise<PostActionStateType>;
   values: PostFormValues;
   userId: string;
+  postId?: string;
   editorStatus: { updating: boolean; creating: boolean };
 };
 
@@ -57,7 +59,9 @@ export default function ArticleForm({
 
   // console.log(values.featuredImage);
 
-  const { hasPostChanged } = state;
+  const { hasPostChanged, isSubmitSuccessful } = state;
+
+  const router = useRouter();
 
   useEffect(() => {
     if (hasPostChanged !== undefined) {
@@ -66,11 +70,29 @@ export default function ArticleForm({
     }
   }, [hasPostChanged]);
 
+  useEffect(() => {
+    if (isSubmitSuccessful === true) {
+      localStorage.removeItem("imagePreview");
+      localStorage.removeItem("featuredImage");
+      console.log(isSubmitSuccessful);
+      router.push(`/blog/${state.values.slug}`);
+    }
+  }, [isSubmitSuccessful]);
+
+  const oldValues = JSON.stringify(values);
+  // console.log(typeof values);
+  // console.log("old values:", oldValues);
+  // console.log(typeof oldValues);
+  // console.log(JSON.parse(JSON.stringify(oldValues)));
+  // console.log(typeof JSON.parse(JSON.stringify(oldValues)));
+
   return (
     <div className="mx-auto w-full">
       {/*ARTICLE*/}
       <div className="h-[50%]">
         <Form action={formAction}>
+          <input name="oldValues" value={oldValues} type="hidden" />
+
           {/*Featured Image*/}
           <div className="">
             <Controller
@@ -100,7 +122,7 @@ export default function ArticleForm({
               className="h-full w-full px-1 py-2 text-lg outline-0 focus:outline-0 md:text-3xl"
               placeholder="Your blog title..."
               {...register("title")}
-              rows={2}
+              rows={3}
               required
               disabled={isPending}
             />
@@ -116,7 +138,7 @@ export default function ArticleForm({
               className="h-full w-full px-1 py-2 text-lg outline-0 focus:outline-0 md:text-3xl"
               placeholder="Optional meta description..."
               {...register("description")}
-              rows={3}
+              rows={5}
               disabled={isPending}
             />
 

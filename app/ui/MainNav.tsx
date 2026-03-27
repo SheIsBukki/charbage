@@ -106,7 +106,7 @@ export default function MainNav({ user }: MainNavProps) {
               </li>
             )}
             <li onClick={() => setOpen(false)} className="">
-              Menu Item 2
+              <Link href="/write">Write</Link>
             </li>
             <li onClick={() => setOpen(false)} className="">
               Menu Item 3

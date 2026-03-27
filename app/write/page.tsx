@@ -12,12 +12,15 @@ export type PostFormValues = {
   description: string;
   content: string;
   featuredImage: string;
+  slug?: string;
+  postId?: string;
 };
 
 export type PostActionStateType = {
   errors: Record<string, { message: string }>;
   values: PostFormValues;
   hasPostChanged?: boolean;
+  isSubmitSuccessful?: boolean;
 };
 
 const submitForm = async (
@@ -27,9 +30,9 @@ const submitForm = async (
   "use server";
 
   const values: PostFormValues = {
-    title: String(formData.get("title") || ""),
+    title: String(formData.get("title")),
     description: String(formData.get("description") || ""),
-    content: String(formData.get("content") || ""),
+    content: String(formData.get("content")),
     featuredImage: String(formData.get("featuredImage") || ""),
   };
 
@@ -44,16 +47,22 @@ const submitForm = async (
   // Uncomment this and use when the TagSelection component is functional — I also need to console log the data to see what it returns
   const post = await createPost(values);
   const publishedArticle = post.data;
-
+  let isSubmitSuccessful;
   // I need to retrieve tagId from localStorage
   if (publishedArticle) {
-    redirect(`/blog/${publishedArticle.slug}`);
-    // console.log(publishedArticle);
+    isSubmitSuccessful = true;
 
     // await addTag(publishedArticle.id, tagId);
+    // revalidatePath("/write");
   }
 
-  return { values, errors: {} };
+  values.slug = publishedArticle?.slug;
+
+  return {
+    values,
+    errors: {},
+    isSubmitSuccessful: isSubmitSuccessful,
+  };
 };
 
 export default async function WritePage() {
