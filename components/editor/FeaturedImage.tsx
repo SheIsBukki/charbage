@@ -116,15 +116,15 @@ export default function FeaturedImage({
                   </p>
                   <p className="flex items-center space-x-2 rounded-lg bg-gray-100 px-4 py-2 text-sm hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-600">
                     <FaImage className="size-5" />
-                    <button
+                    <span
                       onClick={() => handleRemoveImage(featuredImage, userId)}
                     >
                       Remove Cover
-                    </button>
+                    </span>
                   </p>
                 </div>
               ) : (
-                <button className="p-2 ring-2">Add Cover</button>
+                <span className="p-2 ring-2">Add Cover</span>
               )}
             </div>
           )}

@@ -29,8 +29,6 @@ export async function updatePost(
       .where(eq(postTable.id, id))
       .returning();
 
-    revalidatePath("/write");
-
     return post;
   } catch (err) {
     console.error(err);
