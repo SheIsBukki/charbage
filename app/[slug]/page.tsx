@@ -21,7 +21,7 @@ export async function generateMetadata({
 export default async function ProfilePage({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }) {
   const { user: currentUser } = await getCurrentSession();
 
