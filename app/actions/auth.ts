@@ -25,7 +25,7 @@ export const verifyPassword = async (password: string, hash: string) => {
 };
 
 export const registerUser = async (
-  name: string,
+  username: string,
   email: string,
   password?: string,
   // githubUserId?: number,
@@ -40,7 +40,7 @@ export const registerUser = async (
     const [user] = await db
       .insert(userTable)
       .values({
-        name,
+        username,
         email,
         password: hashedPassword,
         // githubUserId: githubUserId,
@@ -111,8 +111,8 @@ export const logoutUser = async () => {
 };
 
 /**
- *  query to see if a user signed up through github or google oauth
- * It's possible that both OAuth code blocks below are problematic because of this addiong —> : Promise<User | null>
+ *  query to see if a user signed up through gitHub or google oauth
+ * It's possible that both OAuth code blocks below are problematic because of this addition —> : Promise<User | null>
  * */
 export const getUserWithGithubData = async (
   // githubUserId: number,
@@ -132,7 +132,9 @@ export const getUserWithGithubData = async (
     serialNumber: user.serialNumber,
     id: user.id,
     email: user.email,
-    name: user.name,
+    username: user.username,
+    firstName: user.firstName,
+    lastName: user.lastName,
     githubUserId: user.githubUserId,
     googleUserId: user.googleUserId,
     password: user.password,
@@ -158,7 +160,9 @@ export const getUserWithGoogleData = async (
     serialNumber: user.serialNumber,
     id: user.id,
     email: user.email,
-    name: user.name,
+    username: user.username,
+    firstName: user.firstName,
+    lastName: user.lastName,
     githubUserId: user.githubUserId,
     googleUserId: user.googleUserId,
     password: user.password,

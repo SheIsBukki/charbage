@@ -47,6 +47,21 @@ export async function getUserWithId(id: User["id"]) {
   }
 }
 
+export async function getUserWithUsername(username: string) {
+  try {
+    const [user] = await db
+      .select()
+      .from(userTable)
+      .where(eq(userTable.username, username))
+      .execute();
+
+    return { user, error: null };
+  } catch (error) {
+    console.error("User could not be found", error);
+    return { user: null, error: "Failed to find user" };
+  }
+}
+
 // I might have to use the getPostsByUser instead to know the postCount of a user
 
 export async function getPostsByUser(
@@ -70,7 +85,7 @@ export async function getLatestPosts(page = 1, pageSize = 5) {
       .select({
         // postId: postTable.id,
         ...getTableColumns(postTable),
-        author: userTable.name,
+        author: userTable.username,
         // comments: count(commentTable.id),
         // likes: count(likeTable.id),
         // bookmarks: count(bookmarkTable.id),
@@ -111,7 +126,7 @@ export async function getPostWithSlug(slug: Post["slug"]) {
     const [post] = await db
       .select({
         ...getTableColumns(postTable),
-        author: userTable.name,
+        author: userTable.username,
       })
       .from(postTable)
       .innerJoin(userTable, eq(postTable.userId, userTable.id))
@@ -135,7 +150,7 @@ export async function getPostReactionsWithId(postId: Post["id"]) {
       .execute();
 
     const comments = await db
-      .select({ ...getTableColumns(commentTable), author: userTable.name })
+      .select({ ...getTableColumns(commentTable), author: userTable.username })
       .from(commentTable)
       .innerJoin(userTable, eq(commentTable.userId, userTable.id))
       .where(eq(commentTable.postId, postId))

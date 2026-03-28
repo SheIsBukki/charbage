@@ -29,6 +29,20 @@
       "when": 1774529634300,
       "tag": "0003_unique_pete_wisdom",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1774710660883,
+      "tag": "0004_simple_hercules",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1774710949413,
+      "tag": "0005_faithful_maximus",
+      "breakpoints": true
     }
   ]
 }

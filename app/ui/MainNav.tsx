@@ -70,7 +70,7 @@ export default function MainNav({ user }: MainNavProps) {
             open ? "translate-x-0" : "translate-x-[100%]",
           )}
         >
-          {/*I probably don't need this button defined explictly here afterall*/}
+          {/*I probably don't need this button defined explicitly here after all*/}
           {/*<button
             aria-expanded={open}
             onClick={() => setOpen(false)}
@@ -118,7 +118,7 @@ export default function MainNav({ user }: MainNavProps) {
         <div className="hidden md:block">
           {user ? (
             <div className="flex items-center space-x-2">
-              <span className="">Hi, {user.name}</span>
+              <span className="">Hi, {user.username}</span>
               <button
                 type="button"
                 onClick={async (event) => {

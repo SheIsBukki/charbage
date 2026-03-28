@@ -76,7 +76,7 @@ export default async function BlogPage({
                 width={100}
                 height={100}
                 src="#"
-                alt={user?.name}
+                alt={user?.username}
                 className=""
               />
             </figure>

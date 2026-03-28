@@ -11,6 +11,7 @@ import CommentForm from "@/components/comments/CommentForm";
 import { createOrEditCommentAction } from "@/app/actions/createOrEditCommentAction";
 import CommentSettings from "@/components/comments/CommentSettings";
 import md from "@/utils/md";
+import Link from "next/link";
 
 export default function CommentCard({
   commentId,
@@ -46,11 +47,15 @@ export default function CommentCard({
       <div className="relative flex justify-between">
         {/*COMMENT AUTHOR AND COMMENT INFO*/}
         <div className="flex items-center space-x-2">
-          <figure className="">
-            <div className="h-8 w-8 rounded-full bg-gray-500"></div>
-          </figure>
+          <Link href={`/@${author}`}>
+            <figure className="">
+              <div className="h-8 w-8 rounded-full bg-gray-500"></div>
+            </figure>
+          </Link>
           <p className="flex flex-col space-y-[0.5px]">
-            <span className="">{author}</span>
+            <span className="">
+              <Link href={`/@${author}`}>{author}</Link>
+            </span>
             <span className="text-xs">
               {regularDate(createdAt)}{" "}
               {updatedAt && (

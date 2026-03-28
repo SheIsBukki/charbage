@@ -24,7 +24,9 @@ export const sessionTable = pgTable("sessions", {
 export const userTable = pgTable("users", {
   serialNumber: serial("serialNumber").notNull(),
   id: uuid("id").defaultRandom().primaryKey(),
-  name: text("name").notNull(),
+  username: text("username").notNull().unique(),
+  firstName: text("firstName"),
+  lastName: text("lastName"),
   email: text("email").notNull().unique(),
   githubUserId: integer("githubUserId"),
   googleUserId: text("googleUserId"),
