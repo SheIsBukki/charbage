@@ -52,18 +52,22 @@ export default function ArticleCards({
             {/*Author and publication info*/}
             <div className="">
               <div className="flex items-center space-x-4">
-                <figure className="">
-                  <Image
-                    sizes="(min-width: 808px) 50vw, 100vw"
-                    width={0}
-                    height={0}
-                    src="/"
-                    alt="author avatar"
-                    className="size-[40] rounded-full bg-gray-500"
-                  />
-                </figure>
+                <Link href={`/@${article.author}`}>
+                  <figure className="">
+                    <Image
+                      sizes="(min-width: 808px) 50vw, 100vw"
+                      width={0}
+                      height={0}
+                      src="/"
+                      alt="author avatar"
+                      className="size-[40] rounded-full bg-gray-500"
+                    />
+                  </figure>
+                </Link>
                 <div className="text-sm">
-                  <p className="font-semibold">{article.author}</p>
+                  <p className="font-semibold">
+                    <Link href={`/@${article.author}`}>{article.author}</Link>
+                  </p>
                   <p className="dark:text-gray-400">
                     {" "}
                     {regularDate(article.createdAt)}

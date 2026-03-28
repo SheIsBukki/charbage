@@ -22,6 +22,7 @@ import { BiCommentDetail } from "react-icons/bi";
 import { CiCircleChevDown, CiCircleChevUp, CiSettings } from "react-icons/ci";
 import { BsFillBookmarkCheckFill, BsHeartFill } from "react-icons/bs";
 import AuthenticationDialogue from "@/components/auth/AuthenticationDialogue";
+import Link from "next/link";
 
 // export const dynamic = "force-dynamic";
 
@@ -90,18 +91,22 @@ export default function Article({
             )}
             {/*Post and author data*/}
             <div className="flex items-center space-x-4">
-              <figure className="">
-                <Image
-                  sizes="(min-width: 808px) 50vw, 100vw"
-                  width={0}
-                  height={0}
-                  src="/"
-                  alt="author avatar"
-                  className="size-[40] rounded-full bg-gray-500"
-                />
-              </figure>
+              <Link href={`/@${post.author}`}>
+                <figure className="">
+                  <Image
+                    sizes="(min-width: 808px) 50vw, 100vw"
+                    width={0}
+                    height={0}
+                    src="/"
+                    alt="author avatar"
+                    className="size-[40] rounded-full bg-gray-500"
+                  />
+                </figure>
+              </Link>
               <div className="text-sm">
-                <p className="font-semibold">{post.author}</p>
+                <p className="font-semibold">
+                  <Link href={`/@${post.author}`}>{post.author}</Link>
+                </p>
                 <p className="dark:text-gray-400">
                   {post.updatedAt
                     ? `Updated at: ${regularDate(post.updatedAt)}`
