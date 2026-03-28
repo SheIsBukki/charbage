@@ -1,8 +1,6 @@
 import { getCurrentSession } from "@/lib/session";
 import { getUserWithUsername } from "@/db/queries/select";
 
-export const dynamic = "force-dynamic";
-
 export async function generateMetadata({
   params,
 }: {
@@ -37,5 +35,5 @@ export default async function ProfilePage({
   // const profileData = await getProfileDataWithSlug(slug)
   // Posts, comments, bookmarks
 
-  return <div>{fullName || profile?.username}'s Profile Page</div>;
+  return <div>{fullName || profile?.username}&apos;s Profile Page</div>;
 }
