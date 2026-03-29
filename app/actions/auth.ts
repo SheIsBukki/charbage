@@ -4,7 +4,7 @@ import { encodeHexLowerCase } from "@oslojs/encoding";
 import { sha256 } from "@oslojs/crypto/sha2";
 import { eq } from "drizzle-orm";
 import { db } from "@/db";
-import { User, userTable } from "@/db/schema";
+import { profileTable, User, userTable } from "@/db/schema";
 import {
   createSession,
   deleteSessionTokenCookie,
@@ -50,6 +50,21 @@ export const registerUser = async (
       .execute();
 
     const safeUser = { ...user, hashedPassword: undefined };
+
+    if (safeUser) {
+      const socialLinks = { github: "", linkedin: "" };
+      const [profile] = await db.insert(profileTable).values({
+        userId: safeUser.id,
+        slug: `@${safeUser.username}`,
+        bio: "",
+        about: "",
+        avatar: "",
+        firstName: "",
+        lastName: "",
+        socialLinks: JSON.stringify(socialLinks),
+        createdAt: safeUser.createdAt,
+      });
+    }
 
     return { user: safeUser, error: null };
   } catch (error) {
@@ -133,8 +148,8 @@ export const getUserWithGithubData = async (
     id: user.id,
     email: user.email,
     username: user.username,
-    firstName: user.firstName,
-    lastName: user.lastName,
+    // firstName: user.firstName,
+    // lastName: user.lastName,
     githubUserId: user.githubUserId,
     googleUserId: user.googleUserId,
     password: user.password,
@@ -161,8 +176,8 @@ export const getUserWithGoogleData = async (
     id: user.id,
     email: user.email,
     username: user.username,
-    firstName: user.firstName,
-    lastName: user.lastName,
+    // firstName: user.firstName,
+    // lastName: user.lastName,
     githubUserId: user.githubUserId,
     googleUserId: user.googleUserId,
     password: user.password,

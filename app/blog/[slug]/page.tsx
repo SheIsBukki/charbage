@@ -6,6 +6,7 @@ import CommentForm from "@/components/comments/CommentForm";
 import CommentCard from "@/components/comments/CommentCard";
 import { Comment } from "@/db/schema";
 import { createOrEditCommentAction } from "@/app/actions/createOrEditCommentAction";
+import { notFound } from "next/navigation";
 
 export async function generateMetadata({
   params,
@@ -13,6 +14,12 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }) {
   const { post } = await getPostWithSlug((await params).slug);
+
+  if (!post) {
+    return {
+      title: "Post does not exist",
+    };
+  }
 
   return {
     title: post?.title || "Blog post",
@@ -30,7 +37,7 @@ export default async function BlogPage({
   const { post } = await getPostWithSlug(slug);
 
   if (!post) {
-    return;
+    return notFound();
   }
 
   let authorisedPostAuthor = "";

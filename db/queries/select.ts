@@ -6,6 +6,7 @@ import {
   likeTable,
   Post,
   postTable,
+  profileTable,
   Tag,
   tagsToPostsTable,
   tagTable,
@@ -47,15 +48,16 @@ export async function getUserWithId(id: User["id"]) {
   }
 }
 
-export async function getUserWithUsername(username: string) {
+export async function getProfileWithSlug(slug: string) {
+  // console.log(slug);
   try {
-    const [user] = await db
+    const [profile] = await db
       .select()
-      .from(userTable)
-      .where(eq(userTable.username, username))
+      .from(profileTable)
+      .where(eq(profileTable.slug, slug))
       .execute();
-
-    return { user, error: null };
+    // console.log(profile);
+    return { profile: profile, error: null };
   } catch (error) {
     console.error("User could not be found", error);
     return { user: null, error: "Failed to find user" };

@@ -122,7 +122,7 @@ export default function CommentForm({
             disabled={isPending}
             className="rounded-full bg-purple-600 px-4 py-2 text-white"
           >
-            Submit
+            Send
           </button>
         </form>
       </div>

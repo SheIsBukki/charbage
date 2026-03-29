@@ -43,6 +43,20 @@
       "when": 1774710949413,
       "tag": "0005_faithful_maximus",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1774800398819,
+      "tag": "0006_freezing_doctor_spectrum",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1774801876134,
+      "tag": "0007_spotty_silver_centurion",
+      "breakpoints": true
     }
   ]
 }
