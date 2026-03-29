@@ -25,8 +25,6 @@ export const userTable = pgTable("users", {
   serialNumber: serial("serialNumber").notNull(),
   id: uuid("id").defaultRandom().primaryKey(),
   username: text("username").notNull().unique(),
-  firstName: text("firstName"),
-  lastName: text("lastName"),
   email: text("email").notNull().unique(),
   githubUserId: integer("githubUserId"),
   googleUserId: text("googleUserId"),
@@ -37,6 +35,26 @@ export const userTable = pgTable("users", {
   })
     .defaultNow()
     .notNull(),
+});
+
+export const profileTable = pgTable("profiles", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  firstName: text("firstName"),
+  lastName: text("lastName"),
+  avatar: text("avatar"),
+  bio: text("bio"),
+  about: text("about"),
+  slug: text("slug"),
+  socialLinks: text("socialLinks"), // THIS IS A JSON string of an object actually, so it must be parsed when fetched
+  // AUTOMATICALLY CREATED WHEN A USER REGISTERS
+  createdAt: timestamp("createdAt", { withTimezone: true, mode: "date" })
+    .notNull()
+    .defaultNow(),
+  updatedAt: timestamp("updatedAt", { mode: "date", precision: 3 }),
+
+  userId: uuid("userId")
+    .notNull()
+    .references(() => userTable.id, { onDelete: "cascade" }),
 });
 
 export const postTable = pgTable("posts", {
@@ -165,6 +183,7 @@ export const bookmarkTable = pgTable("bookmarks", {
 
 export type Session = InferSelectModel<typeof sessionTable>;
 export type User = InferSelectModel<typeof userTable>;
+export type Profile = InferSelectModel<typeof profileTable>;
 export type Post = InferSelectModel<typeof postTable>;
 export type Comment = InferSelectModel<typeof commentTable>;
 export type Like = InferSelectModel<typeof likeTable>;
