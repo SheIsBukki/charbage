@@ -1,9 +1,11 @@
 import { getCurrentSession } from "@/lib/session";
-import { getProfileWithSlug } from "@/db/queries/select";
+import { getPostsByUser, getProfileWithSlug } from "@/db/queries/select";
 import { notFound } from "next/navigation";
-import { regularDate } from "@/utils/helpers";
-import { FaGithub, FaLinkedin, FaShare } from "react-icons/fa";
-import Link from "next/link";
+import BioCard from "@/components/profile/BioCard";
+import ArticleCard from "@/components/articles/ArticleCard";
+import AboutCard from "@/components/profile/AboutCard";
+import { MdOutlineArticle } from "react-icons/md";
+import { IoArrowDown } from "react-icons/io5";
 
 export async function generateMetadata({
   params,
@@ -25,7 +27,7 @@ export async function generateMetadata({
 
   return {
     title: fullName || profileSlug,
-    description: `${fullName || profileSlug}'s profile page`, // Until user's short bio hence user?.bio
+    description: profile.bio || `${fullName || profileSlug}'s profile page`, // Until user's short bio hence user?.bio
   };
 }
 
@@ -45,71 +47,61 @@ export default async function ProfilePage({
     return notFound();
   }
 
-  const socialLinks = JSON.parse(profile.socialLinks || "");
+  const posts = await getPostsByUser(profile.userId);
+
   // console.log(profile);
 
-  const fullName =
-    `${profile.firstName || ""} ${profile.lastName || ""}`.trim();
   // const profileData = await getProfileDataWithSlug(slug)
   // Posts, comments, bookmarks
 
-  // console.log(socialLinks);
-
   return (
-    <div className="boder-red-500 border">
+    <div className="brder-2 container mx-auto space-y-4 border-red-500 py-4 lg:w-4/6">
       {/*BIO CARD*/}
-      <section className="flex w-full space-x-4 dark:text-gray-400">
-        {/*{profile.avatar && (*/}
-        <figure className="size-20 space-y-4 rounded-full ring-2 sm:size-24">
-          <img
-            src={profile.avatar || "/avatar-default-svgrepo-com.svg"}
-            alt="Profile avatar"
-            className="aspect-square size-full overflow-hidden object-cover [clip-path:circle(50%)]"
-          />
-        </figure>
-        {/*)}*/}
+      <BioCard {...profile} />
 
-        <div className="">
-          {/*Profile Name and Share Button*/}
-          <div className="bordr-red-500 boder flex w-full items-center justify-between">
-            <div className="">
-              <p
-                style={{ color: "initial" }}
-                // style={{ color: "unset" }}
-                // style={{ color: "revert" }}
-                className="text-xl font-bold [color:initial]"
-              >
-                {fullName || profileSlug.slice(1)}
-              </p>
-              <span className="">{profileSlug}</span>
-            </div>
-
-            <div className="">
-              {/*Users will be able to copy the profile url*/}
-              <button
-                type="button"
-                className="flex items-center space-x-2 rounded-l bg-indigo-600 px-4 py-2 text-white"
-              >
-                <FaShare /> <span className="">Share</span>
-              </button>
-            </div>
-          </div>
-
-          {profile.bio && <p className="">{profile.bio}</p>}
-          <span className="">Joined {regularDate(profile.createdAt)}</span>
-          {socialLinks.github && (
-            <Link href={socialLinks.github}>
-              <FaGithub />
-            </Link>
-          )}
-
-          {socialLinks.linkedin && (
-            <Link href={socialLinks.linkedin}>
-              <FaLinkedin />
-            </Link>
-          )}
+      <div className="p4 space-y-4 lg:grid lg:grid-cols-6 lg:gap-8 lg:space-y-0">
+        {/*ABOUT CARD*/}
+        <div className="col-span-2">
+          <AboutCard about={profile.about || ""} />
         </div>
-      </section>
+
+        {/*RECENTLY PUBLISHED*/}
+        <div className="col-span-4">
+          <p className="mb-4 px-8 text-xl font-semibold md:px-4">
+            Recently published
+          </p>
+          {posts.length > 0 ? (
+            posts.map((post) => (
+              <ArticleCard
+                key={post.id}
+                article={{ author: profileSlug.slice(1), ...post }}
+              />
+            ))
+          ) : (
+            <div className="boder mx-auto w-fit space-y-4 border-red-500 py-12 text-center align-middle">
+              <p className="flex justify-center">
+                <MdOutlineArticle className="text-2xl text-gray-700 dark:text-gray-400" />
+              </p>
+              <p className="text-xl font-semibold">No posts yet</p>
+              <p className="text-sn text-gray-700 dark:text-gray-400">
+                {profile.firstName || profileSlug.slice(1)} has not published
+                any article yet.
+              </p>
+            </div>
+          )}
+
+          {/*WIP: PAGINATION*/}
+          <div className="mx-auto w-fit">
+            <button
+              type="button"
+              className="ustify-center my-12 flex items-center space-x-2 text-gray-700 dark:text-gray-400"
+            >
+              <span className="">Load more</span>
+              <IoArrowDown className="text-xl" />
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
