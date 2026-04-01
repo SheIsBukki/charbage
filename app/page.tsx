@@ -1,7 +1,7 @@
 // import TagSelection from "@/components/tag/TagSelection";
 // import { getCurrentSession } from "@/lib/session";
 // import MainNav from "@/app/ui/MainNav";
-import ArticleCards from "@/components/articles/ArticleCards";
+import ArticleCard from "@/components/articles/ArticleCard";
 import { getLatestPosts } from "@/db/queries/select";
 import { polyfill } from "interweave-ssr";
 
@@ -9,8 +9,8 @@ polyfill();
 
 export default async function Home() {
   // const { user } = await getCurrentSession();
-  const articlesData = await getLatestPosts();
-  // const { posts } = articlesData;
+  const { posts } = await getLatestPosts();
+
   return (
     <>
       {/*<MainNav user={user} />*/}
@@ -18,9 +18,10 @@ export default async function Home() {
         {/*Other stuff like Reading List, User Suggestion, etc*/}
         <div className="col-span-3 hidden lg:block"></div>
 
-        {/*Article*/}
+        {/*Article Cards*/}
         <div className="col-span-5">
-          <ArticleCards articlesData={articlesData} />
+          {posts &&
+            posts.map((post) => <ArticleCard key={post.id} article={post} />)}
         </div>
       </main>
     </>

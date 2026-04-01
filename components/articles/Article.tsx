@@ -13,7 +13,7 @@ import { removeBookmark, removeLike } from "@/db/queries/delete";
 import { addBookmark, addLike } from "@/db/queries/insert";
 import { Bookmark, Like } from "@/db/schema";
 
-import { PostType } from "@/components/articles/ArticleCards";
+import { PostType } from "@/components/articles/ArticleCard";
 import ArticleSettings from "@/components/articles/ArticleSettings";
 import ReaderInteraction from "@/app/ui/ReaderInteraction";
 
