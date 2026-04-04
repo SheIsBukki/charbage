@@ -1,7 +1,7 @@
 "use client";
 
 import { redirect, useRouter } from "next/navigation";
-import { deleteFeaturedImageEverywhere } from "@/lib/deleteFeaturedImageEverywhere";
+import { deleteAvatarOrFeaturedImage } from "@/lib/deleteAvatarOrFeaturedImage";
 import { DbActionType } from "@/lib/types";
 import { FiEdit } from "react-icons/fi";
 import { RiDeleteBinLine } from "react-icons/ri";
@@ -24,7 +24,7 @@ export default function ArticleSettings({
   const router = useRouter();
 
   const handleDeletePost = async () => {
-    await deleteFeaturedImageEverywhere(featuredImage || "", authorId);
+    await deleteAvatarOrFeaturedImage(featuredImage || "", authorId);
     await deletePostAction(postId);
     redirect("/");
   };

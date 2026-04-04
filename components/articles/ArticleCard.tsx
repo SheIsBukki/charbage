@@ -9,22 +9,7 @@ import { BsBookmark } from "react-icons/bs";
 import { BiLike } from "react-icons/bi";
 import { TfiCommentAlt } from "react-icons/tfi";
 import { createExcerpt, regularDate } from "@/utils/helpers";
-
-export type PostType = {
-  author: string;
-  id: string;
-  title: string;
-  description: string | null;
-  content: string;
-  featuredImage: string | null;
-  slug: string;
-  createdAt: Date;
-  updatedAt: Date | null;
-  userId: string;
-  comments?: number;
-  likes?: number;
-  bookmarks?: number;
-};
+import { PostType } from "@/lib/types";
 
 export default function ArticleCard({ article }: { article: PostType }) {
   const pathname = usePathname();
@@ -77,10 +62,12 @@ export default function ArticleCard({ article }: { article: PostType }) {
           {article.description ? (
             <p className="dark:text-gray-400">{article.description}</p>
           ) : (
-            <Interweave
-              className="dark:text-gray-400"
-              content={createExcerpt(article.content)}
-            />
+            <div>
+              <Interweave
+                className="dark:text-gray-400"
+                content={createExcerpt(article.content)}
+              />
+            </div>
           )}
         </div>
 

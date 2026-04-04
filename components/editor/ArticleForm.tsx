@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useActionState, useEffect } from "react";
+import { useActionState, useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import Form from "next/form";
@@ -10,8 +10,9 @@ import toast from "react-hot-toast";
 import { ArticleFormSchema } from "@/lib/definitions";
 import { PostActionStateType, PostFormValues } from "@/lib/types";
 import MarkdownEditor from "@/components/editor/MarkdownEditor";
-import FeaturedImage from "@/components/editor/FeaturedImage";
 import TagFormModal from "@/components/tag/TagFormModal";
+import { ErrorMessage } from "@/app/ui/ErrorMessage";
+import AvatarOrFeaturedImage from "@/app/ui/AvatarOrFeaturedImage";
 // import TagSelectionModal from "@/components/tag/TagSelectionModal";
 
 type ArticleFormProps = {
@@ -50,12 +51,6 @@ export default function ArticleForm({
 
   // const [openTagForm, setOpenTagForm] = useState(false);
   // const [openTagSelection, setOpenTagSelection] = useState<boolean>(false);
-
-  const ErrorMessage = ({ message }: { message: string | undefined }) => (
-    <p role="alert" className="mt-1 text-xs text-red-500 md:text-base">
-      {message}
-    </p>
-  );
 
   // console.log(values.featuredImage);
 
@@ -101,9 +96,9 @@ export default function ArticleForm({
               disabled={isPending}
               render={() => (
                 <>
-                  <FeaturedImage
-                    updatedImageUrl={values.featuredImage}
-                    userId={userId}
+                  <AvatarOrFeaturedImage
+                    imageUrl={values.featuredImage}
+                    dynamicId={userId}
                   />
                 </>
               )}
