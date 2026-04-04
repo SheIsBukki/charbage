@@ -12,13 +12,13 @@ import AuthenticationDialogue from "@/components/auth/AuthenticationDialogue";
 
 export default function CommentForm({
   action,
-  value,
+  values,
   setOpenSettings,
   setIsEditing,
   currentUser,
 }: CommentFormProps) {
   const [state, formAction, isPending] = useActionState(action, {
-    value,
+    values: values,
     error: {},
   });
 
@@ -28,7 +28,7 @@ export default function CommentForm({
     reset,
   } = useForm({
     resolver: zodResolver(CommentFormSchema),
-    values: state.value,
+    values: state.values,
     errors: state.error,
     mode: "onBlur",
   });
@@ -41,8 +41,8 @@ export default function CommentForm({
   const { hasCommentChanged, serverError, isSubmitSuccessful } = state;
 
   const editorStatus = {
-    updating: value.comment !== "",
-    creating: value.comment === "",
+    updating: values.comment !== "",
+    creating: values.comment === "",
   };
 
   useEffect(() => {
@@ -91,10 +91,10 @@ export default function CommentForm({
           className="space-y-2"
           action={formAction}
         >
-          <input name="postId" value={value.postId} type="hidden" />
-          <input name="userId" value={value.userId} type="hidden" />
-          <input name="commentId" value={value.commentId} type="hidden" />
-          <input name="oldComment" value={value.comment} type="hidden" />
+          <input name="postId" value={values.postId} type="hidden" />
+          <input name="userId" value={values.userId} type="hidden" />
+          <input name="commentId" value={values.commentId} type="hidden" />
+          <input name="oldComment" value={values.comment} type="hidden" />
           <div className="hello">
             <Controller
               name="comment"

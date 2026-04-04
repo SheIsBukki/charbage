@@ -98,7 +98,7 @@ export default function CommentCard({
         {isEditing ? (
           <CommentForm
             action={createOrEditCommentAction}
-            value={{ comment: comment, commentId: commentId }}
+            values={{ comment: comment, commentId: commentId }}
             setOpenSettings={setOpenSettings}
             setIsEditing={setIsEditing}
           />

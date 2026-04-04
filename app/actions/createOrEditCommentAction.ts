@@ -1,6 +1,6 @@
 "use server";
 
-import { CommentActionState, CommentFormValue } from "@/lib/types";
+import { CommentActionState, CommentFormValues } from "@/lib/types";
 import { CommentFormSchema } from "@/lib/definitions";
 import { revalidatePath } from "next/cache";
 import { updateComment } from "@/db/queries/update";
@@ -10,7 +10,7 @@ export const createOrEditCommentAction = async (
   initialState: CommentActionState,
   formData: FormData,
 ) => {
-  const value: CommentFormValue = {
+  const values: CommentFormValues = {
     comment: String(formData.get("comment") || ""),
     postId: String(formData.get("postId") || ""),
     userId: String(formData.get("userId") || ""),
@@ -18,7 +18,7 @@ export const createOrEditCommentAction = async (
     oldComment: String(formData.get("oldComment")),
   };
 
-  const { error: parseError } = CommentFormSchema.safeParse(value);
+  const { error: parseError } = CommentFormSchema.safeParse(values);
 
   const error: CommentActionState["error"] = {};
 
@@ -27,31 +27,35 @@ export const createOrEditCommentAction = async (
   }
 
   const hasCommentChanged =
-    value.oldComment === undefined
+    values.oldComment === undefined
       ? undefined
-      : !!value.commentId &&
-        !value.userId &&
-        value.comment !== value.oldComment;
+      : !!values.commentId &&
+        !values.userId &&
+        values.comment !== values.oldComment;
 
   let serverError = false;
   let isSubmitSuccessful;
 
-  if (value.comment.trim() !== "") {
+  if (values.comment.trim() !== "") {
     let comment;
     let success = "";
 
     const editorStatus = {
-      updating: !!value.commentId && !!value.oldComment,
-      creating: !!value.postId && !!value.userId && !value.commentId,
+      updating: !!values.commentId && !!values.oldComment,
+      creating: !!values.postId && !!values.userId && !values.commentId,
     };
 
     if (editorStatus.updating && hasCommentChanged) {
-      comment = await updateComment(value?.commentId || "", value?.comment);
+      comment = await updateComment(values?.commentId || "", values?.comment);
       if (comment.result) success = comment.result;
     }
 
-    if (editorStatus.creating && value.postId && value.userId) {
-      comment = await createComment(value.comment, value.postId, value.userId);
+    if (editorStatus.creating && values.postId && values.userId) {
+      comment = await createComment(
+        values.comment,
+        values.postId,
+        values.userId,
+      );
       if (comment.data) success = "Comment created successfully";
     }
 
@@ -65,7 +69,7 @@ export const createOrEditCommentAction = async (
   }
 
   return {
-    value,
+    values: values,
     error: {},
     serverError: serverError,
     isSubmitSuccessful: isSubmitSuccessful,

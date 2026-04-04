@@ -118,7 +118,9 @@ export default function MainNav({ user }: MainNavProps) {
         <div className="hidden md:block">
           {user ? (
             <div className="flex items-center space-x-2">
-              <span className="">Hi, {user.username}</span>
+              <span className="">
+                Hi, <Link href={`/@${user.username}`}>{user.username}</Link>
+              </span>
               <button
                 type="button"
                 onClick={async (event) => {

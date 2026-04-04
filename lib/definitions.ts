@@ -24,6 +24,37 @@ export const CommentFormSchema = z.object({
   // .max(300, { message: "Comment cannot exceed 300 characters" }),
 });
 
+export const ProfileFormSchema = z.object({
+  avatar: z.string({ message: "Image should not exceed 10MB" }).optional(),
+  bio: z
+    .string()
+    .max(160, { message: "Bio must not exceed 160 characters" })
+    .optional(),
+  about: z
+    .string()
+    .max(500, { message: "About must not exceed 500 characters" })
+    .optional(),
+  firstname: z.string().optional(),
+  lastname: z.string().optional(),
+  github: z
+    .string()
+    .url({ message: "Please provide a valid GitHub profile URL" })
+    .optional(),
+  linkedin: z
+    .string()
+    .url({ message: "Please provide a valid LinkedIn profile URL" })
+    .optional(),
+});
+
+export const AccountSettingsFormSchema = z.object({
+  email: z.string().email(),
+  username: z
+    .string()
+    .min(1, { message: "Username must be at least 1 character" })
+    .regex(/\S/, { message: "Username must be at least 1 character" }),
+  // password: z.string().optional(), //LATER
+});
+
 // This is for any user who wants to create a tag — using tags will simply fetch available tags for the user to select up to three from for a post
 export const TagFormSchema = z.object({
   name: z

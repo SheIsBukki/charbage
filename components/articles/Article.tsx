@@ -8,12 +8,11 @@ import { clsx } from "clsx";
 
 import md from "@/utils/md";
 import { copyCurrentUrl, regularDate } from "@/utils/helpers";
-import { DbActionType, ReactionsType } from "@/lib/types";
+import { DbActionType, PostType, ReactionsType } from "@/lib/types";
 import { removeBookmark, removeLike } from "@/db/queries/delete";
 import { addBookmark, addLike } from "@/db/queries/insert";
 import { Bookmark, Like } from "@/db/schema";
 
-import { PostType } from "@/components/articles/ArticleCard";
 import ArticleSettings from "@/components/articles/ArticleSettings";
 import ReaderInteraction from "@/app/ui/ReaderInteraction";
 
@@ -125,7 +124,7 @@ export default function Article({
           </article>
 
           {/*STATIC TAGS*/}
-          <div className="boder-2 flex flex-wrap gap-2 border-red-500">
+          <div className="boder-2 my-4 flex flex-wrap gap-2 border-red-500">
             {["Static", "Tags", "Until", "Dynamic", "Tags"].map(
               (tag, index) => (
                 <span

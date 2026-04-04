@@ -126,6 +126,26 @@ export async function deleteComment(id: Comment["id"]) {
   }
 }
 
+export async function deleteUser(id: User["id"]) {
+  const { user } = await getCurrentSession();
+  if (!user) {
+    return {
+      result: null,
+      error: "You are not authorised to delete another user",
+    };
+  }
+
+  try {
+    await db.delete(userTable).where(eq(userTable.id, id));
+    revalidatePath("/");
+
+    return { result: "User successfully removed", error: null };
+  } catch (err) {
+    console.error(err);
+    return { result: null, error: "Failed to delete user" };
+  }
+}
+
 // This is only going to remove the relationship between a tag and a post, not actually delete the tag. Tags can only be deleted by tag author if the tag is not associated with any post
 export async function removeTag(id: Tag["id"]) {
   const { user } = await getCurrentSession();
@@ -227,16 +247,4 @@ export async function deleteTag2(id: Tag["id"]) {
   } else {
     return { error: "Only tag author can delete tag" };
   }
-}
-
-export async function deleteUser(id: User["id"]) {
-  const { user } = await getCurrentSession();
-  if (!user) {
-    return {
-      user: null,
-      error: "You are not authorised to delete another user",
-    };
-  }
-
-  await db.delete(userTable).where(eq(userTable.id, id));
 }

@@ -82,9 +82,9 @@ export const createOrEditPostAction = async (
     }
   }
 
-  console.log(editorStatus);
-  console.log(isSubmitSuccessful);
-  console.log(values);
+  // console.log(editorStatus);
+  // console.log(isSubmitSuccessful);
+  // console.log(values);
 
   return {
     values,

@@ -1,3 +1,4 @@
+import { notFound } from "next/navigation";
 import { getPostReactionsWithId, getPostWithSlug } from "@/db/queries/select";
 import Article from "@/components/articles/Article";
 import { getCurrentSession } from "@/lib/session";
@@ -6,7 +7,6 @@ import CommentForm from "@/components/comments/CommentForm";
 import CommentCard from "@/components/comments/CommentCard";
 import { Comment } from "@/db/schema";
 import { createOrEditCommentAction } from "@/app/actions/createOrEditCommentAction";
-import { notFound } from "next/navigation";
 
 export async function generateMetadata({
   params,
@@ -92,7 +92,11 @@ export default async function BlogPage({
               <CommentForm
                 currentUser={user?.id}
                 action={createOrEditCommentAction}
-                value={{ comment: "", postId: post.id, userId: user?.id || "" }}
+                values={{
+                  comment: "",
+                  postId: post.id,
+                  userId: user?.id || "",
+                }}
               />
             </div>
           </div>
