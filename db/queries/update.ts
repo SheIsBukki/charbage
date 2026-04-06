@@ -151,19 +151,21 @@ export async function updateUserAccount(
   { username, email }: UserAccountFormValues,
 ) {
   try {
-    await db
-      .update(profileTable)
-      .set({ slug: `@${username}` })
-      .where(eq(profileTable.userId, userId));
-
-    await db
+    const [user] = await db
       .update(userTable)
       .set({
-        username: username,
-        email: email,
+        username: username.toLowerCase(),
+        email: email.toLowerCase(),
       })
       .where(eq(userTable.id, userId))
       .returning();
+
+    if (user) {
+      await db
+        .update(profileTable)
+        .set({ slug: `@${user.username}` })
+        .where(eq(profileTable.userId, userId));
+    }
 
     return { result: "Account updated successfully", error: null };
   } catch (error) {

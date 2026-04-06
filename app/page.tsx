@@ -13,8 +13,7 @@ export default async function Home() {
 
   return (
     <>
-      {/*<MainNav user={user} />*/}
-      <main className="container mx-auto grid-cols-8 gap-12 lg:grid">
+      <div className="py4 borer container mx-auto grid-cols-8 gap-12 border-red-500 lg:grid">
         {/*Other stuff like Reading List, User Suggestion, etc*/}
         <div className="col-span-3 hidden lg:block"></div>
 
@@ -23,7 +22,7 @@ export default async function Home() {
           {posts &&
             posts.map((post) => <ArticleCard key={post.id} article={post} />)}
         </div>
-      </main>
+      </div>
     </>
   );
 }

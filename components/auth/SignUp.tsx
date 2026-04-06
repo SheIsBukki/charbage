@@ -1,12 +1,11 @@
 "use client";
 
-import React, { useActionState, useEffect } from "react";
+import React, { useActionState, useState } from "react";
 import Form from "next/form";
 import Link from "next/link";
-// import { usePreviousPath } from "@/components/auth/usePreviousPath";
-import { redirect, useRouter } from "next/navigation";
-// import { validateRedirect } from "@/utils/helpers";
 import { useRedirect } from "@/components/auth/useRedirect";
+import { ErrorMessage } from "@/app/ui/ErrorMessage";
+import { emailAlreadyExists, usernameAlreadyExists } from "@/db/queries/select";
 
 const initialState = { message: "" };
 
@@ -19,30 +18,35 @@ type SignUpProps = {
 };
 
 export default function SignUp({ userAlreadyLoggedIn, action }: SignUpProps) {
-  const router = useRouter();
-
   const [state, formAction, isPending] = useActionState(action, initialState);
+  const [usernameDuplicateError, setUsernameDuplicateError] = useState("");
+  // const [emailDuplicateError, setEmailDuplicateError] = useState("");
   useRedirect({ userAlreadyLoggedIn, state });
-  // const { previous } = usePreviousPath();
 
-  // useEffect(() => {
-  //   if (userAlreadyLoggedIn) {
-  //     redirect("/");
-  //   }
-  // }, []);
+  const handleDuplicate = async (e: any) => {
+    // if (e.target.name === "email" && e.target.value.trim() !== "") {
+    //   const doesEmailExist = await emailAlreadyExists(e.target.value);
+    //
+    //   if (doesEmailExist.result) {
+    //     setEmailDuplicateError(`Email "${e.target.value}" already exists`);
+    //   }
+    //   {
+    //     setEmailDuplicateError("");
+    //   }
+    // }
 
-  // useEffect(() => {
-  //   if (state?.successful) {
-  //     const previous = sessionStorage.getItem("prevPath") || "/";
-  //     // console.log("Successfully signed up successfully.");
-  //     if (validateRedirect(previous)) {
-  //       redirect(previous || "/");
-  //     }
-  //   }
-  // }, [state?.successful]);
+    if (e.target.name === "username" && e.target.value.trim() !== "") {
+      const doesUsernameExist = await usernameAlreadyExists(e.target.value);
 
-  // console.log(previous);
-  // console.log(usePreviousPath());
+      if (doesUsernameExist.result) {
+        setUsernameDuplicateError(
+          `Username "${e.target.value}" already exists`,
+        );
+      } else {
+        setUsernameDuplicateError("");
+      }
+    }
+  };
 
   return (
     <div className="container mx-auto md:w-[70%] md:p-12 lg:w-[50%] lg:p-16">
@@ -51,23 +55,27 @@ export default function SignUp({ userAlreadyLoggedIn, action }: SignUpProps) {
         <Form action={formAction} className="w-full">
           <div className="flex-1 space-y-4 rounded-lg px-6 pb-4 pt-8">
             <div className="w-full space-y-8">
-              {/*Name*/}
+              {/*Username*/}
               <div className="">
                 <label
-                  htmlFor="name"
+                  htmlFor="username"
                   className="mb-3 mt-5 block text-xs font-medium"
                 >
                   Username
                 </label>
 
                 <input
+                  onBlur={(e) => handleDuplicate(e)}
                   type="text"
                   className="peer block w-full rounded-md border border-gray-200 py-[9px] pl-5 text-sm outline-2 placeholder:text-gray-500"
-                  id="name"
-                  name="name"
+                  id="username"
+                  name="username"
                   placeholder="Enter your username"
                   // required
                 />
+                {usernameDuplicateError && (
+                  <ErrorMessage message={usernameDuplicateError} />
+                )}
               </div>
 
               {/*Email*/}
@@ -80,6 +88,7 @@ export default function SignUp({ userAlreadyLoggedIn, action }: SignUpProps) {
                 </label>
 
                 <input
+                  onBlur={(e) => handleDuplicate(e)}
                   type="email"
                   className="peer block w-full rounded-md border border-gray-200 py-[9px] pl-5 text-sm outline-2 placeholder:text-gray-500"
                   id="email"
@@ -87,6 +96,9 @@ export default function SignUp({ userAlreadyLoggedIn, action }: SignUpProps) {
                   placeholder="Enter your email address"
                   // required
                 />
+                {/*{emailDuplicateError && (*/}
+                {/*  <ErrorMessage message={emailDuplicateError} />*/}
+                {/*)}*/}
               </div>
 
               {/*  Password*/}

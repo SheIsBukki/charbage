@@ -114,7 +114,7 @@ export default function ArticleForm({
               id="title"
               aria-describedby="title-error"
               // type="text"
-              className="h-full w-full px-1 py-2 text-lg outline-0 focus:outline-0 md:text-3xl"
+              className="h-full w-full bg-gray-50 px-1 py-2 text-lg outline-0 focus:outline-0 md:text-3xl dark:bg-[revert]"
               placeholder="Your blog title..."
               {...register("title")}
               rows={3}
@@ -130,7 +130,7 @@ export default function ArticleForm({
             <textarea
               id="description"
               aria-describedby="description-error"
-              className="h-full w-full px-1 py-2 text-lg outline-0 focus:outline-0 md:text-3xl"
+              className="h-full w-full bg-gray-50 px-1 py-2 text-lg outline-0 focus:outline-0 md:text-3xl dark:bg-[revert]"
               placeholder="Optional meta description..."
               {...register("description")}
               rows={5}

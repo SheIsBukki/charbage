@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form";
-import { useActionState, useEffect } from "react";
+import { useActionState, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import toast from "react-hot-toast";
@@ -7,6 +7,7 @@ import { GrAlert } from "react-icons/gr";
 import { AccountSettingsFormSchema } from "@/lib/definitions";
 import { AccountSettingsFormProps } from "@/lib/types";
 import { ErrorMessage } from "@/app/ui/ErrorMessage";
+import { usernameAlreadyExists } from "@/db/queries/select";
 
 export default function AccountSettings({
   action,
@@ -16,6 +17,7 @@ export default function AccountSettings({
     values: values,
     errors: {},
   });
+  const [usernameDuplicateError, setUsernameDuplicateError] = useState("");
 
   const {
     register,
@@ -43,7 +45,7 @@ export default function AccountSettings({
   }, [isSubmitSuccessful]);
 
   return (
-    <div className="space-y-4">
+    <div className="h-full space-y-4">
       <div className="space-y-2">
         <p className="flex items-center space-x-2 border-b-2 pb-2">
           <GrAlert className="text-xl text-yellow-500" />
@@ -60,6 +62,25 @@ export default function AccountSettings({
         </p>
       </div>
       <form
+        onBlur={async (e) => {
+          if (
+            e.target.name === "username" &&
+            e.target.value.trim() !== "" &&
+            e.target.value.toLowerCase() !== values.username
+          ) {
+            const existingUsername = await usernameAlreadyExists(
+              e.target.value,
+            );
+
+            if (existingUsername.result) {
+              setUsernameDuplicateError(
+                `Username "${e.target.value}" already exists`,
+              );
+            } else {
+              setUsernameDuplicateError("");
+            }
+          }
+        }}
         action={formAction}
         className="borde-red-500 w-full space-y-4 rounded-md border bg-gray-100 p-4 dark:bg-gray-950"
       >
@@ -76,8 +97,10 @@ export default function AccountSettings({
               className="rounded-md border-2 bg-gray-50 px-2 py-1 dark:bg-[revert]"
             />
           </label>
-          {errors.username && (
-            <ErrorMessage message={errors.username.message} />
+          {(errors.username || usernameDuplicateError) && (
+            <ErrorMessage
+              message={errors?.username?.message || usernameDuplicateError}
+            />
           )}
         </section>
         <section className="w-full space-y-1">

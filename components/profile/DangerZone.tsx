@@ -14,8 +14,12 @@ export default function DangerZone({ user }: { user: User }) {
   return (
     <div className="space-y-4 rounded-lg border-2 border-red-500 p-4">
       <p className="flex w-full items-center justify-between border-b-2 pb-2">
-        <span className="text-xl font-semibold text-red-500">Danger Zone</span>
-        <span className="font-semibold">Delete your account</span>
+        <span className="font-semibold text-red-500 md:text-xl">
+          Danger Zone
+        </span>
+        <span className="text-xs font-semibold md:text-base">
+          Delete your account
+        </span>
       </p>
 
       <p className="text-pretty text-sm leading-relaxed dark:text-gray-200">

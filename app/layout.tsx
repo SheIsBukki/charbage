@@ -1,13 +1,13 @@
 import "highlight.js/styles/shades-of-purple.css";
-import React from "react";
 import type { Metadata } from "next";
+import Script from "next/script";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Toaster } from "react-hot-toast";
 import "./globals.css";
 import { ThemeProvider } from "@/context/ThemeProvider";
-import Script from "next/script";
 import MainNav from "@/app/ui/MainNav";
 import { getCurrentSession } from "@/lib/session";
+import { getProfileWithSlug } from "@/db/queries/select";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,6 +30,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const { user } = await getCurrentSession();
+  const { profile } = await getProfileWithSlug(`@${user?.username}`);
 
   return (
     <html lang="en" suppressHydrationWarning className="scroll-smooth">
@@ -46,12 +47,16 @@ export default async function RootLayout({
         </Script>
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} relative h-[100vh] antialiased`}
       >
         <ThemeProvider>
-          <MainNav user={user} />
+          <nav className="boder fixed top-0 z-50 w-full border-red-500">
+            <MainNav profile={profile} user={user} />
+          </nav>
           <Toaster />
-          {children}
+          <main className="brder h-full border-red-500 pt-[3.6rem]">
+            {children}
+          </main>
         </ThemeProvider>
       </body>
     </html>
