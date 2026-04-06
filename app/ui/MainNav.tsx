@@ -2,20 +2,23 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import { GiCabbage } from "react-icons/gi";
 import { CiEdit } from "react-icons/ci";
 import { FcMenu } from "react-icons/fc";
 import { MdClose } from "react-icons/md";
 import { clsx } from "clsx";
 import ThemeSwitcher from "@/app/ui/ThemeSwitcher";
-import { usePathname, useRouter } from "next/navigation";
-import { User } from "@/db/schema";
+import { Profile, User } from "@/db/schema";
 import { logoutUser } from "@/app/actions/auth";
 import { getPreviousPath } from "@/utils/helpers";
 
-type MainNavProps = { user: Omit<User, "password"> | null };
+type MainNavProps = {
+  user: Omit<User, "password"> | null;
+  profile: Profile | undefined;
+};
 
-export default function MainNav({ user }: MainNavProps) {
+export default function MainNav({ user, profile }: MainNavProps) {
   const router = useRouter();
   const [open, setOpen] = useState<boolean>(false);
   const pathname = usePathname();
@@ -24,8 +27,10 @@ export default function MainNav({ user }: MainNavProps) {
     getPreviousPath(pathname);
   }, [pathname]);
 
+  const fullName = `${profile?.firstName || profile?.lastName || ""}`.trim();
+
   return (
-    <nav className="flex items-center justify-between px-4 py-4 shadow md:px-8">
+    <div className="flex items-center justify-between bg-gray-50 px-4 py-4 shadow md:px-8 dark:bg-gray-950">
       <div className="flex justify-center space-x-2 md:space-x-4">
         <Link href="/">
           {/*Replace Home and cabbage icon below with the app logo*/}
@@ -70,18 +75,36 @@ export default function MainNav({ user }: MainNavProps) {
             open ? "translate-x-0" : "translate-x-[100%]",
           )}
         >
-          {/*I probably don't need this button defined explicitly here after all*/}
-          {/*<button
-            aria-expanded={open}
-            onClick={() => setOpen(false)}
-            type="button"
-            className="fixed right-4 top-4 mb-4 block p-2 text-3xl md:hidden"
-          >
-            <MdClose className="size-6 animate-bounce md:hidden" />
-            <span className="sr-only">Close menu</span>
-          </button>*/}
-
           <ul className="container mx-auto my-8 grid place-content-center place-items-center items-center gap-8 p-8 text-lg">
+            {profile && (
+              <li onClick={() => setOpen(false)} className="">
+                <Link
+                  href={`/${profile.slug}`}
+                  className="flex w-full items-center space-x-2"
+                >
+                  <figure className="size-4 space-y-4 rounded-full ring-2">
+                    <img
+                      src={
+                        `${profile.avatar}` || "/avatar-default-svgrepo-com.svg"
+                      }
+                      alt="Profile avatar"
+                      className="aspect-square size-full overflow-hidden object-cover [clip-path:circle(50%)]"
+                    />
+                  </figure>
+                  <span>{fullName || user?.username}</span>
+                </Link>
+              </li>
+            )}
+            {!pathname.startsWith("/write") && (
+              <li onClick={() => setOpen(false)} className="">
+                <Link href="/write">Write</Link>
+              </li>
+            )}
+            {user && (
+              <li onClick={() => setOpen(false)} className="">
+                <Link href="/settings">Settings</Link>
+              </li>
+            )}
             <li onClick={() => setOpen(false)} className="">
               {user ? (
                 <button
@@ -105,12 +128,6 @@ export default function MainNav({ user }: MainNavProps) {
                 <Link href="/sign-up">Sign up</Link>
               </li>
             )}
-            <li onClick={() => setOpen(false)} className="">
-              <Link href="/write">Write</Link>
-            </li>
-            <li onClick={() => setOpen(false)} className="">
-              Menu Item 3
-            </li>
           </ul>
         </div>
 
@@ -119,7 +136,10 @@ export default function MainNav({ user }: MainNavProps) {
           {user ? (
             <div className="flex items-center space-x-2">
               <span className="">
-                Hi, <Link href={`/@${user.username}`}>{user.username}</Link>
+                Hi,{" "}
+                <Link href={`/@${user.username}`}>
+                  {fullName || user.username}
+                </Link>
               </span>
               <button
                 type="button"
@@ -141,6 +161,6 @@ export default function MainNav({ user }: MainNavProps) {
 
         <ThemeSwitcher />
       </div>
-    </nav>
+    </div>
   );
 }

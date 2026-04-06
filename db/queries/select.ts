@@ -1,5 +1,6 @@
 "use server";
 
+import { asc, count, desc, eq, getTableColumns, ilike } from "drizzle-orm";
 import {
   bookmarkTable,
   commentTable,
@@ -14,72 +15,7 @@ import {
   userTable,
 } from "@/db/schema";
 import { db } from "@/db";
-import {
-  and,
-  asc,
-  between,
-  count,
-  desc,
-  eq,
-  getTableColumns,
-  ilike,
-  sql,
-} from "drizzle-orm";
 import { handleDatabaseOperation } from "@/utils/helpers";
-import { getCurrentSession } from "@/lib/session";
-
-export async function getUserWithId(id: User["id"]) {
-  try {
-    const { githubUserId, googleUserId, password, ...rest } =
-      getTableColumns(userTable);
-
-    const [user] = await db
-      .select({ ...rest, postsCount: count(postTable.id) })
-      .from(userTable)
-      .where(eq(userTable.id, id))
-      .leftJoin(postTable, eq(userTable.id, postTable.userId))
-      .groupBy(userTable.id)
-      .execute();
-
-    return { user, error: null };
-  } catch (error) {
-    console.error("User could not be found", error);
-    return { user: null, error: "Failed to find user" };
-  }
-}
-
-export async function getProfileWithSlug(slug: string) {
-  // console.log(slug);
-  try {
-    const [profile] = await db
-      .select()
-      .from(profileTable)
-      .where(eq(profileTable.slug, slug))
-      .execute();
-    // console.log(profile);
-    return { profile: profile, error: null };
-  } catch (error) {
-    console.error("User could not be found", error);
-    return { user: null, error: "Failed to find user" };
-  }
-}
-
-// I might have to use the getPostsByUser instead to know the postCount of a user
-
-export async function getPostsByUser(
-  id: User["id"],
-  page = 1, // Not sure whether I need to limit
-  pageSize = 5,
-): Promise<Array<Post>> {
-  return db
-    .select({ ...getTableColumns(postTable) })
-    .from(postTable)
-    .where(eq(postTable.userId, id))
-    .orderBy(asc(postTable.id))
-    .limit(pageSize)
-    .offset((page - 1) * pageSize)
-    .execute();
-}
 
 export async function getLatestPosts(page = 1, pageSize = 5) {
   try {
@@ -177,6 +113,93 @@ export async function getPostReactionsWithId(postId: Post["id"]) {
   } catch (error) {
     console.error(error);
     return { reactions: null, error: "Failed to fetch post reactions" };
+  }
+}
+
+export async function getProfileWithSlug(slug: string) {
+  // console.log(slug);
+  try {
+    const [profile] = await db
+      .select()
+      .from(profileTable)
+      .where(eq(profileTable.slug, slug))
+      .execute();
+    // console.log(profile);
+    return { profile: profile, error: null };
+  } catch (error) {
+    console.error("User could not be found", error);
+    return { user: null, error: "Failed to find user" };
+  }
+}
+
+// I might have to use the getPostsByUser instead to know the postCount of a user
+
+export async function getPostsByUser(
+  id: User["id"],
+  page = 1, // Not sure whether I need to limit
+  pageSize = 5,
+): Promise<Array<Post>> {
+  return db
+    .select({ ...getTableColumns(postTable) })
+    .from(postTable)
+    .where(eq(postTable.userId, id))
+    .orderBy(asc(postTable.id))
+    .limit(pageSize)
+    .offset((page - 1) * pageSize)
+    .execute();
+}
+
+export const usernameAlreadyExists = async (username: string) => {
+  try {
+    const [existingUsername] = await db
+      .select({ username: userTable.username })
+      .from(userTable)
+      .where(eq(userTable.username, username.toLowerCase()));
+
+    return { result: !!existingUsername, error: null };
+  } catch (error) {
+    console.error(error);
+    return {
+      error: "Something went wrong. Could not verify",
+      result: null,
+    };
+  }
+};
+
+export const emailAlreadyExists = async (email: string) => {
+  try {
+    const [existingEmail] = await db
+      .select({ email: userTable.email })
+      .from(userTable)
+      .where(eq(userTable.email, email.toLowerCase()));
+
+    return { result: !!existingEmail, error: null };
+  } catch (error) {
+    console.error(error);
+    return {
+      error: "Something went wrong. Could not verify",
+      result: null,
+    };
+  }
+};
+
+export async function getUserWithId(id: User["id"]) {
+  try {
+    const { githubUserId, googleUserId, password, ...rest } =
+      getTableColumns(userTable);
+
+    const [user] = await db
+      .select({ ...rest, postsCount: count(postTable.id) })
+      .from(userTable)
+      .where(eq(userTable.id, id))
+      .leftJoin(postTable, eq(userTable.id, postTable.userId))
+      .groupBy(userTable.id)
+      .execute();
+
+    return { user, error: null };
+  } catch (error) {
+    console.error("User could not be found", error);
+    return { user: null, error: "Failed to find user" };
   }
 }
 

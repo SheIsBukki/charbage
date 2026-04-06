@@ -1,4 +1,3 @@
-import React from "react";
 import { z } from "zod";
 import { redirect } from "next/navigation";
 import { getCurrentSession } from "@/lib/session";
@@ -6,7 +5,7 @@ import { loginUser, registerUser } from "@/app/actions/auth";
 import SignUp from "@/components/auth/SignUp";
 
 const SignUpSchema = z.object({
-  name: z.string().min(2),
+  username: z.string().min(2),
   email: z.string().email(),
   password: z.string().min(5),
   // githubUserId: z.number(),
@@ -25,6 +24,7 @@ export default async function SignUpPage() {
 
     const parsed = SignUpSchema.safeParse(Object.fromEntries(formData));
 
+    console.log(parsed);
     if (!parsed.success) {
       return {
         errors: parsed.error.flatten().fieldErrors,
@@ -32,9 +32,9 @@ export default async function SignUpPage() {
       };
     }
 
-    const { name, email, password } = parsed.data;
+    const { username, email, password } = parsed.data;
     const { user, error } = await registerUser(
-      name,
+      username,
       email,
       password,
       // githubUserId,

@@ -40,8 +40,8 @@ export const registerUser = async (
     const [user] = await db
       .insert(userTable)
       .values({
-        username,
-        email,
+        username: username.toLowerCase(),
+        email: email.toLowerCase(),
         password: hashedPassword,
         // githubUserId: githubUserId,
         // googleUserId: googleUserId,
@@ -74,12 +74,6 @@ export const registerUser = async (
 };
 
 export const loginUser = async (email: string, password?: string) => {
-  /**REMEMBER TO REMOVE THIS IF CHECK FOR PRODUCTION*/
-  // if (!db) {
-  //   console.warn("Database not available: skipping user login");
-  //   return { user: null };
-  // }
-
   const [user] = await db
     .select()
     .from(userTable)
@@ -90,12 +84,12 @@ export const loginUser = async (email: string, password?: string) => {
   }
 
   // Add the following two if statements to avoid sending null password to the database
-  // This if statement checks if the user has a password set—Handles case for OAuth users
+  // This if statement checks if the user has a password set. Handles case for OAuth users
   if (user.password === null) {
     return { user: null, error: "No password set for this account" };
   }
 
-  // This if statement checks if a password is provided—handles case where password is required
+  // This if statement checks if a password is provided. handles case where password is required
   if (password === null) {
     return { user: null, error: "Password is required" };
   }
@@ -148,8 +142,6 @@ export const getUserWithGithubData = async (
     id: user.id,
     email: user.email,
     username: user.username,
-    // firstName: user.firstName,
-    // lastName: user.lastName,
     githubUserId: user.githubUserId,
     googleUserId: user.googleUserId,
     password: user.password,
@@ -176,8 +168,6 @@ export const getUserWithGoogleData = async (
     id: user.id,
     email: user.email,
     username: user.username,
-    // firstName: user.firstName,
-    // lastName: user.lastName,
     githubUserId: user.githubUserId,
     googleUserId: user.googleUserId,
     password: user.password,

@@ -28,7 +28,7 @@ export default function SettingsPageClient({
   ];
 
   return (
-    <div className="container mx-auto w-full space-y-4 p-4 lg:w-2/4">
+    <div className="borer container mx-auto w-full space-y-4 border-red-500 p-4 pb-8 lg:w-3/6">
       <div className="flex w-fit justify-between space-x-2 rounded-lg bg-gray-100 p-2 dark:bg-gray-900">
         {panelButtons.map((panelButton) => (
           <button
@@ -37,7 +37,7 @@ export default function SettingsPageClient({
             type="button"
             id={panelButton.id}
             className={clsx(
-              "rounded-lg px-4 py-1 text-sm font-semibold ring-1 dark:ring-slate-800",
+              "rounded-lg px-2 py-1 text-sm font-semibold ring-1 md:px-4 dark:ring-slate-800",
               {
                 "text-gray-600 ring-slate-200 dark:text-gray-400":
                   panelButton.id !== view,

@@ -49,7 +49,7 @@ export default function ProfileForm({
   }, [isSubmitSuccessful]);
 
   return (
-    <div>
+    <div className="h-full">
       <Form
         className="borer w-full space-y-4 border-red-500"
         action={formAction}
