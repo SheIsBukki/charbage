@@ -27,19 +27,24 @@ export default function SignUp({ userAlreadyLoggedIn, action }: SignUpProps) {
     // if (e.target.name === "email" && e.target.value.trim() !== "") {
     //   const doesEmailExist = await emailAlreadyExists(e.target.value);
     //
-    //   doesEmailExist.result
-    //     ? setEmailDuplicateError(`Email "${e.target.value}" already exists`)
-    //     : setEmailDuplicateError("");
+    //   if (doesEmailExist.result) {
+    //     setEmailDuplicateError(`Email "${e.target.value}" already exists`);
+    //   }
+    //   {
+    //     setEmailDuplicateError("");
+    //   }
     // }
 
     if (e.target.name === "username" && e.target.value.trim() !== "") {
       const doesUsernameExist = await usernameAlreadyExists(e.target.value);
 
-      doesUsernameExist.result
-        ? setUsernameDuplicateError(
-            `Username "${e.target.value}" already exists`,
-          )
-        : setUsernameDuplicateError("");
+      if (doesUsernameExist.result) {
+        setUsernameDuplicateError(
+          `Username "${e.target.value}" already exists`,
+        );
+      } else {
+        setUsernameDuplicateError("");
+      }
     }
   };
 
