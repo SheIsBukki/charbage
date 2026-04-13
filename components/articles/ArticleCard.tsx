@@ -68,7 +68,10 @@ export default function ArticleCard({ article }: { article: PostType }) {
               )}
               <p className="dark:text-gray-400">
                 {" "}
-                {regularDate(article.createdAt)}
+                {article.updatedAt ? "Updated" : "Published"}:{" "}
+                {regularDate(
+                  article.updatedAt ? article.updatedAt : article.createdAt,
+                )}
               </p>
             </div>
           </div>
