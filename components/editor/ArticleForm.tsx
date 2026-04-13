@@ -82,14 +82,15 @@ export default function ArticleForm({
   // console.log(typeof JSON.parse(JSON.stringify(oldValues)));
 
   return (
-    <div className="mx-auto w-full">
+    // <div className="mx-auto w-full px-2">
+    <div className="brder container mx-auto my-8 border-red-500 px-2 pb-12 lg:w-3/5">
       {/*ARTICLE*/}
       <div className="h-[50%]">
         <Form action={formAction}>
           <input name="oldValues" value={oldValues} type="hidden" />
 
           {/*Featured Image*/}
-          <div className="my-6 w-fit px-3">
+          <div className="my-6 w-fit">
             <Controller
               name="featuredImage"
               control={control}
@@ -109,7 +110,7 @@ export default function ArticleForm({
           </div>
 
           {/*Title*/}
-          <div className="my-2 w-full px-2">
+          <div className="my-2 w-full">
             <textarea
               id="title"
               aria-describedby="title-error"
@@ -126,7 +127,7 @@ export default function ArticleForm({
           </div>
 
           {/*Description*/}
-          <div className="my-2 w-full px-2">
+          <div className="my-2 w-full">
             <textarea
               id="description"
               aria-describedby="description-error"

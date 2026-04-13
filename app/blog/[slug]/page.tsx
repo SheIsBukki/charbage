@@ -1,5 +1,10 @@
 import { notFound } from "next/navigation";
-import { getPostReactionsWithId, getPostWithSlug } from "@/db/queries/select";
+import Link from "next/link";
+import {
+  getPostReactionsWithId,
+  getPostWithSlug,
+  getProfileWithSlug,
+} from "@/db/queries/select";
 import Article from "@/components/articles/Article";
 import { getCurrentSession } from "@/lib/session";
 import { deleteComment, deletePost } from "@/db/queries/delete";
@@ -7,6 +12,7 @@ import CommentForm from "@/components/comments/CommentForm";
 import CommentCard from "@/components/comments/CommentCard";
 import { Comment } from "@/db/schema";
 import { createOrEditCommentAction } from "@/app/actions/createOrEditCommentAction";
+import Avatar from "@/app/ui/Avatar";
 
 export async function generateMetadata({
   params,
@@ -53,10 +59,14 @@ export default async function BlogPage({
     (comment: Comment) => comment.userId === user?.id,
   );
 
+  const { profile: currentUserProfile } = await getProfileWithSlug(
+    `@${user?.username}`,
+  );
+
   // console.log(reactions?.comments);
 
   return (
-    <div className="mx-auto mb-24 w-full py-8">
+    <div className="boder bottom-10 mx-auto mb-24 w-full border-red-500 py-12">
       <Article
         authorisedPostAuthor={!!authorisedPostAuthor}
         currentUser={user?.id}
@@ -67,7 +77,7 @@ export default async function BlogPage({
 
       {/*STATIC INTERACTIONS UI UNTIL DYNAMIC COMMENTS*/}
       <hr className="border-1 my-12" />
-      <div className="brder-2 container mx-auto mt-12 space-y-[0.05rem] border-red-500 lg:mx-auto lg:w-3/5">
+      <div className="brder-2 container mx-auto mb-24 mt-12 space-y-[0.05rem] border-red-500 lg:mx-auto lg:mb-auto lg:w-3/5">
         <p
           id="responses"
           className="boder-t-2 mb-12 px-6 text-2xl font-semibold"
@@ -76,17 +86,19 @@ export default async function BlogPage({
         </p>
 
         <div className="items-strt boder flex space-x-2 border-red-500 px-2">
-          <figure className="h-8 w-8 rounded-full bg-gray-500">
-            <img
-              width={100}
-              height={100}
-              src="#"
-              alt={user?.username}
-              className=""
-            />
-          </figure>
+          {user && (
+            <Link href={`/${currentUserProfile?.slug}`}>
+              <figure className="h-8 w-8 rounded-full bg-gray-500">
+                <Avatar
+                  avatarUrl={currentUserProfile?.avatar || ""}
+                  alt={user?.username || ""}
+                  defaultSize={8}
+                  mdToLgSize={8}
+                />
+              </figure>
+            </Link>
+          )}
           <div className="mb mb-4 w-full">
-            {/*<span className="">{user?.name}</span>*/}
             <CommentForm
               currentUser={user?.id}
               action={createOrEditCommentAction}
@@ -102,18 +114,27 @@ export default async function BlogPage({
         {/*  COMMENT CARDS */}
         <div className="boder container mx-auto w-full space-y-4 border-red-500 px-8">
           {reactions?.comments.map(
-            ({ id, content, createdAt, author, userId, updatedAt }) => (
-              <CommentCard
-                key={id}
-                commentId={id}
-                comment={content}
-                createdAt={createdAt}
-                author={author}
-                updatedAt={updatedAt}
-                authorisedCommentAuthor={user?.id === userId}
-                deleteCommentAction={deleteComment}
-              />
-            ),
+            async ({ id, content, createdAt, author, userId, updatedAt }) => {
+              const { profile } = await getProfileWithSlug(`@${author}`);
+
+              const fullName =
+                `${profile?.firstName || ""} ${profile?.lastName || ""}`.trim();
+
+              return (
+                <CommentCard
+                  key={id}
+                  commentId={id}
+                  comment={content}
+                  createdAt={createdAt}
+                  authorName={fullName || author}
+                  authorSlug={`@${author}`}
+                  authorAvatar={profile?.avatar || ""}
+                  updatedAt={updatedAt}
+                  authorisedCommentAuthor={user?.id === userId}
+                  deleteCommentAction={deleteComment}
+                />
+              );
+            },
           )}
         </div>
       </div>

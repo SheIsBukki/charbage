@@ -1,11 +1,11 @@
 "use client";
 
-import React, { useActionState, useState } from "react";
+import { useActionState, useState } from "react";
 import Form from "next/form";
 import Link from "next/link";
 import { useRedirect } from "@/components/auth/useRedirect";
 import { ErrorMessage } from "@/app/ui/ErrorMessage";
-import { emailAlreadyExists, usernameAlreadyExists } from "@/db/queries/select";
+import { useDebouncedDuplicate } from "@/utils/useDebouncedDuplicate";
 
 const initialState = { message: "" };
 
@@ -23,6 +23,8 @@ export default function SignUp({ userAlreadyLoggedIn, action }: SignUpProps) {
   // const [emailDuplicateError, setEmailDuplicateError] = useState("");
   useRedirect({ userAlreadyLoggedIn, state });
 
+  const handleDuplicateUsername = useDebouncedDuplicate(500);
+
   const handleDuplicate = async (e: any) => {
     // if (e.target.name === "email" && e.target.value.trim() !== "") {
     //   const doesEmailExist = await emailAlreadyExists(e.target.value);
@@ -36,16 +38,18 @@ export default function SignUp({ userAlreadyLoggedIn, action }: SignUpProps) {
     // }
 
     if (e.target.name === "username" && e.target.value.trim() !== "") {
-      const doesUsernameExist = await usernameAlreadyExists(e.target.value);
-
-      if (doesUsernameExist.result) {
-        setUsernameDuplicateError(
-          `Username "${e.target.value}" already exists`,
-        );
-      } else {
-        setUsernameDuplicateError("");
-      }
+      handleDuplicateUsername(setUsernameDuplicateError, e.target.value);
     }
+    //   const doesUsernameExist = await usernameAlreadyExists(e.target.value);
+    //
+    //   if (doesUsernameExist.result) {
+    //     setUsernameDuplicateError(
+    //       `Username "${e.target.value}" already exists`,
+    //     );
+    //   } else {
+    //     setUsernameDuplicateError("");
+    //   }
+    // }
   };
 
   return (
@@ -65,7 +69,7 @@ export default function SignUp({ userAlreadyLoggedIn, action }: SignUpProps) {
                 </label>
 
                 <input
-                  onBlur={(e) => handleDuplicate(e)}
+                  onChange={(e) => handleDuplicate(e)}
                   type="text"
                   className="peer block w-full rounded-md border border-gray-200 py-[9px] pl-5 text-sm outline-2 placeholder:text-gray-500"
                   id="username"
@@ -88,7 +92,7 @@ export default function SignUp({ userAlreadyLoggedIn, action }: SignUpProps) {
                 </label>
 
                 <input
-                  onBlur={(e) => handleDuplicate(e)}
+                  // onChange={(e) => handleDuplicate(e)}
                   type="email"
                   className="peer block w-full rounded-md border border-gray-200 py-[9px] pl-5 text-sm outline-2 placeholder:text-gray-500"
                   id="email"

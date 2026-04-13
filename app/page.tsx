@@ -1,28 +1,40 @@
-// import TagSelection from "@/components/tag/TagSelection";
-// import { getCurrentSession } from "@/lib/session";
-// import MainNav from "@/app/ui/MainNav";
-import ArticleCard from "@/components/articles/ArticleCard";
-import { getLatestPosts } from "@/db/queries/select";
 import { polyfill } from "interweave-ssr";
+// import TagSelection from "@/components/tag/TagSelection";
+import { getCurrentSession } from "@/lib/session";
+import { getLatestPosts, getUserBookmarks } from "@/db/queries/select";
+import HomePageClient from "@/app/HomePageClient";
 
 polyfill();
 
 export default async function Home() {
-  // const { user } = await getCurrentSession();
+  const { user } = await getCurrentSession();
   const { posts } = await getLatestPosts();
 
-  return (
-    <>
-      <div className="py4 borer container mx-auto grid-cols-8 gap-12 border-red-500 lg:grid">
-        {/*Other stuff like Reading List, User Suggestion, etc*/}
-        <div className="col-span-3 hidden lg:block"></div>
+  const { result: currentUserBookmarks } = await getUserBookmarks(
+    user?.id || "",
+  );
 
-        {/*Article Cards*/}
-        <div className="col-span-5">
-          {posts &&
-            posts.map((post) => <ArticleCard key={post.id} article={post} />)}
-        </div>
-      </div>
-    </>
+  const postArr = [];
+  if (posts) {
+    postArr.push(...posts);
+  }
+  const bookmarkArr = [];
+  if (currentUserBookmarks) {
+    bookmarkArr.push(...currentUserBookmarks);
+  }
+
+  // console.log(posts?.length);
+  // console.log(postArr.length);
+
+  // console.log(currentUserBookmarks);
+
+  return (
+    <div className="h-full">
+      <HomePageClient
+        posts={postArr}
+        currentUserBookmarks={bookmarkArr}
+        currentUserId={user?.id}
+      />
+    </div>
   );
 }

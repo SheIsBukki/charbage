@@ -5,6 +5,11 @@ import Image from "next/image";
 import { Interweave } from "interweave";
 import { useRouter } from "next/navigation";
 import { clsx } from "clsx";
+import Link from "next/link";
+import { MdOutlineAddLink, MdOutlineBookmarkAdd } from "react-icons/md";
+import { BiCommentDetail } from "react-icons/bi";
+import { CiCircleChevDown, CiCircleChevUp, CiSettings } from "react-icons/ci";
+import { BsFillBookmarkCheckFill, BsHeartFill } from "react-icons/bs";
 
 import md from "@/utils/md";
 import { copyCurrentUrl, regularDate } from "@/utils/helpers";
@@ -12,16 +17,11 @@ import { DbActionType, PostType, ReactionsType } from "@/lib/types";
 import { removeBookmark, removeLike } from "@/db/queries/delete";
 import { addBookmark, addLike } from "@/db/queries/insert";
 import { Bookmark, Like } from "@/db/schema";
-
 import ArticleSettings from "@/components/articles/ArticleSettings";
 import ReaderInteraction from "@/app/ui/ReaderInteraction";
-
-import { MdOutlineAddLink, MdOutlineBookmarkAdd } from "react-icons/md";
-import { BiCommentDetail } from "react-icons/bi";
-import { CiCircleChevDown, CiCircleChevUp, CiSettings } from "react-icons/ci";
-import { BsFillBookmarkCheckFill, BsHeartFill } from "react-icons/bs";
 import AuthenticationDialogue from "@/components/auth/AuthenticationDialogue";
-import Link from "next/link";
+import Avatar from "@/app/ui/Avatar";
+import { useDisableScroll } from "@/app/ui/useDisableScroll";
 
 // export const dynamic = "force-dynamic";
 
@@ -48,6 +48,8 @@ export default function Article({
   const likeCount = reactions?.likes.length;
   const commentCount = reactions?.comments.length;
   const bookmarkCount = reactions?.bookmarks.length;
+  const fullName =
+    `${post.authorFirstname || ""} ${post.authorLastname || ""}`.trim();
 
   useEffect(() => {
     if (copyUrl) {
@@ -64,6 +66,8 @@ export default function Article({
   const currentUserbookmarked = reactions?.bookmarks.some(
     (bookmark: Bookmark) => bookmark.userId === currentUser,
   );
+
+  useDisableScroll(expandMore);
 
   return (
     <>
@@ -91,20 +95,18 @@ export default function Article({
             {/*Post and author data*/}
             <div className="flex items-center space-x-4">
               <Link href={`/@${post.author}`}>
-                <figure className="">
-                  <Image
-                    sizes="(min-width: 808px) 50vw, 100vw"
-                    width={0}
-                    height={0}
-                    src="/"
-                    alt="author avatar"
-                    className="size-[40] rounded-full bg-gray-500"
-                  />
-                </figure>
+                <Avatar
+                  avatarUrl={post.authorAvatar || ""}
+                  alt="Author's avatar"
+                  defaultSize={10}
+                  mdToLgSize={12}
+                />
               </Link>
               <div className="text-sm">
                 <p className="font-semibold">
-                  <Link href={`/@${post.author}`}>{post.author}</Link>
+                  <Link href={`/@${post.author}`}>
+                    {fullName || post.author}
+                  </Link>
                 </p>
                 <p className="dark:text-gray-400">
                   {post.updatedAt
@@ -139,7 +141,7 @@ export default function Article({
         </div>
 
         {/*INTERACTIONS AND SETTINGS*/}
-        <div className="boder-red-500 fixed bottom-0 z-20 w-full border-t-2 bg-white lg:static lg:bottom-auto lg:z-auto lg:order-1 lg:col-span-1 lg:flex lg:flex-col lg:items-center lg:space-y-4 lg:border-r-2 lg:border-t-0 lg:bg-inherit lg:pt-12 dark:bg-[#0a0a0a] lg:dark:bg-inherit">
+        <div className="boder-red-500 w4/5 fixed bottom-0 left-0 right-0 z-20 border-t-2 bg-white lg:static lg:bottom-auto lg:z-auto lg:order-1 lg:col-span-1 lg:flex lg:flex-col lg:items-center lg:space-y-4 lg:border-r-2 lg:border-t-0 lg:bg-inherit lg:pt-12 dark:bg-[#0a0a0a] lg:dark:bg-inherit">
           <div className="brder mt-8 flex justify-between border-red-500 px-4 lg:mt-0 lg:block">
             <div className="flex items-center space-x-4 lg:flex-col lg:space-x-0 lg:space-y-4">
               <a href="#responses" className="">

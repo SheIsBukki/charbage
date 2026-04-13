@@ -1,22 +1,27 @@
 "use client";
 
-import { useState } from "react";
+import { Dispatch, SetStateAction } from "react";
 import Link from "next/link";
 import { RxDoubleArrowLeft, RxDoubleArrowRight } from "react-icons/rx";
 import { IoBookmarksOutline, IoSettingsOutline } from "react-icons/io5";
 import { LuBell, LuLayoutDashboard } from "react-icons/lu";
 import { TfiWrite } from "react-icons/tfi";
 import { MdOutlineLibraryBooks } from "react-icons/md";
+import { FaHome } from "react-icons/fa";
 import { GiCabbage } from "react-icons/gi";
 import { clsx } from "clsx";
 import { Profile } from "@/db/schema";
+import { useDisableScroll } from "@/app/ui/useDisableScroll";
 
 export default function ProfileSideBar({
   currentUserProfile,
+  setOpenAction,
+  openAction,
 }: {
   currentUserProfile: Profile;
+  setOpenAction: Dispatch<SetStateAction<boolean>>;
+  openAction: boolean;
 }) {
-  const [open, setOpen] = useState(false);
   const fullName =
     `${currentUserProfile.firstName || ""} ${currentUserProfile.lastName || ""}`.trim();
 
@@ -31,37 +36,55 @@ export default function ProfileSideBar({
     { text: "Drafts", icon: <MdOutlineLibraryBooks className="text-lg" /> },
   ];
 
+  useDisableScroll(openAction);
+
   return (
     <div
       className={clsx(
-        "boder flex flex-col justify-between space-y-6 border-red-500 py-6 transition-transform duration-300 ease-in motion-reduce:transition-none",
-        !open
-          ? "h-full w-[20%] translate-x-[2%] items-center md:w-[10%] lg:w-[5%]"
-          : "fixed bottom-0 top-[3.5rem] z-30 w-[80%] bg-gray-50 px-4 md:static md:z-auto md:w-[40%] md:bg-transparent lg:w-[20%] dark:bg-gray-950",
+        "borer-red-500 fixed bottom-0 left-0 top-[3.5rem] flex flex-col justify-between space-y-6 border-r-2 py-6 transition-transform duration-300 ease-in motion-reduce:transition-none md:h-[calc(100vh-5rem)]",
+        !openAction
+          ? "w-[16%] translate-x-[-1%] items-center md:w-[8%] lg:w-[4%]"
+          : "z-30 w-[80%] bg-gray-50 px-4 md:z-auto md:w-[28%] md:bg-transparent md:px-[10rem_10rem] lg:w-[14%] dark:bg-gray-950",
       )}
     >
       <div className="flex flex-col space-y-5">
         <div
           className={clsx(
             "boder w-full border-red-500",
-            !open
+            !openAction
               ? "flex w-full flex-col items-center space-y-6"
               : "flex w-full flex-row-reverse items-center justify-between",
           )}
         >
-          <button type="button" onClick={() => setOpen(!open)} className="">
-            {!open ? (
+          <button
+            type="button"
+            onClick={() => setOpenAction(!openAction)}
+            className=""
+          >
+            {!openAction ? (
               <RxDoubleArrowRight className="text-xl" />
             ) : (
               <RxDoubleArrowLeft className="text-xl" />
             )}
           </button>
-          <p className={clsx("flex items-center space-x-2", !open && "mb-4")}>
+          <p
+            className={clsx(
+              "flex items-center space-x-2",
+              !openAction && "mb-4",
+            )}
+          >
             <span className="flex">
-              <GiCabbage className="text-lg" />
+              {/*<GiCabbage className="text-lg" />*/}
+              <FaHome />
             </span>
-            <span className={clsx("font-semibold", !open ? "hidden" : "block")}>
-              Charbage
+            <span
+              className={clsx(
+                "font-semibold",
+                !openAction ? "hidden" : "block",
+              )}
+            >
+              Home
+              {/*Charbage*/}
             </span>
           </p>
         </div>
@@ -72,7 +95,7 @@ export default function ProfileSideBar({
             <span
               className={clsx(
                 "brder border-red-500",
-                !open ? "hidden" : "block",
+                !openAction ? "hidden" : "block",
               )}
             >
               {text}
@@ -96,7 +119,10 @@ export default function ProfileSideBar({
             />
           </figure>
           <span
-            className={clsx("borer border-red-500", !open ? "hidden" : "block")}
+            className={clsx(
+              "borer border-red-500",
+              !openAction ? "hidden" : "block",
+            )}
           >
             {fullName || currentUserProfile.slug}
           </span>
@@ -109,7 +135,10 @@ export default function ProfileSideBar({
             <IoSettingsOutline className={`text-lg`} />
           </span>
           <span
-            className={clsx("borer border-red-500", !open ? "hidden" : "block")}
+            className={clsx(
+              "borer border-red-500",
+              !openAction ? "hidden" : "block",
+            )}
           >
             Settings
           </span>

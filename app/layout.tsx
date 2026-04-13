@@ -45,18 +45,19 @@ export default async function RootLayout({
             }
           `}
         </Script>
+        <meta name="color-scheme" content="dqrk light" />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} relative h-[100vh] antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} relative h-full antialiased`}
       >
         <ThemeProvider>
-          <nav className="boder fixed top-0 z-50 w-full border-red-500">
+          <nav className="boder fixed left-0 right-0 top-0 z-50 w-full border-red-500">
             <MainNav profile={profile} user={user} />
           </nav>
-          <Toaster />
           <main className="brder h-full border-red-500 pt-[3.6rem]">
             {children}
           </main>
+          <Toaster />
         </ThemeProvider>
       </body>
     </html>

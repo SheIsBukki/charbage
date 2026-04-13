@@ -1,13 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { uploadImage } from "@/utils/uploadImage";
 import { BiLoaderAlt } from "react-icons/bi";
 import { FcRemoveImage } from "react-icons/fc";
 import { FaImage } from "react-icons/fa";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
-import { deleteAvatarOrFeaturedImage } from "@/lib/deleteAvatarOrFeaturedImage";
+import { uploadImage } from "@/utils/uploadImage";
+import { deleteAvatarOrFeaturedImage } from "@/utils/deleteAvatarOrFeaturedImage";
 
 export default function AvatarOrFeaturedImage({
   imageUrl,
@@ -103,7 +103,7 @@ export default function AvatarOrFeaturedImage({
       {pathname === "/settings" && (
         <>
           <p className="font-semibold">Profile picture</p>
-          <figure className="size-20 space-y-4 rounded-full ring-2 sm:size-24">
+          <figure className="size-20 space-y-4 rounded-full ring-2 active:scale-100 sm:size-24">
             <img
               src={`${imagePreview}` || "/avatar-default-svgrepo-com.svg"}
               alt="Profile avatar"

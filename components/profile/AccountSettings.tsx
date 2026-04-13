@@ -7,7 +7,7 @@ import { GrAlert } from "react-icons/gr";
 import { AccountSettingsFormSchema } from "@/lib/definitions";
 import { AccountSettingsFormProps } from "@/lib/types";
 import { ErrorMessage } from "@/app/ui/ErrorMessage";
-import { usernameAlreadyExists } from "@/db/queries/select";
+import { useDebouncedDuplicate } from "@/utils/useDebouncedDuplicate";
 
 export default function AccountSettings({
   action,
@@ -17,6 +17,7 @@ export default function AccountSettings({
     values: values,
     errors: {},
   });
+
   const [usernameDuplicateError, setUsernameDuplicateError] = useState("");
 
   const {
@@ -44,6 +45,8 @@ export default function AccountSettings({
     }
   }, [isSubmitSuccessful]);
 
+  const handleDuplicateUsername = useDebouncedDuplicate(500);
+
   return (
     <div className="h-full space-y-4">
       <div className="space-y-2">
@@ -62,23 +65,13 @@ export default function AccountSettings({
         </p>
       </div>
       <form
-        onBlur={async (e) => {
+        onChange={(e) => {
           if (
             e.target.name === "username" &&
             e.target.value.trim() !== "" &&
             e.target.value.toLowerCase() !== values.username
           ) {
-            const existingUsername = await usernameAlreadyExists(
-              e.target.value,
-            );
-
-            if (existingUsername.result) {
-              setUsernameDuplicateError(
-                `Username "${e.target.value}" already exists`,
-              );
-            } else {
-              setUsernameDuplicateError("");
-            }
+            handleDuplicateUsername(setUsernameDuplicateError, e.target.value);
           }
         }}
         action={formAction}
@@ -99,7 +92,7 @@ export default function AccountSettings({
           </label>
           {(errors.username || usernameDuplicateError) && (
             <ErrorMessage
-              message={errors?.username?.message || usernameDuplicateError}
+              message={usernameDuplicateError || errors?.username?.message}
             />
           )}
         </section>
