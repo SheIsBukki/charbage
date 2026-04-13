@@ -140,19 +140,6 @@ export type PostType = {
   bookmarks?: number;
 };
 
-export type PostByUserType = {
-  serialNumber: number;
-  id: string;
-  title: string;
-  description: string | null;
-  content: string;
-  featuredImage: string | null;
-  slug: string;
-  createdAt: Date;
-  updatedAt: Date | null;
-  userId: string;
-};
-
 export type CurrentUserBookmarksType = {
   title: string;
   postSlug: string;
@@ -177,7 +164,7 @@ export type UserBookmarksType = {
   authorUsername: string | null;
 };
 
-export type DbUserBookmarksType = (
+export type DbUserBookmarksFetchType = (
   currentUserId: string,
   page: number,
 ) => Promise<{
@@ -185,37 +172,19 @@ export type DbUserBookmarksType = (
   error: string | null;
 }>;
 
-export type DbHomepagePostsType = (
+export type DbHomepagePostsFetchType = (
   page: number,
 ) => Promise<{ posts: Array<PostType> | null; error: string | null }>;
 
-export type DbUserPostsType = (
+export type DbUserPostsFetchType = (
   id: string,
   page: number,
 ) => Promise<{ posts: Array<Post> | null; error: string | null }>;
 
-export type DataFetcherActionType =
-  | DbUserBookmarksType
-  | DbHomepagePostsType
-  | DbUserPostsType;
-
-export type DataFetcherActionType2 = (
-  id?: string,
-  page?: number,
-  pageSize?: number,
-) => Promise<
-  | { posts: Array<Post> | null; error: string | null }
-  | {
-      posts: Array<PostType> | null;
-      error: string | null;
-    }
-  | { result: Array<UserBookmarksType> | null; error: string | null }
->;
-
-export type FetcherAndKind =
-  | { fetchKind: "homepagePosts"; dataFetcherAction: DbHomepagePostsType }
-  | { fetchKind: "postsByUser"; dataFetcherAction: DbUserPostsType }
+export type PaginationFetcherAndKindType =
+  | { fetchKind: "homepagePosts"; dataFetcher: DbHomepagePostsFetchType }
+  | { fetchKind: "postsByUser"; dataFetcher: DbUserPostsFetchType }
   | {
       fetchKind: "currentUserBookmarks";
-      dataFetcherAction: DbUserBookmarksType;
+      dataFetcher: DbUserBookmarksFetchType;
     };

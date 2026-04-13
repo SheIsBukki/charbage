@@ -9,36 +9,20 @@ import {
   useState,
 } from "react";
 import { IoArrowDown } from "react-icons/io5";
-import {
-  DataFetcherActionType,
-  DataFetcherActionType2,
-  FetcherAndKind,
-  PostType,
-  UserBookmarksType,
-} from "@/lib/types";
-import { Post } from "@/db/schema";
-
-type MoreDataType = Post | PostType | UserBookmarksType;
+import { PaginationFetcherAndKindType } from "@/lib/types";
 
 export default function PaginationWrapper({
-  // dataFetcherAction,
   children,
-  // dataExtractorName,
   setMoreDataAction,
   id,
-  // fetchKind,
   jump = true,
   fetcherAndKind,
 }: {
-  // dataFetcherAction: DataFetcherActionType;
   children: JSX.Element[] | JSX.Element;
-  // dataExtractorName: string;
-  // setMoreDataAction: Dispatch<SetStateAction<MoreDataType[]>>;
   setMoreDataAction: Dispatch<SetStateAction<any[]>>;
   id?: string;
-  // fetchKind: string;
   jump?: boolean;
-  fetcherAndKind: FetcherAndKind;
+  fetcherAndKind: PaginationFetcherAndKindType;
 }) {
   const [page, setPage] = useState(2);
   const heightRef = useRef<HTMLDivElement | null>(null);
@@ -51,7 +35,7 @@ export default function PaginationWrapper({
 
   const [endOfData, setEndOfData] = useState(false);
 
-  const { fetchKind, dataFetcherAction } = fetcherAndKind;
+  const { fetchKind, dataFetcher } = fetcherAndKind;
 
   return (
     <div ref={heightRef}>
@@ -62,43 +46,28 @@ export default function PaginationWrapper({
           onClick={async () => {
             if (endOfData) return;
 
-            // let fetchedData;
-
             if (fetchKind === "postsByUser") {
-              const fetched = await dataFetcherAction(id!, page); // DbUserPostsType
+              const fetched = await dataFetcher(id!, page);
               const newData = fetched.posts;
               if (newData) {
                 setEndOfData(!newData.length);
                 setMoreDataAction((prev) => [...prev, ...newData]);
               }
             } else if (fetchKind === "currentUserBookmarks") {
-              const fetched = await dataFetcherAction(id!, page); // DbUserBookmarksType (id === currentUserId)
+              const fetched = await dataFetcher(id!, page);
               const newData = fetched.result;
               if (newData) {
                 setEndOfData(!newData.length);
                 setMoreDataAction((prev) => [...prev, ...newData]);
               }
             } else {
-              // homepage
-              const fetched = await dataFetcherAction(page); // DbHomepagePostsType
+              const fetched = await dataFetcher(page);
               const newData = fetched.posts;
               if (newData) {
                 setEndOfData(!newData.length);
                 setMoreDataAction((prev) => [...prev, ...newData]);
               }
             }
-
-            // if (fetchKind === "homepagePosts") {
-            //   fetchedData = await dataFetcherAction(page);
-            // } else if (fetchKind !== "homepagePosts") {
-            //   fetchedData = await dataFetcherAction(id!, page);
-            // }
-            // const newData = fetchedData[dataExtractorName];
-            //
-            // if (newData) {
-            //   setEndOfData(!newData.length);
-            //   setMoreDataAction((prev) => [...prev, ...newData]);
-            // }
 
             setPage(page + 1);
           }}

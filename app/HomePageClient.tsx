@@ -11,7 +11,7 @@ import { SlUserFollowing } from "react-icons/sl";
 import PopularTopics from "@/components/home/PopularTopics";
 import PaginationWrapper from "@/app/ui/PaginationWrapper";
 import { getLatestPosts, getUserBookmarks } from "@/db/queries/select";
-import { DbHomepagePostsType, PostType, UserBookmarksType } from "@/lib/types";
+import { PostType, UserBookmarksType } from "@/lib/types";
 import ReadingListCard from "@/components/home/ReadingListCard";
 import PaginatedArticleCards from "@/components/articles/PaginatedArticleCards";
 import { useDisableScroll } from "@/app/ui/useDisableScroll";
@@ -98,15 +98,12 @@ export default function HomePageClient({
           <p className="text-lg font-semibold">Your Reading list</p>
           {bookmarkArr.length ? (
             <PaginationWrapper
-              // dataFetcherAction={getUserBookmarks}
-              // dataExtractorName="result"
               setMoreDataAction={setBookmarkArr}
               id={currentUserId}
-              // fetchKind="currentUserBookmarks"
               jump={false}
               fetcherAndKind={{
                 fetchKind: "currentUserBookmarks",
-                dataFetcherAction: getUserBookmarks,
+                dataFetcher: getUserBookmarks,
               }}
             >
               <div className="space-y-6">
@@ -151,11 +148,10 @@ export default function HomePageClient({
           Newest
         </p>
         <PaginatedArticleCards
-          // dataFetcherAction={getLatestPosts as DbHomepagePostsType}
           posts={posts}
           fetcherAndKind={{
             fetchKind: "homepagePosts",
-            dataFetcherAction: getLatestPosts,
+            dataFetcher: getLatestPosts,
           }}
         />
       </div>

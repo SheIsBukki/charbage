@@ -7,7 +7,7 @@ import BioCard from "@/components/profile/BioCard";
 import AboutCard from "@/components/profile/AboutCard";
 import PaginatedArticleCards from "@/components/articles/PaginatedArticleCards";
 import { getPostsByUser } from "@/db/queries/select";
-import { DbUserPostsType, PostType } from "@/lib/types";
+import { DbUserPostsFetchType, PostType } from "@/lib/types";
 import { Profile } from "@/db/schema";
 import NoUserContent from "@/app/ui/NoUserContent";
 
@@ -64,7 +64,7 @@ export default function ProfilePageClient({
                   userId={profileInView.userId}
                   fetcherAndKind={{
                     fetchKind: "postsByUser",
-                    dataFetcherAction: getPostsByUser as DbUserPostsType,
+                    dataFetcher: getPostsByUser as DbUserPostsFetchType,
                   }}
                 />
               ) : (
