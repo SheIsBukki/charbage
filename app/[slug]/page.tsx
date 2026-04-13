@@ -1,11 +1,6 @@
 import { notFound } from "next/navigation";
-import { MdOutlineArticle } from "react-icons/md";
-import BioCard from "@/components/profile/BioCard";
 import { getCurrentSession } from "@/lib/session";
 import { getPostsByUser, getProfileWithSlug } from "@/db/queries/select";
-import AboutCard from "@/components/profile/AboutCard";
-import ProfileSideBar from "@/components/profile/ProfileSideBar";
-import PaginatedArticleCards from "@/components/articles/PaginatedArticleCards";
 import ProfilePageClient from "@/app/[slug]/ProfilePageClient";
 
 export async function generateMetadata({

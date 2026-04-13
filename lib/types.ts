@@ -1,4 +1,4 @@
-import { Bookmark, Comment, Like } from "@/db/schema";
+import { Bookmark, Comment, Like, Post } from "@/db/schema";
 import { Dispatch, SetStateAction } from "react";
 
 export type DbActionType = (id: string) => Promise<
@@ -140,7 +140,20 @@ export type PostType = {
   bookmarks?: number;
 };
 
-export type currentUserBookmarksType = {
+export type PostByUserType = {
+  serialNumber: number;
+  id: string;
+  title: string;
+  description: string | null;
+  content: string;
+  featuredImage: string | null;
+  slug: string;
+  createdAt: Date;
+  updatedAt: Date | null;
+  userId: string;
+};
+
+export type CurrentUserBookmarksType = {
   title: string;
   postSlug: string;
   createdAt: Date;
@@ -150,7 +163,7 @@ export type currentUserBookmarksType = {
   updatedAt: Date | null;
 };
 
-export type userBookmarksType = {
+export type UserBookmarksType = {
   bookmarkId: string;
   totalBookmarks: number;
   title: string;
@@ -163,3 +176,46 @@ export type userBookmarksType = {
   authorAvatar: string | null;
   authorUsername: string | null;
 };
+
+export type DbUserBookmarksType = (
+  currentUserId: string,
+  page: number,
+) => Promise<{
+  result: Array<UserBookmarksType> | null;
+  error: string | null;
+}>;
+
+export type DbHomepagePostsType = (
+  page: number,
+) => Promise<{ posts: Array<PostType> | null; error: string | null }>;
+
+export type DbUserPostsType = (
+  id: string,
+  page: number,
+) => Promise<{ posts: Array<Post> | null; error: string | null }>;
+
+export type DataFetcherActionType =
+  | DbUserBookmarksType
+  | DbHomepagePostsType
+  | DbUserPostsType;
+
+export type DataFetcherActionType2 = (
+  id?: string,
+  page?: number,
+  pageSize?: number,
+) => Promise<
+  | { posts: Array<Post> | null; error: string | null }
+  | {
+      posts: Array<PostType> | null;
+      error: string | null;
+    }
+  | { result: Array<UserBookmarksType> | null; error: string | null }
+>;
+
+export type FetcherAndKind =
+  | { fetchKind: "homepagePosts"; dataFetcherAction: DbHomepagePostsType }
+  | { fetchKind: "postsByUser"; dataFetcherAction: DbUserPostsType }
+  | {
+      fetchKind: "currentUserBookmarks";
+      dataFetcherAction: DbUserBookmarksType;
+    };

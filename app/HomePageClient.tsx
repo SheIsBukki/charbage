@@ -11,7 +11,7 @@ import { SlUserFollowing } from "react-icons/sl";
 import PopularTopics from "@/components/home/PopularTopics";
 import PaginationWrapper from "@/app/ui/PaginationWrapper";
 import { getLatestPosts, getUserBookmarks } from "@/db/queries/select";
-import { PostType, userBookmarksType } from "@/lib/types";
+import { DbHomepagePostsType, PostType, UserBookmarksType } from "@/lib/types";
 import ReadingListCard from "@/components/home/ReadingListCard";
 import PaginatedArticleCards from "@/components/articles/PaginatedArticleCards";
 import { useDisableScroll } from "@/app/ui/useDisableScroll";
@@ -24,11 +24,11 @@ export default function HomePageClient({
   currentUserId,
 }: {
   posts: PostType[];
-  currentUserBookmarks: userBookmarksType[];
+  currentUserBookmarks: UserBookmarksType[];
   currentUserId?: string;
 }) {
   const [bookmarkArr, setBookmarkArr] =
-    useState<userBookmarksType[]>(currentUserBookmarks);
+    useState<UserBookmarksType[]>(currentUserBookmarks);
 
   const [smBottomPanel, setSmBottomPanel] = useState("");
 
@@ -98,11 +98,16 @@ export default function HomePageClient({
           <p className="text-lg font-semibold">Your Reading list</p>
           {bookmarkArr.length ? (
             <PaginationWrapper
-              dataFetcherAction={getUserBookmarks}
-              dataExtractorName="result"
+              // dataFetcherAction={getUserBookmarks}
+              // dataExtractorName="result"
               setMoreDataAction={setBookmarkArr}
-              userId={currentUserId}
+              id={currentUserId}
+              // fetchKind="currentUserBookmarks"
               jump={false}
+              fetcherAndKind={{
+                fetchKind: "currentUserBookmarks",
+                dataFetcherAction: getUserBookmarks,
+              }}
             >
               <div className="space-y-6">
                 {bookmarkArr.map(
@@ -146,8 +151,12 @@ export default function HomePageClient({
           Newest
         </p>
         <PaginatedArticleCards
-          dataFetcherAction={getLatestPosts}
+          // dataFetcherAction={getLatestPosts as DbHomepagePostsType}
           posts={posts}
+          fetcherAndKind={{
+            fetchKind: "homepagePosts",
+            dataFetcherAction: getLatestPosts,
+          }}
         />
       </div>
 

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Avatar from "@/app/ui/Avatar";
 import { regularDate } from "@/utils/helpers";
-import { currentUserBookmarksType } from "@/lib/types";
+import { CurrentUserBookmarksType } from "@/lib/types";
 
 export default function ReadingListCard({
   title,
@@ -11,7 +11,7 @@ export default function ReadingListCard({
   authorSlug,
   authorAvatar,
   updatedAt,
-}: currentUserBookmarksType) {
+}: CurrentUserBookmarksType) {
   return (
     <div className="space-y-3">
       <div className="flex items-center space-x-3">
