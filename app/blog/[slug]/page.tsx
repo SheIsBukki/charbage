@@ -99,7 +99,6 @@ export default async function BlogPage({
             </Link>
           )}
           <div className="mb mb-4 w-full">
-            {/*<span className="">{user?.name}</span>*/}
             <CommentForm
               currentUser={user?.id}
               action={createOrEditCommentAction}

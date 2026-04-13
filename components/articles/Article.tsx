@@ -95,14 +95,12 @@ export default function Article({
             {/*Post and author data*/}
             <div className="flex items-center space-x-4">
               <Link href={`/@${post.author}`}>
-                <figure className="size-[40] rounded-full bg-gray-500">
-                  <Avatar
-                    avatarUrl={post.authorAvatar || ""}
-                    alt="Author's avatar"
-                    defaultSize={0}
-                    mdToLgSize={0}
-                  />
-                </figure>
+                <Avatar
+                  avatarUrl={post.authorAvatar || ""}
+                  alt="Author's avatar"
+                  defaultSize={10}
+                  mdToLgSize={12}
+                />
               </Link>
               <div className="text-sm">
                 <p className="font-semibold">

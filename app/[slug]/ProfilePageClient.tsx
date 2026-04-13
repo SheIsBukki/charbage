@@ -47,9 +47,7 @@ export default function ProfilePageClient({
           <div className="p4 space-y-4 lg:grid lg:grid-cols-6 lg:gap-8 lg:space-y-0">
             {/*ABOUT CARD*/}
             <div className="col-span-2">
-              <AboutCard
-                about={profileInView.about || "/avatar-default-svgrepo-com.svg"}
-              />
+              <AboutCard about={profileInView.about || ""} />
             </div>
 
             {/*RECENTLY PUBLISHED*/}
