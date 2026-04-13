@@ -173,7 +173,6 @@ export default function HomePageClient({
         >
           <p className="text-lg font-semibold">Featured posts</p>
           {posts
-            .reverse()
             .slice(0, 3)
             .map(
               ({

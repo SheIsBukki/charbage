@@ -84,8 +84,7 @@ export async function getLatestPosts(page = 1, pageSize = 5) {
       .leftJoin(likesAgg, eq(likesAgg.postId, postTable.id))
       .leftJoin(bookmarksAgg, eq(bookmarksAgg.postId, postTable.id))
       .orderBy(
-        desc(postTable.updatedAt || postTable.createdAt),
-        // desc(sql`COALESCE(${postTable.updatedAt}, ${postTable.createdAt})`),
+        desc(sql`COALESCE(${postTable.updatedAt}, ${postTable.createdAt})`),
       )
       .limit(pageSize)
       .offset((page - 1) * pageSize);
