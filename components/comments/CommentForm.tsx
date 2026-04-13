@@ -75,12 +75,15 @@ export default function CommentForm({
     }
   }, [hasCommentChanged]);
 
+  // console.log(currentUser);
+
   return (
     <>
       <div className="pb-4">
         {/*Will place current user's avatar and name*/}
         <form
           onFocus={() => {
+            console.log(currentUser);
             if (currentUser === undefined) {
               setShowAuthenticationDialogue(true);
             }

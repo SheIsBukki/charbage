@@ -19,7 +19,7 @@ export default function SmViewportPanel({
   ];
 
   return (
-    <div className="fixed bottom-0 z-30 flex w-full items-center justify-center space-x-8 border-t-2 bg-gray-50 py-4 text-gray-600 md:hidden dark:bg-gray-950 dark:text-gray-300">
+    <div className="fixed bottom-0 left-0 right-0 z-30 flex w-full items-center justify-center space-x-8 border-t-2 bg-gray-50 py-4 text-gray-600 md:hidden dark:bg-gray-950 dark:text-gray-300">
       {bottomPanelItems.map(({ icon, text }) => (
         <button
           onClick={() => {
