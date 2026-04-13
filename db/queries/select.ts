@@ -1,6 +1,16 @@
 "use server";
 
-import { asc, count, desc, eq, getTableColumns, ilike } from "drizzle-orm";
+import {
+  AnyColumn,
+  asc,
+  count,
+  countDistinct,
+  desc,
+  eq,
+  getTableColumns,
+  ilike,
+  sql,
+} from "drizzle-orm";
 import {
   bookmarkTable,
   commentTable,
@@ -16,34 +26,66 @@ import {
 } from "@/db/schema";
 import { db } from "@/db";
 import { handleDatabaseOperation } from "@/utils/helpers";
+import { AnyRecord } from "node:dns";
 
 export async function getLatestPosts(page = 1, pageSize = 5) {
+  /**/
+  // tags: sql<
+  //   tag[]
+  // >`array(select * from ${tagstopoststable} join ${tagtable} on ${tagstopoststable.tagid} = ${tagtable.id} where ${tagstopoststable.postid} = ${posttable.id} )`,
+  // .groupBy(postTable.id)
+  // .leftJoin(tagsToPostsTable, eq(postTable.id, tagsToPostsTable.postId))
+  // .orderBy(desc(postTable.updatedAt || postTable.createdAt))
   try {
+    const commentsAgg = db
+      .select({
+        postId: commentTable.postId,
+        commentCount: count(commentTable.id).as("comment_count"),
+      })
+      .from(commentTable)
+      .groupBy(commentTable.postId)
+      .as("comments_agg");
+
+    const likesAgg = db
+      .select({
+        postId: likeTable.postId,
+        likeCount: count(likeTable.id).as("like_count"),
+      })
+      .from(likeTable)
+      .groupBy(likeTable.postId)
+      .as("likes_agg");
+
+    const bookmarksAgg = db
+      .select({
+        postId: bookmarkTable.postId,
+        bookmarkCount: count(bookmarkTable.id).as("bookmark_count"),
+      })
+      .from(bookmarkTable)
+      .groupBy(bookmarkTable.postId)
+      .as("bookmarks_agg");
+
     const posts = await db
       .select({
-        // postId: postTable.id,
         ...getTableColumns(postTable),
+        // I will replace this with authorSlug when all users have profile
         author: userTable.username,
-        // comments: count(commentTable.id),
-        // likes: count(likeTable.id),
-        // bookmarks: count(bookmarkTable.id),
-
-        // tags: sql<
-        //   tag[]
-        // >`array(select * from ${tagstopoststable} join ${tagtable} on ${tagstopoststable.tagid} = ${tagtable.id} where ${tagstopoststable.postid} = ${posttable.id} )`,
+        authorFirstname: profileTable.firstName,
+        authorLastname: profileTable.lastName,
+        authorAvatar: profileTable.avatar,
+        comments: sql<number>`COALESCE(${commentsAgg.commentCount}, 0)::int`,
+        likes: sql<number>`COALESCE(${likesAgg.likeCount}, 0)::int`,
+        bookmarks: sql<number>`COALESCE(${bookmarksAgg.bookmarkCount}, 0)::int`,
       })
       .from(postTable)
-      // .groupBy(postTable.id)
-      // I don't need the where statement for now, and will probably never need it since the orderBy desc statement does the job
-      // .where(
-      //   between(postTable.createdAt, sql`now() - interval '1 day'`, sql`now()`),
-      // )
-      .leftJoin(tagsToPostsTable, eq(postTable.id, tagsToPostsTable.postId))
-      .innerJoin(userTable, eq(postTable.userId, userTable.id))
-      // .leftJoin(commentTable, eq(commentTable.postId, postTable.id))
-      // .leftJoin(likeTable, eq(likeTable.id, commentTable.postId))
-      // .leftJoin(bookmarkTable, eq(bookmarkTable.postId, postTable.id))
-      .orderBy(desc(postTable.createdAt))
+      // I WILL CHANGE THIS TO innerJoin when all users have a profile
+      .leftJoin(profileTable, eq(profileTable.userId, postTable.userId))
+      .innerJoin(userTable, eq(userTable.id, postTable.userId))
+      .leftJoin(commentsAgg, eq(commentsAgg.postId, postTable.id))
+      .leftJoin(likesAgg, eq(likesAgg.postId, postTable.id))
+      .leftJoin(bookmarksAgg, eq(bookmarksAgg.postId, postTable.id))
+      .orderBy(
+        desc(sql`COALESCE(${postTable.updatedAt}, ${postTable.createdAt})`),
+      )
       .limit(pageSize)
       .offset((page - 1) * pageSize);
     return {
@@ -65,9 +107,13 @@ export async function getPostWithSlug(slug: Post["slug"]) {
       .select({
         ...getTableColumns(postTable),
         author: userTable.username,
+        authorFirstname: profileTable.firstName,
+        authorLastname: profileTable.lastName,
+        authorAvatar: profileTable.avatar,
       })
       .from(postTable)
       .innerJoin(userTable, eq(postTable.userId, userTable.id))
+      .leftJoin(profileTable, eq(profileTable.userId, postTable.userId))
       .where(eq(postTable.slug, slug))
       .execute();
 
@@ -134,19 +180,22 @@ export async function getProfileWithSlug(slug: string) {
 
 // I might have to use the getPostsByUser instead to know the postCount of a user
 
-export async function getPostsByUser(
-  id: User["id"],
-  page = 1, // Not sure whether I need to limit
-  pageSize = 5,
-): Promise<Array<Post>> {
-  return db
-    .select({ ...getTableColumns(postTable) })
-    .from(postTable)
-    .where(eq(postTable.userId, id))
-    .orderBy(asc(postTable.id))
-    .limit(pageSize)
-    .offset((page - 1) * pageSize)
-    .execute();
+export async function getPostsByUser(id: User["id"], page = 1, pageSize = 5) {
+  try {
+    const posts = await db
+      .select({ ...getTableColumns(postTable) })
+      .from(postTable)
+      .where(eq(postTable.userId, id))
+      .orderBy(desc(postTable.updatedAt || postTable.createdAt))
+      .limit(pageSize)
+      .offset((page - 1) * pageSize)
+      .execute();
+
+    return { posts, error: null };
+  } catch (error) {
+    console.error(error);
+    return { error: "Could not find posts by user", posts: null };
+  }
 }
 
 export const usernameAlreadyExists = async (username: string) => {
@@ -156,6 +205,7 @@ export const usernameAlreadyExists = async (username: string) => {
       .from(userTable)
       .where(eq(userTable.username, username.toLowerCase()));
 
+    console.log(existingUsername?.username);
     return { result: !!existingUsername, error: null };
   } catch (error) {
     console.error(error);
@@ -180,6 +230,47 @@ export const emailAlreadyExists = async (email: string) => {
       error: "Something went wrong. Could not verify",
       result: null,
     };
+  }
+};
+
+export const getUserBookmarks = async (
+  currentUserId: string,
+  page = 1,
+  pageSize = 1,
+) => {
+  if (!currentUserId) {
+    return { error: "Failed to fetch user bookmarks", result: null };
+  }
+
+  try {
+    const bookmarks = await db
+      .select({
+        bookmarkId: bookmarkTable.id,
+        totalBookmarks: sql<number>`COUNT(*) OVER (PARTITION BY ${bookmarkTable.userId}) AS bookmark_count`,
+        title: postTable.title,
+        postSlug: postTable.slug,
+        createdAt: postTable.createdAt,
+        updatedAt: postTable.updatedAt,
+        authorSlug: profileTable.slug,
+        authorFirstname: profileTable.firstName,
+        authorLastname: profileTable.lastName,
+        authorAvatar: profileTable.avatar,
+        authorUsername: userTable.username,
+      })
+      .from(bookmarkTable)
+      .innerJoin(postTable, eq(bookmarkTable.postId, postTable.id))
+      .leftJoin(profileTable, eq(profileTable.userId, postTable.userId))
+      .leftJoin(userTable, eq(userTable.id, postTable.userId))
+      .where(eq(bookmarkTable.userId, currentUserId))
+      .orderBy(desc(bookmarkTable.createdAt))
+      .limit(pageSize)
+      .offset((page - 1) * pageSize)
+      .execute();
+
+    return { result: bookmarks, error: null };
+  } catch (error) {
+    console.error(error);
+    return { error: "Failed to fetch user bookmarks", result: null };
   }
 };
 
@@ -390,3 +481,5 @@ export async function getPostReactionCountWithId(id: Post["id"]) {
   }
 }
 * */
+
+// sql<number>`COUNT(*) OVER (PARTITION BY ${bookmarkTable.userId}) AS bookmark_count`

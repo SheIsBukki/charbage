@@ -10,9 +10,15 @@ import { BiLike } from "react-icons/bi";
 import { TfiCommentAlt } from "react-icons/tfi";
 import { createExcerpt, regularDate } from "@/utils/helpers";
 import { PostType } from "@/lib/types";
+import Avatar from "@/app/ui/Avatar";
 
 export default function ArticleCard({ article }: { article: PostType }) {
   const pathname = usePathname();
+  const fullName =
+    `${article.authorFirstname || ""} ${article.authorLastname || ""}`.trim();
+
+  // console.log(article);
+  // console.log(typeof article.comments);
 
   return (
     <div className="space-y-2 px-8 py-3 md:px-4 lg:my-6 lg:rounded-lg lg:border">
@@ -33,22 +39,31 @@ export default function ArticleCard({ article }: { article: PostType }) {
           <div className="flex items-center space-x-4">
             {pathname !== `/@${article.author}` && (
               <Link href={`/@${article.author}`}>
-                <figure className="">
-                  <Image
-                    sizes="(min-width: 808px) 50vw, 100vw"
-                    width={0}
-                    height={0}
-                    src="/"
-                    alt="author avatar"
-                    className="size-[40] rounded-full bg-gray-500"
-                  />
-                </figure>
+                <Avatar
+                  avatarUrl={article.authorAvatar || ""}
+                  alt="author's avatar"
+                  defaultSize={10}
+                  mdToLgSize={10}
+                />
+                {/*<figure className="size-[40] rounded-full bg-gray-500 ring-2">*/}
+                {/*  <img*/}
+                {/*    width={0}*/}
+                {/*    height={0}*/}
+                {/*    src={*/}
+                {/*      article.authorAvatar || "/avatar-default-svgrepo-com.svg"*/}
+                {/*    }*/}
+                {/*    alt="author avatar"*/}
+                {/*    className="size-[40] rounded-full bg-gray-500"*/}
+                {/*  />*/}
+                {/*</figure>*/}
               </Link>
             )}
             <div className="text-sm">
               {pathname !== `/@${article.author}` && (
                 <p className="font-semibold">
-                  <Link href={`/@${article.author}`}>{article.author}</Link>
+                  <Link href={`/@${article.author}`}>
+                    {fullName || article.author}
+                  </Link>
                 </p>
               )}
               <p className="dark:text-gray-400">
@@ -100,7 +115,6 @@ export default function ArticleCard({ article }: { article: PostType }) {
         </div>
 
         {/*Interactions*/}
-
         <div className="flex items-center space-x-2.5 md:space-x-4">
           <span className="inline-flex items-center space-x-1">
             <span className="">{article.likes}</span>
@@ -109,12 +123,16 @@ export default function ArticleCard({ article }: { article: PostType }) {
           </span>
 
           <span className="inline-flex items-center space-x-1">
-            <span className="">{article.likes}</span>
+            <span className="">{article.comments}</span>
             <span className="hidden md:inline-block">comments</span>
             <TfiCommentAlt className="inline-block md:hidden md:size-4" />
           </span>
 
-          <BsBookmark className="md:size-4" />
+          <span className="inline-flex items-center space-x-1">
+            <span className="">{article.bookmarks}</span>
+            <span className="hidden md:inline-block">bookmarks</span>
+            <BsBookmark className="inline-block md:hidden md:size-4" />
+          </span>
         </div>
       </div>
     </div>

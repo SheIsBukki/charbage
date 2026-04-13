@@ -1,7 +1,7 @@
 "use client";
 
 import { redirect, useRouter } from "next/navigation";
-import { deleteAvatarOrFeaturedImage } from "@/lib/deleteAvatarOrFeaturedImage";
+import { deleteAvatarOrFeaturedImage } from "@/utils/deleteAvatarOrFeaturedImage";
 import { DbActionType } from "@/lib/types";
 import { FiEdit } from "react-icons/fi";
 import { RiDeleteBinLine } from "react-icons/ri";

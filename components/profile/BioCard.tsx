@@ -26,11 +26,11 @@ export default function BioCard({
     <section className="flex w-full space-x-6 border-b p-4 pb-8 text-sm text-gray-700 dark:text-gray-400">
       {/*AVATAR*/}
       <div className="">
-        <figure className="size-20 space-y-4 rounded-full ring-2 sm:size-24">
+        <figure className="ctive:scale-150 size-20 space-y-4 rounded-full ring-2 sm:size-24">
           <img
             src={avatar || "/avatar-default-svgrepo-com.svg"}
             alt="Profile avatar"
-            className="aspect-square size-full overflow-hidden object-cover [clip-path:circle(50%)]"
+            className="aspect-square size-full overflow-hidden object-cover [clip-path:circle(50%)] active:scale-150"
           />
         </figure>
       </div>
@@ -39,12 +39,7 @@ export default function BioCard({
         {/*Profile Name and Share Button*/}
         <div className="w-fll brder items-center justify-between space-y-2 border-red-500 md:flex md:space-y-0">
           <div className="">
-            <p
-              style={{ color: "initial" }}
-              // style={{ color: "unset" }}
-              // style={{ color: "revert" }}
-              className="text-xl font-bold [color:initial]"
-            >
+            <p className="text-xl font-bold dark:text-gray-50">
               {fullName || slug?.slice(1)}
             </p>
             <span className="">{slug}</span>

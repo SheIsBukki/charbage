@@ -1,16 +1,5 @@
-// export type PostDataType = {
-//   posts: PostType | null;
-//   error: null | string;
-// };
-
 import { Bookmark, Comment, Like } from "@/db/schema";
 import { Dispatch, SetStateAction } from "react";
-
-export type ReactionCountType = {
-  comments: number;
-  bookmarks: number;
-  likes: number;
-} | null;
 
 export type DbActionType = (id: string) => Promise<
   | {
@@ -22,16 +11,6 @@ export type DbActionType = (id: string) => Promise<
       error: null;
     }
 >;
-
-export type DbActionReturnType =
-  | {
-      error: string;
-      result: null;
-    }
-  | {
-      result: string;
-      error: null;
-    };
 
 export type ReactionsType = {
   likes: Like[];
@@ -143,7 +122,10 @@ export type AccountSettingsFormProps = {
 };
 
 export type PostType = {
-  author: string;
+  author?: string;
+  authorFirstname?: string | null;
+  authorLastname?: string | null;
+  authorAvatar?: string | null;
   id: string;
   title: string;
   description: string | null;
@@ -156,4 +138,28 @@ export type PostType = {
   comments?: number;
   likes?: number;
   bookmarks?: number;
+};
+
+export type currentUserBookmarksType = {
+  title: string;
+  postSlug: string;
+  createdAt: Date;
+  authorName: string;
+  authorSlug: string;
+  authorAvatar: string;
+  updatedAt: Date | null;
+};
+
+export type userBookmarksType = {
+  bookmarkId: string;
+  totalBookmarks: number;
+  title: string;
+  postSlug: string;
+  createdAt: Date;
+  updatedAt: Date | null;
+  authorSlug: string | null;
+  authorFirstname: string | null;
+  authorLastname: string | null;
+  authorAvatar: string | null;
+  authorUsername: string | null;
 };

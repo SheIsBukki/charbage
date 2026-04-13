@@ -15,30 +15,26 @@ export default async function WritePage() {
   }
 
   return (
-    <div className="container mx-auto my-8 w-[80%] gap-12 lg:grid lg:w-[90%] lg:grid-cols-8">
-      <div className="col-span-2 hidden lg:block">
-        <p className="">The Article Draft and other info section</p>
-      </div>
-      <div className="col-span-6">
-        {/*<PostForm />*/}
-        <ArticleForm
-          userId={user.id}
-          action={createOrEditPostAction}
-          values={{
-            title: "",
-            description: "",
-            content: "",
-            featuredImage: "",
-          }}
-          editorStatus={{
-            updating: false,
-            creating: true,
-          }}
-        />
-        {/*<TagFormModal />*/}
-      </div>
-    </div>
+    // <div className="brder container mx-auto my-8 border-red-500 pb-12 lg:w-3/5">
+    <ArticleForm
+      userId={user.id}
+      action={createOrEditPostAction}
+      values={{
+        title: "",
+        description: "",
+        content: "",
+        featuredImage: "",
+      }}
+      editorStatus={{
+        updating: false,
+        creating: true,
+      }}
+    />
+    // </div>
   );
+  {
+    /*<TagFormModal />*/
+  }
 }
 
 /** 

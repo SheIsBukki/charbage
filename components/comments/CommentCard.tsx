@@ -12,13 +12,16 @@ import { createOrEditCommentAction } from "@/app/actions/createOrEditCommentActi
 import CommentSettings from "@/components/comments/CommentSettings";
 import md from "@/utils/md";
 import Link from "next/link";
+import Avatar from "@/app/ui/Avatar";
 
 export default function CommentCard({
   commentId,
   comment,
   createdAt,
   updatedAt,
-  author,
+  authorName,
+  authorSlug,
+  authorAvatar,
   authorisedCommentAuthor,
   deleteCommentAction,
 }: {
@@ -26,7 +29,9 @@ export default function CommentCard({
   comment: string;
   createdAt: Date;
   updatedAt: Date | null;
-  author: string;
+  authorName: string;
+  authorSlug: string;
+  authorAvatar: string;
   authorisedCommentAuthor: boolean;
   deleteCommentAction: DbActionType;
 }) {
@@ -47,14 +52,19 @@ export default function CommentCard({
       <div className="relative flex justify-between">
         {/*COMMENT AUTHOR AND COMMENT INFO*/}
         <div className="flex items-center space-x-2">
-          <Link href={`/@${author}`}>
-            <figure className="">
-              <div className="h-8 w-8 rounded-full bg-gray-500"></div>
+          <Link href={`/@${authorSlug}`}>
+            <figure className="h-8 w-8 rounded-full bg-gray-500">
+              <Avatar
+                defaultSize={8}
+                mdToLgSize={8}
+                avatarUrl={authorAvatar}
+                alt="Comment author"
+              />
             </figure>
           </Link>
           <p className="flex flex-col space-y-[0.5px]">
             <span className="">
-              <Link href={`/@${author}`}>{author}</Link>
+              <Link href={`/${authorSlug}`}>{authorName}</Link>
             </span>
             <span className="text-xs">
               {regularDate(createdAt)}{" "}
@@ -135,10 +145,10 @@ export default function CommentCard({
             <textarea
               id={`${commentId}`}
               ref={nestedReplyRef}
-              className="border-1 w-full rounded-lg bg-gray-100 outline outline-1 dark:bg-gray-900"
+              className="border-1 w-full rounded-lg bg-gray-100 outline outline-1 placeholder:p-2 dark:bg-gray-900"
               rows={5}
               cols={100}
-              placeholder={`Replying to ${author}`}
+              placeholder={`Replying to ${authorName}`}
             />
             <button
               className="rounded-full bg-purple-600 px-4 py-2 text-white"

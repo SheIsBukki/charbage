@@ -1,4 +1,5 @@
 import md from "@/utils/md";
+import { usernameAlreadyExists } from "@/db/queries/select";
 
 export async function handleDatabaseOperation<T>(
   operation: () => Promise<T>,
