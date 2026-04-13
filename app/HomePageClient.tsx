@@ -102,8 +102,8 @@ export default function HomePageClient({
               id={currentUserId}
               jump={false}
               fetcherAndKind={{
-                fetchKind: "currentUserBookmarks",
-                dataFetcher: getUserBookmarks,
+                kind: "currentUserBookmarks",
+                fetcher: getUserBookmarks,
               }}
             >
               <div className="space-y-6">
@@ -150,8 +150,8 @@ export default function HomePageClient({
         <PaginatedArticleCards
           posts={posts}
           fetcherAndKind={{
-            fetchKind: "homepagePosts",
-            dataFetcher: getLatestPosts,
+            kind: "homepagePosts",
+            fetcher: getLatestPosts,
           }}
         />
       </div>

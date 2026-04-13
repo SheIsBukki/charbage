@@ -63,8 +63,8 @@ export default function ProfilePageClient({
                   posts={postArr}
                   userId={profileInView.userId}
                   fetcherAndKind={{
-                    fetchKind: "postsByUser",
-                    dataFetcher: getPostsByUser as DbUserPostsFetchType,
+                    kind: "postsByUser",
+                    fetcher: getPostsByUser as DbUserPostsFetchType,
                   }}
                 />
               ) : (

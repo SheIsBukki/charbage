@@ -35,7 +35,7 @@ export default function PaginationWrapper({
 
   const [endOfData, setEndOfData] = useState(false);
 
-  const { fetchKind, dataFetcher } = fetcherAndKind;
+  const { kind, fetcher } = fetcherAndKind;
 
   return (
     <div ref={heightRef}>
@@ -46,22 +46,22 @@ export default function PaginationWrapper({
           onClick={async () => {
             if (endOfData) return;
 
-            if (fetchKind === "postsByUser") {
-              const fetched = await dataFetcher(id!, page);
+            if (kind === "postsByUser") {
+              const fetched = await fetcher(id!, page);
               const newData = fetched.posts;
               if (newData) {
                 setEndOfData(!newData.length);
                 setMoreDataAction((prev) => [...prev, ...newData]);
               }
-            } else if (fetchKind === "currentUserBookmarks") {
-              const fetched = await dataFetcher(id!, page);
+            } else if (kind === "currentUserBookmarks") {
+              const fetched = await fetcher(id!, page);
               const newData = fetched.result;
               if (newData) {
                 setEndOfData(!newData.length);
                 setMoreDataAction((prev) => [...prev, ...newData]);
               }
             } else {
-              const fetched = await dataFetcher(page);
+              const fetched = await fetcher(page);
               const newData = fetched.posts;
               if (newData) {
                 setEndOfData(!newData.length);

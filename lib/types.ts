@@ -182,9 +182,9 @@ export type DbUserPostsFetchType = (
 ) => Promise<{ posts: Array<Post> | null; error: string | null }>;
 
 export type PaginationFetcherAndKindType =
-  | { fetchKind: "homepagePosts"; dataFetcher: DbHomepagePostsFetchType }
-  | { fetchKind: "postsByUser"; dataFetcher: DbUserPostsFetchType }
+  | { kind: "homepagePosts"; fetcher: DbHomepagePostsFetchType }
+  | { kind: "postsByUser"; fetcher: DbUserPostsFetchType }
   | {
-      fetchKind: "currentUserBookmarks";
-      dataFetcher: DbUserBookmarksFetchType;
+      kind: "currentUserBookmarks";
+      fetcher: DbUserBookmarksFetchType;
     };
