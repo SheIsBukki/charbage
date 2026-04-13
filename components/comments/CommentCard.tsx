@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import { Interweave } from "interweave";
 import { MdOutlineFavoriteBorder } from "react-icons/md";
 import { BsThreeDots } from "react-icons/bs";
@@ -11,7 +12,6 @@ import CommentForm from "@/components/comments/CommentForm";
 import { createOrEditCommentAction } from "@/app/actions/createOrEditCommentAction";
 import CommentSettings from "@/components/comments/CommentSettings";
 import md from "@/utils/md";
-import Link from "next/link";
 import Avatar from "@/app/ui/Avatar";
 
 export default function CommentCard({
@@ -24,6 +24,7 @@ export default function CommentCard({
   authorAvatar,
   authorisedCommentAuthor,
   deleteCommentAction,
+  currentUser,
 }: {
   commentId: string;
   comment: string;
@@ -34,6 +35,7 @@ export default function CommentCard({
   authorAvatar: string;
   authorisedCommentAuthor: boolean;
   deleteCommentAction: DbActionType;
+  currentUser: string;
 }) {
   const [isNestedReplyOpen, setIsNestedReplyOpen] = useState(false);
   const [openSettings, setOpenSettings] = useState(false);
@@ -111,6 +113,7 @@ export default function CommentCard({
             values={{ comment: comment, commentId: commentId }}
             setOpenSettings={setOpenSettings}
             setIsEditing={setIsEditing}
+            currentUser={currentUser}
           />
         ) : (
           <Interweave

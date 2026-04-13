@@ -132,6 +132,7 @@ export default async function BlogPage({
                   updatedAt={updatedAt}
                   authorisedCommentAuthor={user?.id === userId}
                   deleteCommentAction={deleteComment}
+                  currentUser={user?.id || ""}
                 />
               );
             },
