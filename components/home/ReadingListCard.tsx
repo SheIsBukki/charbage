@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Avatar from "@/app/ui/Avatar";
-import { regularDate } from "@/utils/helpers";
+import { getRelativeTime } from "@/utils/helpers";
 import { CurrentUserBookmarksType } from "@/lib/types";
 
 export default function ReadingListCard({
@@ -35,7 +35,7 @@ export default function ReadingListCard({
       </p>
       <p className="text-gray-600 dark:text-gray-400">
         {updatedAt ? "Updated" : "Published"}:{" "}
-        {regularDate(updatedAt || createdAt)}
+        {getRelativeTime(updatedAt || createdAt)}
       </p>
     </div>
   );

@@ -12,7 +12,7 @@ import { CiCircleChevDown, CiCircleChevUp, CiSettings } from "react-icons/ci";
 import { BsFillBookmarkCheckFill, BsHeartFill } from "react-icons/bs";
 
 import md from "@/utils/md";
-import { copyCurrentUrl, regularDate } from "@/utils/helpers";
+import { copyCurrentUrl, getRelativeTime } from "@/utils/helpers";
 import { DbActionType, PostType, ReactionsType } from "@/lib/types";
 import { removeBookmark, removeLike } from "@/db/queries/delete";
 import { addBookmark, addLike } from "@/db/queries/insert";
@@ -110,8 +110,8 @@ export default function Article({
                 </p>
                 <p className="dark:text-gray-400">
                   {post.updatedAt
-                    ? `Updated at: ${regularDate(post.updatedAt)}`
-                    : `Published at: ${regularDate(post.createdAt)}`}
+                    ? `Updated at: ${getRelativeTime(post.updatedAt)}`
+                    : `Published at: ${getRelativeTime(post.createdAt)}`}
                 </p>
               </div>
             </div>
@@ -153,9 +153,10 @@ export default function Article({
               </a>
               <button
                 name="likeButton"
-                onClick={async (event) => {
+                onClick={async () => {
                   if (currentUser === undefined) {
                     setShowAuthenticationDialogue(true);
+                    return;
                   }
 
                   if (currentUserLiked) {
@@ -185,6 +186,7 @@ export default function Article({
                 onClick={async () => {
                   if (currentUser === undefined) {
                     setShowAuthenticationDialogue(true);
+                    return;
                   }
 
                   if (currentUserbookmarked) {
@@ -231,15 +233,12 @@ export default function Article({
                 onClick={() => setExpandMore(!expandMore)}
                 className="bordr-2 border-red-500 lg:mt-12"
               >
-                {window !== undefined && window.outerWidth >= 1024 ? (
-                  expandMore ? (
-                    <CiCircleChevUp className="hidden text-3xl lg:block" />
-                  ) : (
-                    <CiCircleChevDown className="hidden text-3xl lg:block" />
-                  )
+                {expandMore ? (
+                  <CiCircleChevUp className="hidden text-3xl lg:block" />
                 ) : (
-                  <CiSettings className={`text-3xl lg:hidden`} />
+                  <CiCircleChevDown className="hidden text-3xl lg:block" />
                 )}
+                <CiSettings className="text-3xl lg:hidden" />
               </button>
             )}
           </div>

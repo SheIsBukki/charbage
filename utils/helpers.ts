@@ -1,5 +1,26 @@
 import md from "@/utils/md";
 import { usernameAlreadyExists } from "@/db/queries/select";
+import dayjs, { Dayjs } from "dayjs";
+import calendar from "dayjs/plugin/calendar";
+import updateLocale from "dayjs/plugin/updateLocale";
+import relativeTime from "dayjs/plugin/relativeTime";
+
+dayjs.extend(calendar);
+dayjs.extend(updateLocale);
+dayjs.extend(relativeTime);
+// dayjs.updateLocale("en", {
+//   calendar: {
+//     sameDay: "[Today at] h:mm A",
+//     lastDay: "[Yesterday at] h:mm A",
+//     lastWeek: "ddd [at] h:mm A",
+//     sameElse: function (this: Dayjs) {
+//       const diff = dayjs().diff(this, "day");
+//       return diff < 14
+//         ? this.format("[Last] dddd, D MMM [at] h:mm A")
+//         : this.format("ddd, D MMM YYYY [at] h:mm A");
+//     },
+//   },
+// });
 
 export async function handleDatabaseOperation<T>(
   operation: () => Promise<T>,
@@ -88,3 +109,17 @@ export function getPreviousPath(pathname: string) {
       typeof window !== "undefined" ? sessionStorage.getItem("prevPath") : null,
   };
 }
+
+export const getRelativeTime = (date: Date) => {
+  return dayjs(date).calendar(Date.now(), {
+    sameDay: "[Today at] h:mm A",
+    lastDay: "[Yesterday at] h:mm A",
+    lastWeek: "dddd [at] h:mm A",
+    sameElse:
+      dayjs().diff(date, "day") < 14
+        ? "[Last] dddd, D MMM [at] h:mm A"
+        : "ddd, D MMM YYYY [at] h:mm A",
+  });
+
+  // return dayjs(date).calendar();
+};

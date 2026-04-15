@@ -8,7 +8,7 @@ import "highlight.js/styles/shades-of-purple.css";
 import { BsBookmark } from "react-icons/bs";
 import { BiLike } from "react-icons/bi";
 import { TfiCommentAlt } from "react-icons/tfi";
-import { createExcerpt, regularDate } from "@/utils/helpers";
+import { createExcerpt, getRelativeTime } from "@/utils/helpers";
 import { PostType } from "@/lib/types";
 import Avatar from "@/app/ui/Avatar";
 
@@ -45,17 +45,6 @@ export default function ArticleCard({ article }: { article: PostType }) {
                   defaultSize={10}
                   mdToLgSize={10}
                 />
-                {/*<figure className="size-[40] rounded-full bg-gray-500 ring-2">*/}
-                {/*  <img*/}
-                {/*    width={0}*/}
-                {/*    height={0}*/}
-                {/*    src={*/}
-                {/*      article.authorAvatar || "/avatar-default-svgrepo-com.svg"*/}
-                {/*    }*/}
-                {/*    alt="author avatar"*/}
-                {/*    className="size-[40] rounded-full bg-gray-500"*/}
-                {/*  />*/}
-                {/*</figure>*/}
               </Link>
             )}
             <div className="text-sm">
@@ -66,10 +55,10 @@ export default function ArticleCard({ article }: { article: PostType }) {
                   </Link>
                 </p>
               )}
-              <p className="dark:text-gray-400">
+              <p className="text-xs md:text-sm dark:text-gray-400">
                 {" "}
                 {article.updatedAt ? "Updated" : "Published"}:{" "}
-                {regularDate(
+                {getRelativeTime(
                   article.updatedAt ? article.updatedAt : article.createdAt,
                 )}
               </p>

@@ -6,13 +6,13 @@ import { Interweave } from "interweave";
 import { MdOutlineFavoriteBorder } from "react-icons/md";
 import { BsThreeDots } from "react-icons/bs";
 import { BiCommentDetail } from "react-icons/bi";
-import { regularDate } from "@/utils/helpers";
 import { DbActionType } from "@/lib/types";
 import CommentForm from "@/components/comments/CommentForm";
 import { createOrEditCommentAction } from "@/app/actions/createOrEditCommentAction";
 import CommentSettings from "@/components/comments/CommentSettings";
 import md from "@/utils/md";
 import Avatar from "@/app/ui/Avatar";
+import { getRelativeTime } from "@/utils/helpers";
 
 export default function CommentCard({
   commentId,
@@ -55,26 +55,24 @@ export default function CommentCard({
         {/*COMMENT AUTHOR AND COMMENT INFO*/}
         <div className="flex items-center space-x-2">
           <Link href={`/@${authorSlug}`}>
-            <figure className="h-8 w-8 rounded-full bg-gray-500">
-              <Avatar
-                defaultSize={8}
-                mdToLgSize={8}
-                avatarUrl={authorAvatar}
-                alt="Comment author"
-              />
-            </figure>
+            <Avatar
+              defaultSize={8}
+              mdToLgSize={8}
+              avatarUrl={authorAvatar}
+              alt="Comment author"
+            />
           </Link>
           <p className="flex flex-col space-y-[0.5px]">
             <span className="">
               <Link href={`/${authorSlug}`}>{authorName}</Link>
             </span>
             <span className="text-xs">
-              {regularDate(createdAt)}{" "}
+              {getRelativeTime(createdAt)}{" "}
               {updatedAt && (
                 <>
                   &#124; Edited{" "}
                   <span className="hidden md:inline-block">
-                    on {regularDate(updatedAt)}{" "}
+                    {getRelativeTime(updatedAt)}{" "}
                   </span>
                 </>
               )}
