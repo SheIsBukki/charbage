@@ -48,7 +48,11 @@ export default function HomePageClient({
     { text: "Drafts", icon: <MdOutlineLibraryBooks className="text-2xl" /> },
   ];
   return (
-    <div className="brder container relative mx-auto mb-20 mt-5 h-full border-red-500 md:my-10 md:grid md:grid-cols-6 lg:grid-cols-8">
+    <div
+      className={clsx(
+        "brder container relative mx-auto mb-20 mt-5 h-full border-red-500 md:my-10 md:grid md:grid-cols-6 lg:grid-cols-8",
+      )}
+    >
       {/*Other stuff like Reading List, User Suggestion, etc*/}
       {/*JUST SOME iTEMS*/}
       <div

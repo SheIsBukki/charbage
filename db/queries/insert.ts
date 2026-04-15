@@ -15,7 +15,7 @@ import {
 import { getCurrentSession } from "@/lib/session";
 import { handleDatabaseOperation } from "@/utils/helpers";
 
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import slugify from "slugify";
 
@@ -66,16 +66,18 @@ export async function createPost(data: {
 }
 
 export async function addLike(postId: string, userId: string) {
-  try {
-    // const { user } = await getCurrentSession();
-    // if (!user) {
-    //   return { error: "User must be logged in to like a post", result: null };
-    // }
-    //
-    // const userId = user.id;
+  if (!userId) {
+    return { error: "User must be logged in to like a post", result: null };
+  }
 
-    if (!userId) {
-      return { error: "User must be logged in to like a post", result: null };
+  try {
+    const [userAlreadyLiked] = await db
+      .select()
+      .from(likeTable)
+      .where(and(eq(likeTable.postId, postId), eq(likeTable.userId, userId)));
+
+    if (userAlreadyLiked) {
+      return { error: "User already liked this post", result: null };
     }
 
     await db.insert(likeTable).values({ postId, userId }).returning().execute();
@@ -89,20 +91,23 @@ export async function addLike(postId: string, userId: string) {
 }
 
 export async function addBookmark(postId: string, userId: string) {
+  if (!userId) {
+    return {
+      error: "User must be logged in to bookmark a post",
+      result: null,
+    };
+  }
   try {
-    // const { user } = await getCurrentSession();
-    // if (!user) {
-    //   return {
-    //     error: "User must be logged in to bookmark a post",
-    //     result: null,
-    //   };
-    // }
-    //
-    // const userId = user.id;
+    const [userAlreadyBookmarked] = await db
+      .select()
+      .from(bookmarkTable)
+      .where(
+        and(eq(bookmarkTable.userId, userId), eq(bookmarkTable.postId, postId)),
+      );
 
-    if (!userId) {
+    if (userAlreadyBookmarked) {
       return {
-        error: "User must be logged in to bookmark a post",
+        error: "User already bookmarked this post",
         result: null,
       };
     }

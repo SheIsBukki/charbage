@@ -2,10 +2,14 @@ import { useEffect } from "react";
 
 export function useDisableScroll(dialogueState: boolean): void {
   useEffect(() => {
+    const html = document.getElementsByTagName("html")[0];
+
     if (dialogueState && document.body.clientWidth < 768) {
-      document.body.style.overflowY = "hidden";
+      html.style.overflow = "hidden";
+      document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflowY = "visible";
+      html.style.overflow = "visible";
+      document.body.style.overflow = "visible";
     }
   }, [dialogueState]);
 }

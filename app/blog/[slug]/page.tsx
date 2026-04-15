@@ -88,14 +88,12 @@ export default async function BlogPage({
         <div className="items-strt boder flex space-x-2 border-red-500 px-2">
           {user && (
             <Link href={`/${currentUserProfile?.slug}`}>
-              <figure className="h-8 w-8 rounded-full bg-gray-500">
-                <Avatar
-                  avatarUrl={currentUserProfile?.avatar || ""}
-                  alt={user?.username || ""}
-                  defaultSize={8}
-                  mdToLgSize={8}
-                />
-              </figure>
+              <Avatar
+                avatarUrl={currentUserProfile?.avatar || ""}
+                alt={user?.username || ""}
+                defaultSize={8}
+                mdToLgSize={8}
+              />
             </Link>
           )}
           <div className="mb mb-4 w-full">
