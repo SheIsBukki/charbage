@@ -8,6 +8,7 @@ import "highlight.js/styles/shades-of-purple.css";
 import { BsBookmark } from "react-icons/bs";
 import { BiLike } from "react-icons/bi";
 import { TfiCommentAlt } from "react-icons/tfi";
+
 import { createExcerpt, getRelativeTime } from "@/utils/helpers";
 import { PostType } from "@/lib/types";
 import Avatar from "@/app/ui/Avatar";
@@ -96,15 +97,19 @@ export default function ArticleCard({ article }: { article: PostType }) {
       </div>
 
       {/*Tags and Interactions*/}
-      <div className="flex items-center justify-between border-b pb-6 text-xs md:text-sm lg:border-0 lg:pb-0 dark:text-gray-300">
+      <div className="itemscenter justifybetween boder flex flex-col space-y-2 border-b pb-6 pt-4 text-xs md:text-sm lg:border-0 lg:pb-0 dark:text-gray-300">
         {/*Tags*/}
-        <div className="flex space-x-1 md:space-x-2">
-          {["REACT", "VUE", "FRONTEND"].map((tag) => (
-            <p key={tag} className="">
-              #{tag}
-            </p>
-          ))}
-        </div>
+        {article.tags && article.tags.length > 0 && (
+          <div className="flex space-x-1 md:space-x-2">
+            {article.tags.map((tag) => (
+              <span key={tag.id} className="">
+                <Link href={`/tag/${tag.slug}`} className="">
+                  #{tag.name}
+                </Link>
+              </span>
+            ))}
+          </div>
+        )}
 
         {/*Interactions*/}
         <div className="flex items-center space-x-2.5 md:space-x-4">
@@ -130,11 +135,3 @@ export default function ArticleCard({ article }: { article: PostType }) {
     </div>
   );
 }
-
-/**
- * I need to create a logic to check if the post.updatedAt is more recent
-
-                <span className="">
-                  Last updated: {regularDate(post.updatedAt)}
-                </span>
- * */

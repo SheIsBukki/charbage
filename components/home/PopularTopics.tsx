@@ -1,27 +1,19 @@
 import Link from "next/link";
+import { Tag } from "@/db/schema";
 
-export default function PopularTopics() {
-  const staticTopics = [
-    "React",
-    "JavaScript",
-    "Linux",
-    "Yoruba Cinema",
-    "VueJS",
-    "World History",
-    "Finance",
-    "Fitness",
-    "Food",
-    "Literature",
-  ];
-
+export default function PopularTopics({
+  popularTopics,
+}: {
+  popularTopics: Tag[];
+}) {
   return (
     <div className="flex flex-wrap gap-3">
-      {staticTopics.map((topic, index) => (
+      {popularTopics.map((topic, index) => (
         <span
           key={index}
           className="rounded-lg bg-gray-100 px-3 py-2 dark:bg-gray-800"
         >
-          <Link href="#">{topic}</Link>
+          <Link href={topic.slug}>{topic.name}</Link>
         </span>
       ))}
     </div>

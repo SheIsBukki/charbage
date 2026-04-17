@@ -125,19 +125,18 @@ export default function Article({
             />
           </article>
 
-          {/*STATIC TAGS*/}
-          <div className="boder-2 my-4 flex flex-wrap gap-2 border-red-500">
-            {["Static", "Tags", "Until", "Dynamic", "Tags"].map(
-              (tag, index) => (
-                <span
-                  className="rounded-full bg-gray-200 px-4 py-2 text-[0.75em] dark:bg-gray-500"
-                  key={`${tag}-${index}`}
-                >
-                  {tag}
-                </span>
-              ),
-            )}
-          </div>
+          {/*TAGS*/}
+          {post.tags && post.tags.length > 0 && (
+            <div className="boder-2 my-4 flex flex-wrap items-center gap-x-2 gap-y-4 border-red-500">
+              {post.tags.map((tag, index) => (
+                <Link href={`/tag/${tag.slug}`} key={tag.id}>
+                  <span className="rounded-full bg-gray-200 px-4 py-2 text-xs dark:bg-gray-500">
+                    {tag.name}
+                  </span>
+                </Link>
+              ))}
+            </div>
+          )}
         </div>
 
         {/*INTERACTIONS AND SETTINGS*/}

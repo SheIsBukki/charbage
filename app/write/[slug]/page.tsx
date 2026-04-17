@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { getCurrentSession } from "@/lib/session";
-import { getPostWithSlug } from "@/db/queries/select";
+import { getPostWithSlug, getTags } from "@/db/queries/select";
 import ArticleForm from "@/components/editor/ArticleForm";
 import { createOrEditPostAction } from "@/app/actions/createOrEditPostAction";
 
@@ -23,8 +23,15 @@ export default async function EditPage({
 
   const authorisedPostAuthor = user.id;
 
+  const tags = await getTags();
+
+  if (!tags.data) {
+    throw new Error("Something went wrong with getting all tags");
+  }
+
   return (
     <ArticleForm
+      tagData={tags.data}
       userId={authorisedPostAuthor}
       action={createOrEditPostAction}
       values={{
@@ -34,6 +41,7 @@ export default async function EditPage({
         description: post.description || "",
         content: post.content,
         featuredImage: post.featuredImage || "",
+        tags: JSON.stringify(post.tags || []),
       }}
       editorStatus={{
         updating: true,

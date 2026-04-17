@@ -8,6 +8,7 @@ import { LuBell } from "react-icons/lu";
 import { IoBookmarksOutline, IoStatsChartOutline } from "react-icons/io5";
 import { CiSearch } from "react-icons/ci";
 import { SlUserFollowing } from "react-icons/sl";
+
 import PopularTopics from "@/components/home/PopularTopics";
 import PaginationWrapper from "@/app/ui/PaginationWrapper";
 import { getLatestPosts, getUserBookmarks } from "@/db/queries/select";
@@ -17,15 +18,18 @@ import PaginatedArticleCards from "@/components/articles/PaginatedArticleCards";
 import { useDisableScroll } from "@/app/ui/useDisableScroll";
 import SmViewportPanel from "@/components/home/SmViewportPanel";
 import NoUserContent from "@/app/ui/NoUserContent";
+import { Tag } from "@/db/schema";
 
 export default function HomePageClient({
   currentUserBookmarks,
   posts,
   currentUserId,
+  tags,
 }: {
   posts: PostType[];
   currentUserBookmarks: UserBookmarksType[];
   currentUserId?: string;
+  tags: Tag[];
 }) {
   const [bookmarkArr, setBookmarkArr] =
     useState<UserBookmarksType[]>(currentUserBookmarks);
@@ -203,9 +207,9 @@ export default function HomePageClient({
               ),
             )}
 
-          <p className="text-gray-600 dark:text-gray-400">
-            <Link href="#">See full list</Link>
-          </p>
+          {/*<p className="text-gray-600 dark:text-gray-400">*/}
+          {/*  <Link href="#">See full list</Link>*/}
+          {/*</p>*/}
         </div>
 
         <hr className="" />
@@ -219,9 +223,9 @@ export default function HomePageClient({
           )}
         >
           <p className="text-lg font-semibold">Popular topics</p>
-          <PopularTopics />
+          <PopularTopics popularTopics={tags} />
           <p className="text-gray-600 dark:text-gray-400">
-            <Link href="#">See more topics</Link>
+            <Link href="/tag">See more topics</Link>
           </p>
         </div>
       </div>

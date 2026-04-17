@@ -4,7 +4,9 @@ import { ArticleFormSchema } from "@/lib/definitions";
 import slugify from "slugify";
 import { updatePost } from "@/db/queries/update";
 import { OldValues, PostActionStateType, PostFormValues } from "@/lib/types";
-import { createPost } from "@/db/queries/insert";
+import { addTag, createPost } from "@/db/queries/insert";
+import { Tag } from "@/db/schema";
+import { removeTag } from "@/db/queries/delete";
 
 export const createOrEditPostAction = async (
   initialState: PostActionStateType,
@@ -15,7 +17,10 @@ export const createOrEditPostAction = async (
     description: String(formData.get("description") || ""),
     content: String(formData.get("content")),
     featuredImage: String(formData.get("featuredImage") || ""),
+    tags: String(formData.get("tags")),
   };
+
+  const tags: Tag[] = JSON.parse(values.tags || "");
 
   const oldValues: OldValues = JSON.parse(String(formData.get("oldValues")));
 
@@ -28,13 +33,15 @@ export const createOrEditPostAction = async (
 
   let isSubmitSuccessful;
   let serverError;
+  let tagServerErrorMessage;
 
   const hasPostChanged = !oldValues.postId
     ? undefined
     : values.title !== oldValues.title ||
       values.description !== oldValues.description ||
       values.content !== oldValues.content ||
-      values.featuredImage !== oldValues.featuredImage;
+      values.featuredImage !== oldValues.featuredImage ||
+      values.tags !== oldValues.tags;
 
   const editorStatus = {
     updating:
@@ -42,6 +49,36 @@ export const createOrEditPostAction = async (
     creating:
       oldValues.title === "" && oldValues.content === "" && !values.slug,
   };
+
+  async function publishedPostsTagManager(postId: string) {
+    const oldTags: Tag[] = JSON.parse(oldValues.tags);
+    for (const tag of tags) {
+      const alreadyAddedTagIndex = oldTags.findIndex(
+        (oldTag) => oldTag.id === tag.id,
+      );
+
+      if (alreadyAddedTagIndex === -1) {
+        const addedTag = await addTag(postId, tag.id);
+
+        if (addedTag.error) {
+          serverError = true;
+          tagServerErrorMessage = `Failed to add tag ${tag} to post`;
+        }
+      }
+    }
+
+    for (const oldTag of oldTags) {
+      const tagToRemoveIndex = tags.findIndex((tag) => tag.id === oldTag.id);
+      if (tagToRemoveIndex === -1) {
+        const removedTag = await removeTag(oldTag.id, postId);
+
+        if (removedTag.error) {
+          serverError = true;
+          tagServerErrorMessage = `Failed to remove tag ${oldTag} from post`;
+        }
+      }
+    }
+  }
 
   if (editorStatus.updating) {
     values.slug =
@@ -52,14 +89,14 @@ export const createOrEditPostAction = async (
           );
   }
 
-  // console.log(hasPostChanged);
-
   if (editorStatus.updating && hasPostChanged) {
     const updatedPost = await updatePost(oldValues.postId, values);
-    // I need to retrieve tagId from localStorage
+
     if (updatedPost !== "Failed to update post") {
       isSubmitSuccessful = true;
-      // revalidatePath("/write");
+
+      await publishedPostsTagManager(updatedPost.id);
+      /*ADD OR REMOVE TAGS FROM A PREVIOUSLY PUBLISHED POST*/
     } else {
       serverError = true;
     }
@@ -77,19 +114,23 @@ export const createOrEditPostAction = async (
       isSubmitSuccessful = true;
       values.slug = publishedArticle.slug;
 
-      // await addTag(publishedArticle.id, tagId);
-      // revalidatePath("/write");
+      /*ADD TAGS TO NEW POSTS*/
+      for (const tag of tags) {
+        const addedTag = await addTag(publishedArticle.id, tag.id);
+
+        if (addedTag.error) {
+          serverError = true;
+          tagServerErrorMessage = `Failed to add tag ${tag} to post`;
+        }
+      }
     }
   }
-
-  // console.log(editorStatus);
-  // console.log(isSubmitSuccessful);
-  // console.log(values);
 
   return {
     values,
     errors: {},
     serverError: serverError,
+    tagServerErrorMessage: tagServerErrorMessage,
     hasPostChanged: hasPostChanged,
     isSubmitSuccessful: isSubmitSuccessful,
   };

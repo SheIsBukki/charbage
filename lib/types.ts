@@ -1,4 +1,4 @@
-import { Bookmark, Comment, Like, Post } from "@/db/schema";
+import { Bookmark, Comment, Like, Post, Tag } from "@/db/schema";
 import { Dispatch, SetStateAction } from "react";
 
 export type DbActionType = (id: string) => Promise<
@@ -52,6 +52,7 @@ export type OldValues = {
   slug: string;
   title: string;
   content: string;
+  tags: string;
 };
 
 export type PostFormValues = {
@@ -61,6 +62,7 @@ export type PostFormValues = {
   featuredImage: string;
   slug?: string;
   postId?: string;
+  tags?: string;
 };
 
 export type PostActionStateType = {
@@ -138,6 +140,7 @@ export type PostType = {
   comments?: number;
   likes?: number;
   bookmarks?: number;
+  tags?: Array<Tag> | null;
 };
 
 export type CurrentUserBookmarksType = {
@@ -188,3 +191,14 @@ export type PaginationFetcherAndKindType =
       kind: "currentUserBookmarks";
       fetcher: DbUserBookmarksFetchType;
     };
+export type ArticleFormProps = {
+  action: (
+    initialState: PostActionStateType,
+    formData: FormData,
+  ) => Promise<PostActionStateType>;
+  values: PostFormValues;
+  userId: string;
+  postId?: string;
+  editorStatus: { updating: boolean; creating: boolean };
+  tagData: Tag[];
+};
