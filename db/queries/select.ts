@@ -1,16 +1,6 @@
 "use server";
 
-import {
-  AnyColumn,
-  asc,
-  count,
-  countDistinct,
-  desc,
-  eq,
-  getTableColumns,
-  ilike,
-  sql,
-} from "drizzle-orm";
+import { asc, count, desc, eq, getTableColumns, ilike, sql } from "drizzle-orm";
 import {
   bookmarkTable,
   commentTable,
@@ -26,43 +16,56 @@ import {
 } from "@/db/schema";
 import { db } from "@/db";
 import { handleDatabaseOperation } from "@/utils/helpers";
-import { AnyRecord } from "node:dns";
+
+const reactionsAndTagsAgg = {
+  commentsAgg: db
+    .select({
+      postId: commentTable.postId,
+      commentCount: count(commentTable.id).as("comment_count"),
+    })
+    .from(commentTable)
+    .groupBy(commentTable.postId)
+    .as("comments_agg"),
+
+  likesAgg: db
+    .select({
+      postId: likeTable.postId,
+      likeCount: count(likeTable.id).as("like_count"),
+    })
+    .from(likeTable)
+    .groupBy(likeTable.postId)
+    .as("likes_agg"),
+
+  bookmarksAgg: db
+    .select({
+      postId: bookmarkTable.postId,
+      bookmarkCount: count(bookmarkTable.id).as("bookmark_count"),
+    })
+    .from(bookmarkTable)
+    .groupBy(bookmarkTable.postId)
+    .as("bookmarks_agg"),
+
+  associatedTags: db
+    .select({
+      postId: tagsToPostsTable.postId,
+      tags: sql`COALESCE(json_agg(json_build_object(
+          'id', ${tagTable.id},
+          'name', ${tagTable.name},
+          'slug', ${tagTable.slug},
+          'description', ${tagTable.description})) FILTER (WHERE ${tagTable.id} IS NOT NULL),'[]'::json)`.as(
+        "tags",
+      ),
+    })
+    .from(tagsToPostsTable)
+    .leftJoin(tagTable, eq(tagTable.id, tagsToPostsTable.tagId))
+    .groupBy(tagsToPostsTable.postId)
+    .as("tags_posts_agg"),
+};
 
 export async function getLatestPosts(page = 1, pageSize = 5) {
-  /**/
-  // tags: sql<
-  //   tag[]
-  // >`array(select * from ${tagstopoststable} join ${tagtable} on ${tagstopoststable.tagid} = ${tagtable.id} where ${tagstopoststable.postid} = ${posttable.id} )`,
-  // .groupBy(postTable.id)
-  // .leftJoin(tagsToPostsTable, eq(postTable.id, tagsToPostsTable.postId))
-  // .orderBy(desc(postTable.updatedAt || postTable.createdAt))
   try {
-    const commentsAgg = db
-      .select({
-        postId: commentTable.postId,
-        commentCount: count(commentTable.id).as("comment_count"),
-      })
-      .from(commentTable)
-      .groupBy(commentTable.postId)
-      .as("comments_agg");
-
-    const likesAgg = db
-      .select({
-        postId: likeTable.postId,
-        likeCount: count(likeTable.id).as("like_count"),
-      })
-      .from(likeTable)
-      .groupBy(likeTable.postId)
-      .as("likes_agg");
-
-    const bookmarksAgg = db
-      .select({
-        postId: bookmarkTable.postId,
-        bookmarkCount: count(bookmarkTable.id).as("bookmark_count"),
-      })
-      .from(bookmarkTable)
-      .groupBy(bookmarkTable.postId)
-      .as("bookmarks_agg");
+    const { associatedTags, commentsAgg, likesAgg, bookmarksAgg } =
+      reactionsAndTagsAgg;
 
     const posts = await db
       .select({
@@ -72,6 +75,7 @@ export async function getLatestPosts(page = 1, pageSize = 5) {
         authorFirstname: profileTable.firstName,
         authorLastname: profileTable.lastName,
         authorAvatar: profileTable.avatar,
+        tags: sql<Array<Tag>>`${associatedTags.tags}`,
         comments: sql<number>`COALESCE(${commentsAgg.commentCount}, 0)::int`,
         likes: sql<number>`COALESCE(${likesAgg.likeCount}, 0)::int`,
         bookmarks: sql<number>`COALESCE(${bookmarksAgg.bookmarkCount}, 0)::int`,
@@ -83,6 +87,7 @@ export async function getLatestPosts(page = 1, pageSize = 5) {
       .leftJoin(commentsAgg, eq(commentsAgg.postId, postTable.id))
       .leftJoin(likesAgg, eq(likesAgg.postId, postTable.id))
       .leftJoin(bookmarksAgg, eq(bookmarksAgg.postId, postTable.id))
+      .leftJoin(associatedTags, eq(postTable.id, associatedTags.postId))
       .orderBy(
         desc(sql`COALESCE(${postTable.updatedAt}, ${postTable.createdAt})`),
       )
@@ -103,6 +108,22 @@ export async function getLatestPosts(page = 1, pageSize = 5) {
 
 export async function getPostWithSlug(slug: Post["slug"]) {
   try {
+    const associatedTags = db
+      .select({
+        postId: tagsToPostsTable.postId,
+        tags: sql`COALESCE(json_agg(json_build_object(
+          'id', ${tagTable.id},
+          'name', ${tagTable.name},
+          'slug', ${tagTable.slug},
+          'description', ${tagTable.description})) FILTER (WHERE ${tagTable.id} IS NOT NULL),'[]'::json)`.as(
+          "tags",
+        ),
+      })
+      .from(tagsToPostsTable)
+      .leftJoin(tagTable, eq(tagTable.id, tagsToPostsTable.tagId))
+      .groupBy(tagsToPostsTable.postId)
+      .as("tags_posts_agg");
+
     const [post] = await db
       .select({
         ...getTableColumns(postTable),
@@ -110,13 +131,17 @@ export async function getPostWithSlug(slug: Post["slug"]) {
         authorFirstname: profileTable.firstName,
         authorLastname: profileTable.lastName,
         authorAvatar: profileTable.avatar,
+        tags: sql<Array<Tag>>`${associatedTags.tags}`,
       })
       .from(postTable)
       .innerJoin(userTable, eq(postTable.userId, userTable.id))
       .leftJoin(profileTable, eq(profileTable.userId, postTable.userId))
+      .leftJoin(associatedTags, eq(postTable.id, associatedTags.postId))
       .where(eq(postTable.slug, slug))
       .execute();
 
+    // console.log(post.tags);
+    // console.log(post);
     return { post, error: null };
   } catch (error) {
     console.error("Post could not be found", error);
@@ -182,15 +207,29 @@ export async function getProfileWithSlug(slug: string) {
 
 export async function getPostsByUser(id: User["id"], page = 1, pageSize = 5) {
   try {
+    const { associatedTags, commentsAgg, likesAgg, bookmarksAgg } =
+      reactionsAndTagsAgg;
+
     const posts = await db
-      .select({ ...getTableColumns(postTable) })
+      .select({
+        ...getTableColumns(postTable),
+        tags: sql<Array<Tag>>`${associatedTags.tags}`,
+        comments: sql<number>`COALESCE(${commentsAgg.commentCount}, 0)::int`,
+        likes: sql<number>`COALESCE(${likesAgg.likeCount}, 0)::int`,
+        bookmarks: sql<number>`COALESCE(${bookmarksAgg.bookmarkCount}, 0)::int`,
+      })
       .from(postTable)
+      .leftJoin(associatedTags, eq(postTable.id, associatedTags.postId))
+      .leftJoin(commentsAgg, eq(commentsAgg.postId, postTable.id))
+      .leftJoin(likesAgg, eq(likesAgg.postId, postTable.id))
+      .leftJoin(bookmarksAgg, eq(bookmarksAgg.postId, postTable.id))
       .where(eq(postTable.userId, id))
       .orderBy(desc(postTable.updatedAt || postTable.createdAt))
       .limit(pageSize)
       .offset((page - 1) * pageSize)
       .execute();
 
+    // console.log(posts);
     return { posts, error: null };
   } catch (error) {
     console.error(error);
@@ -236,7 +275,7 @@ export const emailAlreadyExists = async (email: string) => {
 export const getUserBookmarks = async (
   currentUserId: string,
   page = 1,
-  pageSize = 1,
+  pageSize = 5,
 ) => {
   if (!currentUserId) {
     return { error: "Failed to fetch user bookmarks", result: null };
@@ -274,41 +313,6 @@ export const getUserBookmarks = async (
   }
 };
 
-export async function getUserWithId(id: User["id"]) {
-  try {
-    const { githubUserId, googleUserId, password, ...rest } =
-      getTableColumns(userTable);
-
-    const [user] = await db
-      .select({ ...rest, postsCount: count(postTable.id) })
-      .from(userTable)
-      .where(eq(userTable.id, id))
-      .leftJoin(postTable, eq(userTable.id, postTable.userId))
-      .groupBy(userTable.id)
-      .execute();
-
-    return { user, error: null };
-  } catch (error) {
-    console.error("User could not be found", error);
-    return { user: null, error: "Failed to find user" };
-  }
-}
-
-export async function getPostsByTag(id: Tag["id"], page = 1, pageSize = 5) {
-  const posts = await db
-    .select({
-      ...getTableColumns(postTable),
-    })
-    .from(postTable)
-    .innerJoin(tagsToPostsTable, eq(tagsToPostsTable.postId, postTable.id))
-    .where(eq(tagsToPostsTable.tagId, id))
-    .limit(pageSize)
-    .offset((page - 1) * pageSize)
-    .execute();
-
-  return posts;
-}
-
 export async function getTags(
   page = 1,
   pageSize = 10,
@@ -329,17 +333,80 @@ export async function getTags(
 // Tag Search Functionality
 export const searchTags = async (keyword: string) => {
   try {
-    const searchedTag = await db
+    // const searchedTag = await db // For multiple search results
+    const [searchedTag] = await db
       .select()
       .from(tagTable)
-      .where(keyword ? ilike(tagTable.name, keyword) : undefined);
-
+      // .where(keyword ? ilike(tagTable.name, keyword) : undefined);
+      .where(ilike(tagTable.name, `%${keyword}%`));
+    // console.log(searchedTag);
+    // console.log(searchedTag.name);
     return searchedTag;
   } catch (error) {
     console.error(error);
     throw new Error("Something went wrong with searching for tag");
   }
 };
+
+export const getTagWithSlug = async (slug: string) => {
+  try {
+    const [tag] = await db
+      .select()
+      .from(tagTable)
+      .where(eq(tagTable.slug, slug));
+
+    return { result: tag, error: null };
+  } catch (error) {
+    console.error(error);
+    return { error: "Failed to find tag", result: null };
+  }
+};
+
+// export const getTagById = async (id: string) => {
+//   try {
+//     const [tag] = await db.select().from(tagTable).where(eq(tagTable.id, id));
+//
+//     return { result: tag, error: null };
+//   } catch (error) {
+//     console.error(error);
+//     return { error: "Failed to find tag", result: null };
+//   }
+// };
+
+// export async function getUserWithId(id: User["id"]) {
+//   try {
+//     const { githubUserId, googleUserId, password, ...rest } =
+//       getTableColumns(userTable);
+//
+//     const [user] = await db
+//       .select({ ...rest, postsCount: count(postTable.id) })
+//       .from(userTable)
+//       .where(eq(userTable.id, id))
+//       .leftJoin(postTable, eq(userTable.id, postTable.userId))
+//       .groupBy(userTable.id)
+//       .execute();
+//
+//     return { user, error: null };
+//   } catch (error) {
+//     console.error("User could not be found", error);
+//     return { user: null, error: "Failed to find user" };
+//   }
+// }
+
+// export async function getPostsByTag(id: Tag["id"], page = 1, pageSize = 5) {
+//   const posts = await db
+//     .select({
+//       ...getTableColumns(postTable),
+//     })
+//     .from(postTable)
+//     .innerJoin(tagsToPostsTable, eq(tagsToPostsTable.postId, postTable.id))
+//     .where(eq(tagsToPostsTable.tagId, id))
+//     .limit(pageSize)
+//     .offset((page - 1) * pageSize)
+//     .execute();
+//
+//   return posts;
+// }
 
 // export async function getTags1(
 //   page = 1,
@@ -411,75 +478,50 @@ export const searchTags = async (keyword: string) => {
 }
  * */
 
-/*
-export async function findLike(postId: Post["id"]) {
-  try {
-    const { user } = await getCurrentSession();
-    if (!user) {
-      return {
-        error: "User must be logged in to remove a like on a post",
-        result: null,
-      };
-    }
-
-    const userId = user.id;
-
-    const [likeExist] = await db
-      .select()
-      .from(likeTable)
-      .where(and(eq(likeTable.userId, userId), eq(likeTable.postId, postId)))
-      .execute();
-
-    console.log(likeExist);
-
-    return { result: "Successfully found like", error: null };
-  } catch (error) {
-    console.error(error);
-    return { error: "Failed to find like", result: null };
-  }
-}
-* */
-
-/*
-export async function getPostLikes(postId: Post["id"]) {
-  try {
-    const likes = await db
-      .select()
-      .from(likeTable)
-      .where(eq(likeTable.postId, postId))
-      .orderBy(desc(likeTable.createdAt))
-      .execute();
-
-    return { likes: likes, error: null };
-  } catch (error) {
-    console.error(error);
-    return { likes: null, error: "Failed to fetch post likes" };
-  }
-}
-* */
-
-/*
-export async function getPostReactionCountWithId(id: Post["id"]) {
-  try {
-    const [reactionCount] = await db
-      .select({
-        comments: count(commentTable),
-        likes: count(likeTable),
-        bookmarks: count(bookmarkTable),
-      })
-      .from(postTable)
-      .leftJoin(commentTable, eq(commentTable.postId, postTable.id))
-      .leftJoin(likeTable, eq(likeTable.postId, postTable.id))
-      .leftJoin(bookmarkTable, eq(bookmarkTable.postId, postTable.id))
-      .where(eq(postTable.id, id))
-      .execute();
-
-    return { reactionCount, error: null };
-  } catch (error) {
-    console.error(error);
-    return { reactionCount: null, error: "Failed to fetch reaction count" };
-  }
-}
-* */
-
 // sql<number>`COUNT(*) OVER (PARTITION BY ${bookmarkTable.userId}) AS bookmark_count`
+
+/*
+const commentsAgg = db
+      .select({
+        postId: commentTable.postId,
+        commentCount: count(commentTable.id).as("comment_count"),
+      })
+      .from(commentTable)
+      .groupBy(commentTable.postId)
+      .as("comments_agg");
+
+    const likesAgg = db
+      .select({
+        postId: likeTable.postId,
+        likeCount: count(likeTable.id).as("like_count"),
+      })
+      .from(likeTable)
+      .groupBy(likeTable.postId)
+      .as("likes_agg");
+
+    const bookmarksAgg = db
+      .select({
+        postId: bookmarkTable.postId,
+        bookmarkCount: count(bookmarkTable.id).as("bookmark_count"),
+      })
+      .from(bookmarkTable)
+      .groupBy(bookmarkTable.postId)
+      .as("bookmarks_agg");
+
+    const associatedTags = db
+      .select({
+        postId: tagsToPostsTable.postId,
+        tags: sql`COALESCE(json_agg(json_build_object(
+          'id', ${tagTable.id},
+          'name', ${tagTable.name},
+          'slug', ${tagTable.slug},
+          'description', ${tagTable.description})) FILTER (WHERE ${tagTable.id} IS NOT NULL),'[]'::json)`.as(
+          "tags",
+        ),
+      })
+      .from(tagsToPostsTable)
+      .leftJoin(tagTable, eq(tagTable.id, tagsToPostsTable.tagId))
+      .groupBy(tagsToPostsTable.postId)
+      .as("tags_posts_agg");
+
+* */

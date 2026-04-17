@@ -1,5 +1,7 @@
 "use server";
 
+import { and, count, eq, getTableColumns } from "drizzle-orm";
+import { revalidatePath } from "next/cache";
 import {
   bookmarkTable,
   Comment,
@@ -8,15 +10,14 @@ import {
   Post,
   postTable,
   Tag,
+  TagsToPosts,
   tagsToPostsTable,
   tagTable,
   User,
   userTable,
 } from "@/db/schema";
 import { db } from "@/db";
-import { and, count, eq, getTableColumns } from "drizzle-orm";
 import { getCurrentSession } from "@/lib/session";
-import { revalidatePath } from "next/cache";
 
 export async function deletePost(id: Post["id"]) {
   const { user } = await getCurrentSession();
@@ -56,8 +57,6 @@ export async function removeLike(postId: Post["id"], userId: User["id"]) {
       .from(likeTable)
       .where(and(eq(likeTable.userId, userId), eq(likeTable.postId, postId)))
       .execute();
-
-    // console.log(likeExist);
 
     if (!likeExist) {
       return {
@@ -147,35 +146,27 @@ export async function deleteUser(id: User["id"]) {
 }
 
 // This is only going to remove the relationship between a tag and a post, not actually delete the tag. Tags can only be deleted by tag author if the tag is not associated with any post
-export async function removeTag(id: Tag["id"]) {
-  const { user } = await getCurrentSession();
+export async function removeTag(
+  tagId: TagsToPosts["tagId"],
+  postId: TagsToPosts["postId"],
+) {
+  try {
+    const [removeTagAssociation] = await db
+      .delete(tagsToPostsTable)
+      .where(
+        and(
+          eq(tagsToPostsTable.tagId, tagId),
+          eq(tagsToPostsTable.postId, postId),
+        ),
+      )
+      .returning()
+      .execute();
 
-  if (!user) {
-    return {
-      error: "User must be logged in to delete tag",
-    };
+    return { result: removeTagAssociation, error: null };
+  } catch (err) {
+    console.error(err);
+    return { result: null, error: "Failed to delete tag" };
   }
-
-  const [tagToRemove] = await db
-    .select({ ...getTableColumns(tagTable), postAuthor: postTable.userId })
-    .from(tagsToPostsTable)
-    .where(eq(tagsToPostsTable.tagId, id))
-    .innerJoin(postTable, eq(tagsToPostsTable.postId, postTable.id))
-    .execute();
-
-  if (tagToRemove.postAuthor !== user.id) {
-    return {
-      error: "Only the post author is authorised to remove tags on a post",
-    };
-  }
-
-  const [removeTagAssociation] = await db
-    .delete(tagsToPostsTable)
-    .where(eq(tagsToPostsTable.tagId, id))
-    .returning()
-    .execute();
-
-  return removeTagAssociation;
 }
 
 export async function deleteTag(id: Tag["id"]) {

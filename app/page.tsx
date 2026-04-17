@@ -1,7 +1,6 @@
 import { polyfill } from "interweave-ssr";
-// import TagSelection from "@/components/tag/TagSelection";
 import { getCurrentSession } from "@/lib/session";
-import { getLatestPosts, getUserBookmarks } from "@/db/queries/select";
+import { getLatestPosts, getTags, getUserBookmarks } from "@/db/queries/select";
 import HomePageClient from "@/app/HomePageClient";
 
 polyfill();
@@ -23,10 +22,11 @@ export default async function Home() {
     bookmarkArr.push(...currentUserBookmarks);
   }
 
-  // console.log(posts?.length);
-  // console.log(postArr.length);
+  const tags = await getTags();
 
-  // console.log(currentUserBookmarks);
+  if (!tags.data) {
+    throw new Error("Something went wrong with getting all tags");
+  }
 
   return (
     <div className="h-full">
@@ -34,6 +34,7 @@ export default async function Home() {
         posts={postArr}
         currentUserBookmarks={bookmarkArr}
         currentUserId={user?.id}
+        tags={tags.data}
       />
     </div>
   );

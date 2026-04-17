@@ -52,6 +52,8 @@ export default async function BlogPage({
     authorisedPostAuthor = user.id;
   }
 
+  // console.log(post.tags);
+
   const { reactions } = await getPostReactionsWithId(post.id);
 
   const commentCount = reactions?.comments.length;

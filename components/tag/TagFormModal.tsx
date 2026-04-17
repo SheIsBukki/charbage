@@ -1,5 +1,6 @@
 "use client";
 
+import { Dispatch, SetStateAction } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
@@ -16,10 +17,16 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-// import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Tag } from "@/db/schema";
 
-export default function TagForm() {
+export default function TagForm({
+  tags,
+  setTagsAction,
+}: {
+  tags: Array<Tag>;
+  setTagsAction: Dispatch<SetStateAction<Array<Tag>>>;
+}) {
   const {
     register,
     handleSubmit,
@@ -43,6 +50,9 @@ export default function TagForm() {
     if (tag.error && tag.error === "Sorry, tag already exists") {
       toast.error("Sorry, tag already exists");
     } else if (tag.tag) {
+      if (tags.length < 3) {
+        setTagsAction((prev) => [...prev, tag.tag]);
+      }
       toast.success("Tag successfully created!");
     }
 
@@ -66,10 +76,6 @@ export default function TagForm() {
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="">
-            {/*<Label htmlFor="name" className="text-right">
-                Name
-              </Label>*/}
-
             <Input
               id="name"
               type="text"
@@ -88,10 +94,6 @@ export default function TagForm() {
           </div>
 
           <div className="">
-            {/*<Label htmlFor="description" className="text-right">
-                Description
-              </Label>*/}
-
             <Textarea
               id="description"
               {...register("description")}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useEffect } from "react";
+import { useActionState, useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import Form from "next/form";
@@ -8,25 +8,17 @@ import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 
 import { ArticleFormSchema } from "@/lib/definitions";
-import { PostActionStateType, PostFormValues } from "@/lib/types";
+import { ArticleFormProps } from "@/lib/types";
 import MarkdownEditor from "@/components/editor/MarkdownEditor";
 import TagFormModal from "@/components/tag/TagFormModal";
 import { ErrorMessage } from "@/app/ui/ErrorMessage";
 import AvatarOrFeaturedImage from "@/app/ui/AvatarOrFeaturedImage";
-// import TagSelectionModal from "@/components/tag/TagSelectionModal";
-
-type ArticleFormProps = {
-  action: (
-    initialState: PostActionStateType,
-    formData: FormData,
-  ) => Promise<PostActionStateType>;
-  values: PostFormValues;
-  userId: string;
-  postId?: string;
-  editorStatus: { updating: boolean; creating: boolean };
-};
+import TagSelectionModal from "@/components/tag/TagSelectionModal";
+import { Tag } from "@/db/schema";
+import PreviewTags from "@/components/tag/PreviewTags";
 
 export default function ArticleForm({
+  tagData,
   action,
   values,
   userId,
@@ -48,11 +40,6 @@ export default function ArticleForm({
     mode: "onBlur",
     // mode: "onSubmit",
   });
-
-  // const [openTagForm, setOpenTagForm] = useState(false);
-  // const [openTagSelection, setOpenTagSelection] = useState<boolean>(false);
-
-  // console.log(values.featuredImage);
 
   const { hasPostChanged, isSubmitSuccessful } = state;
 
@@ -81,14 +68,38 @@ export default function ArticleForm({
   // console.log(JSON.parse(JSON.stringify(oldValues)));
   // console.log(typeof JSON.parse(JSON.stringify(oldValues)));
 
+  const tagValues = JSON.parse(values.tags || JSON.stringify([]));
+  console.log(tagValues);
+  const [tags, setTags] = useState<Array<Tag>>(tagValues);
+
+  const handleAddOrRemoveTag = (selectedTag: Tag) => {
+    // console.log("selectedTag", selectedTag);
+
+    const tagIndex = tags.findIndex((tag) => tag.id === selectedTag.id);
+
+    if (tagIndex !== -1) {
+      setTags((prev) => [...prev].filter((tag) => tag.id !== selectedTag.id));
+    } else if (tags.length < 3) {
+      setTags((prev) => [...prev, selectedTag]);
+    } else {
+      return;
+    }
+  };
+
+  console.log(tags);
+
   return (
-    // <div className="mx-auto w-full px-2">
     <div className="brder container mx-auto my-8 border-red-500 px-2 pb-12 lg:w-3/5">
       {/*ARTICLE*/}
       <div className="h-[50%]">
         <Form action={formAction}>
+          <input
+            type="hidden"
+            value={JSON.stringify(tags)}
+            name="tags"
+            className=""
+          />
           <input name="oldValues" value={oldValues} type="hidden" />
-
           {/*Featured Image*/}
           <div className="my-6 w-fit">
             <Controller
@@ -108,7 +119,6 @@ export default function ArticleForm({
               <ErrorMessage message={errors.featuredImage.message} />
             )}
           </div>
-
           {/*Title*/}
           <div className="my-2 w-full">
             <textarea
@@ -125,7 +135,6 @@ export default function ArticleForm({
 
             {errors.title && <ErrorMessage message={errors.title.message} />}
           </div>
-
           {/*Description*/}
           <div className="my-2 w-full">
             <textarea
@@ -142,18 +151,26 @@ export default function ArticleForm({
               <ErrorMessage message={errors.description.message} />
             )}
           </div>
-
           {/*TAG CREATE FORM MODAL AND TAG SEARCH MODAL*/}
           <div className="mb-4 flex w-full items-center justify-between space-x-4 text-sm md:justify-end md:space-x-4 md:text-base">
             {/*Looks like I don't need to even attempt to create the modal at all*/}
-            <TagFormModal />
+            <TagFormModal setTagsAction={setTags} tags={tags} />
 
             {/*This will be for Tag search——I COMMENTED OUT THIS BECAUSE IT MIGHT BE CAUSING RUNTIME UNHANDLED PROMISE REJECTION ERROR IN PRODUCTION */}
-            {/*<TagSelectionModal />*/}
-            {/*<Button variant="outline" type="button" className="">
-              Select a tag
-            </Button>*/}
+            <TagSelectionModal
+              tags={tags}
+              tagData={tagData}
+              handleAddOrRemoveTagAction={handleAddOrRemoveTag}
+            />
           </div>
+
+          {/*Preview selected TAGS*/}
+          {tags.length > 0 && (
+            <PreviewTags
+              previewTags={tags}
+              handleAddOrRemoveTagAction={handleAddOrRemoveTag}
+            />
+          )}
 
           {/*Markdown Content*/}
           <div className="container mx-auto w-full">
@@ -176,7 +193,6 @@ export default function ArticleForm({
               <ErrorMessage message={errors.content.message} />
             )}
           </div>
-
           {/*Publish button*/}
           <div className="mx-auto mt-6 w-[50%]">
             <button

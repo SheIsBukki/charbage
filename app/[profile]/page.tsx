@@ -1,14 +1,14 @@
 import { notFound } from "next/navigation";
 import { getCurrentSession } from "@/lib/session";
 import { getPostsByUser, getProfileWithSlug } from "@/db/queries/select";
-import ProfilePageClient from "@/app/[slug]/ProfilePageClient";
+import ProfilePageClient from "@/app/[profile]/ProfilePageClient";
 
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ profile: string }>;
 }) {
-  const { slug } = await params;
+  const { profile: slug } = await params;
   const profileSlug = decodeURIComponent(slug);
   const { profile } = await getProfileWithSlug(profileSlug);
 
@@ -23,16 +23,16 @@ export async function generateMetadata({
 
   return {
     title: fullName || profileSlug,
-    description: profile.bio || `${fullName || profileSlug}'s profile page`, // Until user's short bio hence user?.bio
+    description: profile.bio || `${fullName || profileSlug}'s profile page`,
   };
 }
 
 export default async function ProfilePage({
   params,
 }: {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ profile: string }>;
 }) {
-  const { slug } = await params;
+  const { profile: slug } = await params;
   const profileSlug = decodeURIComponent(slug);
   const { profile } = await getProfileWithSlug(profileSlug);
   if (!profile) {
@@ -48,9 +48,6 @@ export default async function ProfilePage({
   const { profile: currentUserProfile } = await getProfileWithSlug(
     `@${currentUser?.username}`,
   );
-  // console.log(profile);
-
-  // Posts, comments, bookmarks
 
   return (
     profile && (
