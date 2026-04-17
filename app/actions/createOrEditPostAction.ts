@@ -52,7 +52,7 @@ export const createOrEditPostAction = async (
 
   async function publishedPostsTagManager(postId: string) {
     const oldTags: Tag[] = JSON.parse(oldValues.tags);
-    for (let tag of tags) {
+    for (const tag of tags) {
       const alreadyAddedTagIndex = oldTags.findIndex(
         (oldTag) => oldTag.id === tag.id,
       );
@@ -67,7 +67,7 @@ export const createOrEditPostAction = async (
       }
     }
 
-    for (let oldTag of oldTags) {
+    for (const oldTag of oldTags) {
       const tagToRemoveIndex = tags.findIndex((tag) => tag.id === oldTag.id);
       if (tagToRemoveIndex === -1) {
         const removedTag = await removeTag(oldTag.id, postId);
