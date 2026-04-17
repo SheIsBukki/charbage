@@ -115,7 +115,7 @@ export const createOrEditPostAction = async (
       values.slug = publishedArticle.slug;
 
       /*ADD TAGS TO NEW POSTS*/
-      for (let tag of tags) {
+      for (const tag of tags) {
         const addedTag = await addTag(publishedArticle.id, tag.id);
 
         if (addedTag.error) {
