@@ -9,7 +9,11 @@ import { BsBookmark } from "react-icons/bs";
 import { BiLike } from "react-icons/bi";
 import { TfiCommentAlt } from "react-icons/tfi";
 
-import { createExcerpt, getRelativeTime } from "@/utils/helpers";
+import {
+  createExcerpt,
+  getReadingTime,
+  getRelativeTime,
+} from "@/utils/helpers";
 import { PostType } from "@/lib/types";
 import Avatar from "@/app/ui/Avatar";
 
@@ -17,9 +21,6 @@ export default function ArticleCard({ article }: { article: PostType }) {
   const pathname = usePathname();
   const fullName =
     `${article.authorFirstname || ""} ${article.authorLastname || ""}`.trim();
-
-  // console.log(article);
-  // console.log(typeof article.comments);
 
   return (
     <div className="space-y-2 px-8 py-3 md:px-4 lg:my-6 lg:rounded-lg lg:border">
@@ -111,25 +112,29 @@ export default function ArticleCard({ article }: { article: PostType }) {
           </div>
         )}
 
-        {/*Interactions*/}
-        <div className="flex items-center space-x-2.5 md:space-x-4">
-          <span className="inline-flex items-center space-x-1">
-            <span className="">{article.likes}</span>
-            <span className="hidden md:inline-block">likes</span>
-            <BiLike className="inline-block md:hidden md:size-4" />
-          </span>
+        {/*INTERACTION AND READING TIME*/}
+        <div className="flex justify-between">
+          {/*Interactions*/}
+          <div className="flex items-center space-x-2.5 md:space-x-4">
+            <span className="inline-flex items-center space-x-1">
+              <span className="">{article.likes}</span>
+              <span className="hidden md:inline-block">likes</span>
+              <BiLike className="inline-block md:hidden md:size-4" />
+            </span>
 
-          <span className="inline-flex items-center space-x-1">
-            <span className="">{article.comments}</span>
-            <span className="hidden md:inline-block">comments</span>
-            <TfiCommentAlt className="inline-block md:hidden md:size-4" />
-          </span>
+            <span className="inline-flex items-center space-x-1">
+              <span className="">{article.comments}</span>
+              <span className="hidden md:inline-block">comments</span>
+              <TfiCommentAlt className="inline-block md:hidden md:size-4" />
+            </span>
 
-          <span className="inline-flex items-center space-x-1">
-            <span className="">{article.bookmarks}</span>
-            <span className="hidden md:inline-block">bookmarks</span>
-            <BsBookmark className="inline-block md:hidden md:size-4" />
-          </span>
+            <span className="inline-flex items-center space-x-1">
+              <span className="">{article.bookmarks}</span>
+              <span className="hidden md:inline-block">bookmarks</span>
+              <BsBookmark className="inline-block md:hidden md:size-4" />
+            </span>
+          </div>
+          <p className="">{getReadingTime(article.content)} min read</p>
         </div>
       </div>
     </div>

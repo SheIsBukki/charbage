@@ -2,12 +2,12 @@ import md from "@/utils/md";
 import { usernameAlreadyExists } from "@/db/queries/select";
 import dayjs, { Dayjs } from "dayjs";
 import calendar from "dayjs/plugin/calendar";
-import updateLocale from "dayjs/plugin/updateLocale";
-import relativeTime from "dayjs/plugin/relativeTime";
+// import updateLocale from "dayjs/plugin/updateLocale";
+// import relativeTime from "dayjs/plugin/relativeTime";
 
 dayjs.extend(calendar);
-dayjs.extend(updateLocale);
-dayjs.extend(relativeTime);
+// dayjs.extend(updateLocale);
+// dayjs.extend(relativeTime);
 // dayjs.updateLocale("en", {
 //   calendar: {
 //     sameDay: "[Today at] h:mm A",
@@ -122,4 +122,9 @@ export const getRelativeTime = (date: Date) => {
   });
 
   // return dayjs(date).calendar();
+};
+
+export const getReadingTime = (content: string) => {
+  const wordCount = content.split(/\s+/).length;
+  return Math.ceil(wordCount / 150);
 };

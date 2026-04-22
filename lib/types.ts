@@ -62,7 +62,7 @@ export type PostFormValues = {
   featuredImage: string;
   slug?: string;
   postId?: string;
-  tags?: string;
+  tags: string;
 };
 
 export type PostActionStateType = {
@@ -71,6 +71,7 @@ export type PostActionStateType = {
   serverError?: boolean;
   hasPostChanged?: boolean;
   isSubmitSuccessful?: boolean;
+  tagServerErrorMessage?: string;
 };
 
 export type ProfileFormValues = {
@@ -191,6 +192,7 @@ export type PaginationFetcherAndKindType =
       kind: "currentUserBookmarks";
       fetcher: DbUserBookmarksFetchType;
     };
+
 export type ArticleFormProps = {
   action: (
     initialState: PostActionStateType,

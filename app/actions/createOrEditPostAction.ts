@@ -1,7 +1,7 @@
 "use server";
 
-import { ArticleFormSchema } from "@/lib/definitions";
 import slugify from "slugify";
+import { ArticleFormSchema } from "@/lib/definitions";
 import { updatePost } from "@/db/queries/update";
 import { OldValues, PostActionStateType, PostFormValues } from "@/lib/types";
 import { addTag, createPost } from "@/db/queries/insert";
@@ -33,7 +33,7 @@ export const createOrEditPostAction = async (
 
   let isSubmitSuccessful;
   let serverError;
-  let tagServerErrorMessage;
+  let tagServerErrorMessage: string = "";
 
   const hasPostChanged = !oldValues.postId
     ? undefined
@@ -52,6 +52,7 @@ export const createOrEditPostAction = async (
 
   async function publishedPostsTagManager(postId: string) {
     const oldTags: Tag[] = JSON.parse(oldValues.tags);
+
     for (const tag of tags) {
       const alreadyAddedTagIndex = oldTags.findIndex(
         (oldTag) => oldTag.id === tag.id,
@@ -69,6 +70,7 @@ export const createOrEditPostAction = async (
 
     for (const oldTag of oldTags) {
       const tagToRemoveIndex = tags.findIndex((tag) => tag.id === oldTag.id);
+
       if (tagToRemoveIndex === -1) {
         const removedTag = await removeTag(oldTag.id, postId);
 
@@ -95,8 +97,8 @@ export const createOrEditPostAction = async (
     if (updatedPost !== "Failed to update post") {
       isSubmitSuccessful = true;
 
-      await publishedPostsTagManager(updatedPost.id);
       /*ADD OR REMOVE TAGS FROM A PREVIOUSLY PUBLISHED POST*/
+      await publishedPostsTagManager(updatedPost.id);
     } else {
       serverError = true;
     }
@@ -115,12 +117,14 @@ export const createOrEditPostAction = async (
       values.slug = publishedArticle.slug;
 
       /*ADD TAGS TO NEW POSTS*/
-      for (const tag of tags) {
-        const addedTag = await addTag(publishedArticle.id, tag.id);
+      if (tags.length > 0) {
+        for (const tag of tags) {
+          const addedTag = await addTag(publishedArticle.id, tag.id);
 
-        if (addedTag.error) {
-          serverError = true;
-          tagServerErrorMessage = `Failed to add tag ${tag} to post`;
+          if (addedTag.error) {
+            serverError = true;
+            tagServerErrorMessage = `Failed to add tag ${tag} to post`;
+          }
         }
       }
     }

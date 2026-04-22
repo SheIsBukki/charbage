@@ -26,6 +26,7 @@ export default async function WritePage() {
         description: "",
         content: "",
         featuredImage: "",
+        tags: JSON.stringify([]),
       }}
       editorStatus={{
         updating: false,
