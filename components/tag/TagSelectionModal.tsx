@@ -9,7 +9,6 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -19,22 +18,6 @@ import { Tag } from "@/db/schema";
 // import { useDebouncedSearch } from "@/utils/useDebouncedSearch";
 import { useDebouncedCallback } from "use-debounce";
 
-// const getPopularTags = async () => {
-// const tags = await getTags();
-//
-// if (!tags.data) {
-//   toast.error("Something went wrong with getting all tags");
-//   throw new Error("Something went wrong with getting all tags");
-//   // return;
-// }
-
-// I will use this extractedTag if I don't want the userId
-// const extractedTag = tags.data.map((tag) => {
-//   const { name, description, id, slug } = tag;
-//
-//   return { name, description, id, slug };
-// });
-// };
 export default function TagSelectionModal({
   tagData,
   tags,
@@ -139,7 +122,7 @@ export default function TagSelectionModal({
             <HiOutlineMagnifyingGlass className="absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
           </div>
 
-          {/*SEARCHED TAGS*/}
+          {/*SEARCHED TAG*/}
           {searchedTag && (
             <button
               title={searchedTag.description}
@@ -156,6 +139,7 @@ export default function TagSelectionModal({
           )}
 
           {/*NOT SURE WHETHER I WANT MULTIPLE SEARCH RESULTS*/}
+          {/*SEARCHED TAGS*/}
           {/*{searchedTags && searchedTags.length > 0 && (*/}
           {/*  <div className="flex flex-shrink-0 flex-col">*/}
           {/*    {searchedTags.slice(0, 5).map((searchedTag) => (*/}
@@ -217,12 +201,6 @@ export default function TagSelectionModal({
             ))}
           </div>
         </div>
-
-        {/*<DialogFooter>*/}
-        {/*  <Button disabled={tags.length >= 3} type="submit">*/}
-        {/*    Select tag*/}
-        {/*  </Button>*/}
-        {/*</DialogFooter>*/}
       </DialogContent>
     </Dialog>
   );

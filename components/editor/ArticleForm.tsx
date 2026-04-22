@@ -41,7 +41,7 @@ export default function ArticleForm({
     // mode: "onSubmit",
   });
 
-  const { hasPostChanged, isSubmitSuccessful } = state;
+  const { hasPostChanged, isSubmitSuccessful, tagServerErrorMessage } = state;
 
   const router = useRouter();
 
@@ -56,25 +56,22 @@ export default function ArticleForm({
     if (isSubmitSuccessful === true) {
       localStorage.removeItem("imagePreview");
       localStorage.removeItem("featuredImage");
-      // console.log(isSubmitSuccessful);
       router.push(`/blog/${state.values.slug}`);
     }
   }, [isSubmitSuccessful]);
 
-  const oldValues = JSON.stringify(values);
-  // console.log(typeof values);
-  // console.log("old values:", oldValues);
-  // console.log(typeof oldValues);
-  // console.log(JSON.parse(JSON.stringify(oldValues)));
-  // console.log(typeof JSON.parse(JSON.stringify(oldValues)));
+  useEffect(() => {
+    if (tagServerErrorMessage) {
+      toast.error(tagServerErrorMessage);
+    }
+  }, [tagServerErrorMessage]);
 
-  const tagValues = JSON.parse(values.tags || JSON.stringify([]));
-  console.log(tagValues);
+  const oldValues = JSON.stringify(values);
+
+  const tagValues = JSON.parse(values.tags);
   const [tags, setTags] = useState<Array<Tag>>(tagValues);
 
   const handleAddOrRemoveTag = (selectedTag: Tag) => {
-    // console.log("selectedTag", selectedTag);
-
     const tagIndex = tags.findIndex((tag) => tag.id === selectedTag.id);
 
     if (tagIndex !== -1) {
@@ -82,24 +79,26 @@ export default function ArticleForm({
     } else if (tags.length < 3) {
       setTags((prev) => [...prev, selectedTag]);
     } else {
+      toast("You cannot have more than 3 tags per post", {
+        style: {
+          background: "#a855f7",
+          color: "#fff",
+        },
+      });
       return;
     }
   };
-
-  console.log(tags);
 
   return (
     <div className="brder container mx-auto my-8 border-red-500 px-2 pb-12 lg:w-3/5">
       {/*ARTICLE*/}
       <div className="h-[50%]">
         <Form action={formAction}>
-          <input
-            type="hidden"
-            value={JSON.stringify(tags)}
-            name="tags"
-            className=""
-          />
+          {/*All old values, including tags and featured image url*/}
           <input name="oldValues" value={oldValues} type="hidden" />
+
+          {/*Tags*/}
+          <input type="hidden" value={JSON.stringify(tags)} name="tags" />
           {/*Featured Image*/}
           <div className="my-6 w-fit">
             <Controller
@@ -124,7 +123,6 @@ export default function ArticleForm({
             <textarea
               id="title"
               aria-describedby="title-error"
-              // type="text"
               className="h-full w-full bg-gray-50 px-1 py-2 text-lg outline-0 focus:outline-0 md:text-3xl dark:bg-[revert]"
               placeholder="Your blog title..."
               {...register("title")}
@@ -151,19 +149,18 @@ export default function ArticleForm({
               <ErrorMessage message={errors.description.message} />
             )}
           </div>
+
           {/*TAG CREATE FORM MODAL AND TAG SEARCH MODAL*/}
           <div className="mb-4 flex w-full items-center justify-between space-x-4 text-sm md:justify-end md:space-x-4 md:text-base">
             {/*Looks like I don't need to even attempt to create the modal at all*/}
             <TagFormModal setTagsAction={setTags} tags={tags} />
 
-            {/*This will be for Tag search——I COMMENTED OUT THIS BECAUSE IT MIGHT BE CAUSING RUNTIME UNHANDLED PROMISE REJECTION ERROR IN PRODUCTION */}
             <TagSelectionModal
               tags={tags}
               tagData={tagData}
               handleAddOrRemoveTagAction={handleAddOrRemoveTag}
             />
           </div>
-
           {/*Preview selected TAGS*/}
           {tags.length > 0 && (
             <PreviewTags
@@ -212,65 +209,3 @@ export default function ArticleForm({
     </div>
   );
 }
-
-/**
- *  TAG SELECTION MODAL
-       <>
-        {openTagSelection && (
-          <div className="">
-            <TagSelectionModal />
-          </div>
-        )}
-      </>
- * */
-
-/**
- *     //TAG CREATE FORM
-      <div className="">
-        //This creates a new tag
-        {openTagForm && (
-          <div className="relative mx-auto h-full w-full">
-            <div className="absolute z-50 mx-auto w-full rounded-lg bg-gray-100 px-4 py-20 md:px-36 md:py-48 lg:px-48 dark:bg-gray-900">
-              <div className="w-full">
-                <button
-                  className="relative bottom-10 w-full place-items-end space-x-2 rounded-lg px-4 py-2 text-3xl md:bottom-20"
-                  onClick={() => setOpenTagForm(false)}
-                >
-                  <MdClose className="size-12 text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" />
-                </button>
-              </div>
-
-              <TagForm />
-            </div>
-          </div>
-        )}
-      </div>
- * */
-
-/**
- *  <div className="flex w-full items-center justify-between space-x-4 text-sm md:justify-end md:space-x-6 md:text-base">
-            TAG CREATE FORM MODAL BUTTON
-            <button
-              type="button"
-              onClick={() => setOpenTagForm(true)}
-              className="mb-4 mt-2 rounded-lg bg-gray-100 px-4 py-2 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700"
-            >
-              Create a tag
-            </button>
-          </div>
- * */
-
-/**
- * <TagSelectionModal />
-            <button
-              type="button"
-              onClick={() =>
-                openTagSelection
-                  ? setOpenTagSelection(false)
-                  : setOpenTagSelection(true)
-              }
-              className="mb-4 mt-2 rounded-lg bg-gray-100 px-4 py-2 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700"
-            >
-              Select a tag
-            </button>
- * */

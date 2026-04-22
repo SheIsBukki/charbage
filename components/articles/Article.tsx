@@ -1,18 +1,26 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import { Interweave } from "interweave";
 import { useRouter } from "next/navigation";
-import { clsx } from "clsx";
 import Link from "next/link";
-import { MdOutlineAddLink, MdOutlineBookmarkAdd } from "react-icons/md";
+import { MdOutlineBookmarkAdd } from "react-icons/md";
 import { BiCommentDetail } from "react-icons/bi";
 import { CiCircleChevDown, CiCircleChevUp, CiSettings } from "react-icons/ci";
-import { BsFillBookmarkCheckFill, BsHeartFill } from "react-icons/bs";
+import {
+  BsFillBookmarkCheckFill,
+  BsHeartFill,
+  BsThreeDots,
+  BsThreeDotsVertical,
+} from "react-icons/bs";
 
 import md from "@/utils/md";
-import { copyCurrentUrl, getRelativeTime } from "@/utils/helpers";
+import {
+  copyCurrentUrl,
+  getReadingTime,
+  getRelativeTime,
+} from "@/utils/helpers";
 import { DbActionType, PostType, ReactionsType } from "@/lib/types";
 import { removeBookmark, removeLike } from "@/db/queries/delete";
 import { addBookmark, addLike } from "@/db/queries/insert";
@@ -22,6 +30,8 @@ import ReaderInteraction from "@/app/ui/ReaderInteraction";
 import AuthenticationDialogue from "@/components/auth/AuthenticationDialogue";
 import Avatar from "@/app/ui/Avatar";
 import { useDisableScroll } from "@/app/ui/useDisableScroll";
+import { FaShare } from "react-icons/fa";
+import SocialShare from "@/app/ui/SocialShare";
 
 // export const dynamic = "force-dynamic";
 
@@ -40,8 +50,8 @@ export default function Article({
 }) {
   const router = useRouter();
 
-  const [copyUrl, setCopyUrl] = useState(false);
   const [expandMore, setExpandMore] = useState(false);
+  const [openShareMenu, setOpenShareMenu] = useState(false);
   const [showAuthenticationDialogue, setShowAuthenticationDialogue] =
     useState(false);
 
@@ -50,15 +60,6 @@ export default function Article({
   const bookmarkCount = reactions?.bookmarks.length;
   const fullName =
     `${post.authorFirstname || ""} ${post.authorLastname || ""}`.trim();
-
-  useEffect(() => {
-    if (copyUrl) {
-      copyCurrentUrl().then((r) => console.log(r));
-    }
-
-    const timeoutId = setTimeout(() => setCopyUrl(false), 2000);
-    return () => clearTimeout(timeoutId);
-  }, [copyUrl]);
 
   const currentUserLiked = reactions?.likes.some(
     (like: Like) => like.userId === currentUser,
@@ -71,9 +72,9 @@ export default function Article({
 
   return (
     <>
-      <div className="brder-2 container relative mx-auto border-red-500 lg:grid lg:grid-cols-8 lg:gap-x-8">
+      <div className="container relative mx-auto lg:grid lg:grid-cols-8 lg:gap-x-8">
         {/*ARTICLE*/}
-        <div className="boder-2 border-red-500 px-6 lg:order-2 lg:col-span-6 lg:pe-16">
+        <div className="px-6 lg:order-2 lg:col-span-6 lg:pe-16">
           <div className="mb-8 flex flex-col space-y-8">
             {/*Title*/}
             <h1 className="text-2xl font-bold md:text-5xl">{post.title}</h1>
@@ -92,14 +93,15 @@ export default function Article({
                 </figure>
               </div>
             )}
+
             {/*Post and author data*/}
             <div className="flex items-center space-x-4">
               <Link href={`/@${post.author}`}>
                 <Avatar
                   avatarUrl={post.authorAvatar || ""}
                   alt="Author's avatar"
-                  defaultSize={10}
-                  mdToLgSize={12}
+                  defaultSize={12}
+                  mdToLgSize={14}
                 />
               </Link>
               <div className="text-sm">
@@ -108,10 +110,17 @@ export default function Article({
                     {fullName || post.author}
                   </Link>
                 </p>
-                <p className="dark:text-gray-400">
-                  {post.updatedAt
-                    ? `Updated at: ${getRelativeTime(post.updatedAt)}`
-                    : `Published at: ${getRelativeTime(post.createdAt)}`}
+
+                <p className="flex flex-col space-y-1 dark:text-gray-400">
+                  <span className="">
+                    {post.updatedAt
+                      ? `Updated at: ${getRelativeTime(post.updatedAt)}`
+                      : `Published at: ${getRelativeTime(post.createdAt)}`}
+                  </span>
+
+                  <span className="text-sm underline underline-offset-4 dark:text-gray-400">
+                    {getReadingTime(post.content)} min read
+                  </span>
                 </p>
               </div>
             </div>
@@ -127,11 +136,11 @@ export default function Article({
 
           {/*TAGS*/}
           {post.tags && post.tags.length > 0 && (
-            <div className="boder-2 my-4 flex flex-wrap items-center gap-x-2 gap-y-4 border-red-500">
-              {post.tags.map((tag, index) => (
-                <Link href={`/tag/${tag.slug}`} key={tag.id}>
+            <div className="my-4 flex flex-wrap items-center gap-x-2 gap-y-4">
+              {post.tags.map(({ id, name, slug }) => (
+                <Link href={`/tag/${slug}`} key={id}>
                   <span className="rounded-full bg-gray-200 px-4 py-2 text-xs dark:bg-gray-500">
-                    {tag.name}
+                    {name}
                   </span>
                 </Link>
               ))}
@@ -140,8 +149,8 @@ export default function Article({
         </div>
 
         {/*INTERACTIONS AND SETTINGS*/}
-        <div className="boder-red-500 w4/5 fixed bottom-0 left-0 right-0 z-20 border-t-2 bg-white lg:static lg:bottom-auto lg:z-auto lg:order-1 lg:col-span-1 lg:flex lg:flex-col lg:items-center lg:space-y-4 lg:border-r-2 lg:border-t-0 lg:bg-inherit lg:pt-12 dark:bg-[#0a0a0a] lg:dark:bg-inherit">
-          <div className="brder mt-8 flex justify-between border-red-500 px-4 lg:mt-0 lg:block">
+        <div className="fixed bottom-0 left-0 right-0 z-20 border-t-2 bg-white lg:static lg:bottom-auto lg:z-auto lg:order-1 lg:col-span-1 lg:flex lg:flex-col lg:items-center lg:space-y-4 lg:border-r-2 lg:border-t-0 lg:bg-inherit lg:pt-12 dark:bg-[#0a0a0a] lg:dark:bg-inherit">
+          <div className="mt-8 flex justify-between px-4 lg:mt-0 lg:block">
             <div className="flex items-center space-x-4 lg:flex-col lg:space-x-0 lg:space-y-4">
               <a href="#responses" className="">
                 <ReaderInteraction
@@ -211,18 +220,14 @@ export default function Article({
                   interactionCount={bookmarkCount}
                 />
               </button>
-              <div
-                title="Copy link"
-                onClick={() => setCopyUrl(true)}
-                className="items-center lg:my-4"
+              {/*SOCIAL SHARE BUTTON*/}
+              <button
+                title="Share button"
+                onClick={() => setOpenShareMenu(!openShareMenu)}
+                type="button"
               >
-                <MdOutlineAddLink
-                  className={clsx(
-                    "text-2xl hover:scale-125",
-                    copyUrl && "text-purple-500",
-                  )}
-                />
-              </div>
+                <FaShare />
+              </button>
             </div>
 
             {authorisedPostAuthor && (
@@ -230,21 +235,21 @@ export default function Article({
                 type="button"
                 title="Settings"
                 onClick={() => setExpandMore(!expandMore)}
-                className="bordr-2 border-red-500 lg:mt-12"
+                className="lg:mt-12"
               >
                 {expandMore ? (
                   <CiCircleChevUp className="hidden text-3xl lg:block" />
                 ) : (
                   <CiCircleChevDown className="hidden text-3xl lg:block" />
                 )}
-                <CiSettings className="text-3xl lg:hidden" />
+                <BsThreeDotsVertical className="text-2xl lg:hidden" />
               </button>
             )}
           </div>
 
-          <div className="brder-2 mt-8 flex items-center justify-between border-red-500 lg:static lg:flex-col lg:space-x-0 lg:space-y-4">
+          <div className="mt-8 flex items-center justify-between lg:static lg:flex-col lg:space-x-0 lg:space-y-4">
             {expandMore && authorisedPostAuthor && (
-              <div className="borer-red-500 brder-b-0 absolute bottom-[6rem] z-30 block h-[calc(100dvh/2)] w-full items-center space-y-6 border-2 bg-white p-4 md:p-8 lg:static lg:bottom-auto lg:z-auto lg:flex lg:h-auto lg:flex-col lg:border-0 lg:bg-inherit lg:p-0 dark:bg-[#0a0a0a] lg:dark:bg-inherit">
+              <div className="h[calc(100dvh/2)] bordr-red-500 absolute bottom-[6rem] right-1 z-30 block items-center space-y-6 rounded-md border-2 bg-white p-1 lg:static lg:bottom-auto lg:right-auto lg:z-auto lg:flex lg:h-auto lg:flex-col lg:border-0 lg:bg-inherit lg:p-0 dark:bg-[#0a0a0a] lg:dark:bg-inherit">
                 <ArticleSettings
                   postId={post.id}
                   authorId={post.userId}
@@ -255,6 +260,12 @@ export default function Article({
               </div>
             )}
           </div>
+          <SocialShare
+            openShareMenu={openShareMenu}
+            slug={post.slug || ""}
+            shortText={post.description || ""}
+            postOrProfile="post"
+          />
         </div>
       </div>
       <AuthenticationDialogue

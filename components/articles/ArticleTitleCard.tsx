@@ -3,7 +3,7 @@ import Avatar from "@/app/ui/Avatar";
 import { getRelativeTime } from "@/utils/helpers";
 import { CurrentUserBookmarksType } from "@/lib/types";
 
-export default function ReadingListCard({
+export default function ArticleTitleCard({
   title,
   postSlug,
   createdAt,
