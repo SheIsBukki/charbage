@@ -39,7 +39,7 @@ export default function MainNav({ user, profile }: MainNavProps) {
 
   return (
     <div className="w-full">
-      <div className="wfull lgspace-x-52 brder flex items-center justify-between gap-x-8 border-red-500 bg-gray-50 px-4 py-4 shadow md:px-8 lg:gap-x-24 dark:bg-gray-950">
+      <div className="brder flex items-center justify-between gap-x-8 border-red-500 bg-gray-50 px-4 py-4 shadow md:px-8 lg:gap-x-24 dark:bg-gray-950">
         <div className="boder flex items-center justify-center space-x-2 border-red-500 md:space-x-6">
           <Link href="/">
             {/*Replace Home and cabbage icon below with the app logo*/}
@@ -81,9 +81,11 @@ export default function MainNav({ user, profile }: MainNavProps) {
           </button>
 
           {/*NOTIfiCATIONS*/}
-          <div className="hidden md:block">
-            <LuBell className="hidden text-2xl font-thin md:block" />
-          </div>
+          {user && (
+            <div className="hidden md:block">
+              <LuBell className="hidden text-2xl font-thin md:block" />
+            </div>
+          )}
           {/*Desktop Nav*/}
           <div className="hidden md:block">
             {user ? (

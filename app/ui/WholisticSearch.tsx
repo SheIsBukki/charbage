@@ -47,7 +47,7 @@ export default function WholisticSearch() {
   useDisableScroll(openSearchModal);
 
   return (
-    <div className="brder h-full w-full border-red-500 md:relative lg:w-1/2">
+    <div className="brder h-full w-full border-red-500 md:relative md:w-1/2">
       <div className="boder relative flex flex-1 flex-shrink-0 border-red-500">
         <label htmlFor="search" className="sr-only">
           Search
