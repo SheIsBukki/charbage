@@ -11,24 +11,29 @@ export default function ArticleTitleCard({
   authorSlug,
   authorAvatar,
   updatedAt,
+  showAuthor = true,
 }: CurrentUserBookmarksType) {
   return (
     <div className="space-y-3">
-      <div className="flex items-center space-x-3">
-        <Avatar
-          avatarUrl={authorAvatar}
-          alt="Author's avatar"
-          defaultSize={5}
-          mdToLgSize={8}
-        />
-        <span className="text-gray-600 dark:text-gray-400">
-          <Link href={`/${authorSlug}`} className="">
-            {authorName}
-          </Link>
-        </span>
-      </div>
+      {showAuthor && (
+        <div className="flex items-center space-x-3">
+          {authorAvatar && (
+            <Avatar
+              avatarUrl={authorAvatar}
+              alt="Author's avatar"
+              defaultSize={5}
+              mdToLgSize={8}
+            />
+          )}
+          <span className="text-gray-600 dark:text-gray-400">
+            <Link href={`/${authorSlug}`} className="">
+              {authorName}
+            </Link>
+          </span>
+        </div>
+      )}
 
-      <p className="text-lg font-bold">
+      <p className="font-bold">
         <Link href={`/blog/${postSlug}`} className="">
           {title}
         </Link>

@@ -330,7 +330,7 @@ export async function getTags(
   }, "Something went wrong with getting all tags");
 }
 
-// Tag Search Functionality
+// Tag WholisticSearch Functionality
 export const searchTags = async (keyword: string) => {
   try {
     // const searchedTag = await db // For multiple search results
@@ -359,6 +359,68 @@ export const getTagWithSlug = async (slug: string) => {
   } catch (error) {
     console.error(error);
     return { error: "Failed to find tag", result: null };
+  }
+};
+
+// Holistic search
+export const search = async (searchInput: string) => {
+  const postMatchQuery = sql`(setweight(to_tsvector('english', ${postTable.title}), 'A') || setweight(to_tsvector('english', ${postTable.content}), 'B')), to_tsquery('english', ${searchInput})`;
+
+  const profileMatchQuery = sql`(setweight(to_tsvector('english', ${profileTable.firstName}), 'A') || setweight(to_tsvector('english', ${profileTable.lastName}), 'B') || setweight(to_tsvector('english', ${profileTable.slug}), 'C')), to_tsquery('english', ${searchInput})`;
+
+  const tagMatchQuery = sql`(
+  setweight(to_tsvector('english', ${tagTable.name}), 'A') ||
+  setweight(to_tsvector('english', ${tagTable.description}), 'B')), to_tsquery('english', ${searchInput})`;
+
+  try {
+    const postResults = await db
+      .select({
+        ...getTableColumns(postTable),
+        rank: sql<number>`ts_rank(${postMatchQuery})`,
+        rankCd: sql<number>`ts_rank_cd(${postMatchQuery})`,
+      })
+      .from(postTable)
+      .where(
+        sql`(setweight(to_tsvector('english', ${postTable.title}), 'A') || setweight(to_tsvector('english', ${postTable.content}), 'B')) @@ to_tsquery('english', ${searchInput}) `,
+      )
+      .orderBy((t) => desc(t.rank));
+
+    const profileResults = await db
+      .select({
+        ...getTableColumns(profileTable),
+        rank: sql<number>`ts_rank(${profileMatchQuery})`,
+        rankCd: sql<number>`ts_rank_cd(${profileMatchQuery})`,
+      })
+      .from(profileTable)
+      .where(
+        sql`(setweight(to_tsvector('english', ${profileTable.firstName}), 'A') || setweight(to_tsvector('english', ${profileTable.lastName}), 'B') || setweight(to_tsvector('english', ${profileTable.slug}), 'C')) @@ to_tsquery('english', ${searchInput}) `,
+      )
+      .orderBy((t) => desc(t.rank));
+
+    // const tagResults = await db
+    //   .select()
+    //   .from(tagTable)
+    //   .where(ilike(tagTable.name, `%${searchInput}%`));
+
+    const tagResults = await db
+      .select({
+        ...getTableColumns(tagTable),
+        rank: sql<number>`ts_rank(${tagMatchQuery})`,
+        rankCd: sql<number>`ts_rank_cd(${tagMatchQuery})`,
+      })
+      .from(tagTable)
+      .where(
+        sql`(
+      setweight(to_tsvector('english', ${tagTable.name}), 'A') ||
+      setweight(to_tsvector('english', ${tagTable.description}), 'B')
+      ) @@ to_tsquery('english', ${searchInput})`,
+      )
+      .orderBy((t) => desc(t.rank));
+
+    return { result: { postResults, profileResults, tagResults }, error: null };
+  } catch (error) {
+    console.error(error);
+    return { error: error, result: null };
   }
 };
 

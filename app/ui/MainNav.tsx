@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { GiCabbage } from "react-icons/gi";
 import { CiEdit, CiSettings } from "react-icons/ci";
@@ -15,6 +15,7 @@ import { logoutUser } from "@/app/actions/auth";
 import { getPreviousPath } from "@/utils/helpers";
 import Avatar from "@/app/ui/Avatar";
 import { useDisableScroll } from "@/app/ui/useDisableScroll";
+import WholisticSearch from "@/app/ui/WholisticSearch";
 
 type MainNavProps = {
   user: Omit<User, "password"> | null;
@@ -34,36 +35,12 @@ export default function MainNav({ user, profile }: MainNavProps) {
   const fullName =
     `${profile?.firstName || ""} ${profile?.lastName || ""}`.trim();
 
-  // MAYBE NO NEED FOR THIS
-  // const menuItemsRef = useRef<HTMLDivElement | null>(null);
-  // useEffect(() => {
-  //   let timeoutId: NodeJS.Timeout;
-  //
-  //   if (open) {
-  //     menuItemsRef.current?.parentNode?.nextSibling?.addEventListener(
-  //       "click",
-  //       () => setOpen(false),
-  //     );
-  //
-  //     window.addEventListener("scroll", () => setOpen(false));
-  //     timeoutId = setTimeout(() => setOpen(false), 10000);
-  //   }
-  //
-  //   return () => {
-  //     clearTimeout(timeoutId);
-  //     window.removeEventListener("scroll", () => setOpen(false));
-  //   };
-  // }, [open]);
-
   useDisableScroll(open);
 
   return (
-    <div
-      // ref={menuItemsRef}
-      className=""
-    >
-      <div className="flex items-center justify-between bg-gray-50 px-4 py-4 shadow md:px-8 dark:bg-gray-950">
-        <div className="flex items-center justify-center space-x-2 md:space-x-6">
+    <div className="w-full">
+      <div className="brder flex items-center justify-between gap-x-8 border-red-500 bg-gray-50 px-4 py-4 shadow md:px-8 lg:gap-x-24 dark:bg-gray-950">
+        <div className="boder flex items-center justify-center space-x-2 border-red-500 md:space-x-6">
           <Link href="/">
             {/*Replace Home and cabbage icon below with the app logo*/}
             <span className="hidden text-2xl font-bold text-purple-500 md:block">
@@ -76,13 +53,16 @@ export default function MainNav({ user, profile }: MainNavProps) {
               className="flex items-center space-x-2"
               href={user ? "/write" : "/sign-in"}
             >
-              <CiEdit className="mdhidden size-6" />
+              <CiEdit className="size-6" />
               <span className="hidden md:block">Write</span>
             </Link>
           )}
         </div>
 
-        <div className="flex items-center justify-between space-x-2 md:space-x-6">
+        {/*SEARCH*/}
+        <WholisticSearch />
+
+        <div className="brder flex items-center justify-between gap-x-2 border-blue-500 md:gap-x-4 lg:gap-x-8">
           {/*Hamburger Menu for Mobile nav*/}
           <button
             aria-expanded={open}
@@ -101,9 +81,11 @@ export default function MainNav({ user, profile }: MainNavProps) {
           </button>
 
           {/*NOTIfiCATIONS*/}
-          <div className="hidden md:block">
-            <LuBell className="text-2xl font-thin" />
-          </div>
+          {user && (
+            <div className="hidden md:block">
+              <LuBell className="hidden text-2xl font-thin md:block" />
+            </div>
+          )}
           {/*Desktop Nav*/}
           <div className="hidden md:block">
             {user ? (

@@ -6,7 +6,6 @@ import { clsx } from "clsx";
 import { MdOutlineLibraryBooks } from "react-icons/md";
 import { LuBell } from "react-icons/lu";
 import { IoBookmarksOutline, IoStatsChartOutline } from "react-icons/io5";
-import { CiSearch } from "react-icons/ci";
 import { SlUserFollowing } from "react-icons/sl";
 
 import PopularTopics from "@/components/home/PopularTopics";
@@ -40,7 +39,7 @@ export default function HomePageClient({
   const placeholderItems = [
     // { text: "Charbage", icon: <GiCabbage className="text-lg" /> },
     // { text: "Blogs", icon: <BsFolderCheck className="text-lg" /> },
-    // { text: "Search", icon: <CiSearch className="text-2xl" /> },
+    // { text: "WholisticSearch", icon: <CiSearch className="text-2xl" /> },
     // { text: "Notifications", icon: <LuBell className="text-2xl" /> },
     // { text: "Write", icon: <TfiWrite className="text-2xl" /> },
     { text: "Following", icon: <SlUserFollowing className="text-2xl" /> },
@@ -70,12 +69,6 @@ export default function HomePageClient({
               : "hidden",
           )}
         >
-          <p className="flex w-full items-center space-x-4 md:hidden">
-            <span className="">
-              <CiSearch className="text-2xl" />
-            </span>
-            <span className="">Search</span>
-          </p>
           <p className="flex w-full items-center space-x-4 md:hidden">
             <span className="">
               <LuBell className="text-2xl" />
@@ -167,7 +160,7 @@ export default function HomePageClient({
           "space-y-6 lg:fixed lg:bottom-0 lg:right-[2rem] lg:top-24 lg:col-span-2 lg:col-start-7 lg:block lg:max-h-[100%] lg:w-[calc(((100%/8)*2)-2rem)] lg:overflow-auto lg:border-l-[0.5px] lg:pb-24 lg:pl-6 xl:w-[calc(((100%/8)*2)-3rem)] xl:pl-12",
         )}
       >
-        {/*FEATURED POSTS — NOTE THIS IS NOT DYNAMIC, THIS IS READING THE SAME POSTS DATA BUT IN REVERSE*/}
+        {/*FEATURED POSTS — NOTE THIS IS NOT DYNAMIC, THIS IS READING THE SAME FIRST THREE POSTS FROM THE POSTS DATA*/}
         <div
           className={clsx(
             "space-y-6 lg:block",
