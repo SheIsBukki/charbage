@@ -14,8 +14,8 @@ import {
   WhatsappIcon,
   WhatsappShareButton,
 } from "next-share";
-import { copyCurrentUrl } from "@/utils/helpers";
 import { clsx } from "clsx";
+import { copyCurrentUrl } from "@/utils/helpers";
 
 export default function SocialShare({
   openShareMenu,
@@ -43,8 +43,6 @@ export default function SocialShare({
     process.env.NODE_ENV === "development"
       ? "http://localhost:3000"
       : "https://charbage.netlify.app";
-
-  console.log(process.env.NODE_ENV);
 
   const shareUrl = `${url}/${slug}`;
 

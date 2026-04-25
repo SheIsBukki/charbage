@@ -148,10 +148,11 @@ export type CurrentUserBookmarksType = {
   title: string;
   postSlug: string;
   createdAt: Date;
-  authorName: string;
-  authorSlug: string;
-  authorAvatar: string;
+  authorName?: string;
+  authorSlug?: string;
+  authorAvatar?: string;
   updatedAt: Date | null;
+  showAuthor?: boolean;
 };
 
 export type UserBookmarksType = {
@@ -203,4 +204,27 @@ export type ArticleFormProps = {
   postId?: string;
   editorStatus: { updating: boolean; creating: boolean };
   tagData: Tag[];
+};
+
+export type PostResultType = {
+  id: string;
+  title: string;
+  description: string | null;
+  slug: string;
+  createdAt: Date;
+  updatedAt: Date | null;
+};
+
+export type ProfileResultType = {
+  id: string;
+  firstName: string | null;
+  lastName: string | null;
+  avatar: string | null;
+  slug: string | null;
+};
+
+export type TagResultType = {
+  id: string;
+  name: string;
+  slug: string;
 };
