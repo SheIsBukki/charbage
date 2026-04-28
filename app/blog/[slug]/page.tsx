@@ -52,8 +52,6 @@ export default async function BlogPage({
     authorisedPostAuthor = user.id;
   }
 
-  // console.log(post.tags);
-
   const { reactions } = await getPostReactionsWithId(post.id);
 
   const commentCount = reactions?.comments.length;
@@ -65,10 +63,8 @@ export default async function BlogPage({
     `@${user?.username}`,
   );
 
-  // console.log(reactions?.comments);
-
   return (
-    <div className="boder bottom-10 mx-auto mb-24 w-full border-red-500 py-12">
+    <div className="bottom-10 mx-auto mb-24 w-full py-12 lg:w-3/5">
       <Article
         authorisedPostAuthor={!!authorisedPostAuthor}
         currentUser={user?.id}
@@ -79,15 +75,12 @@ export default async function BlogPage({
 
       {/*STATIC INTERACTIONS UI UNTIL DYNAMIC COMMENTS*/}
       <hr className="border-1 my-12" />
-      <div className="brder-2 container mx-auto mb-24 mt-12 space-y-[0.05rem] border-red-500 lg:mx-auto lg:mb-auto lg:w-3/5">
-        <p
-          id="responses"
-          className="boder-t-2 mb-12 px-6 text-2xl font-semibold"
-        >
+      <div className="container mx-auto mb-24 mt-12 space-y-[0.05rem] lg:mx-auto lg:mb-auto lg:w-4/5">
+        <p id="responses" className="mb-12 px-6 text-2xl font-semibold">
           Responses ({commentCount})
         </p>
 
-        <div className="items-strt boder flex space-x-2 border-red-500 px-2">
+        <div className="flex space-x-2 px-2">
           {user && (
             <Link href={`/${currentUserProfile?.slug}`}>
               <Avatar
@@ -112,7 +105,7 @@ export default async function BlogPage({
         </div>
 
         {/*  COMMENT CARDS */}
-        <div className="boder container mx-auto w-full space-y-4 border-red-500 px-8">
+        <div className="container mx-auto w-full space-y-4 px-8">
           {reactions?.comments.map(
             async ({ id, content, createdAt, author, userId, updatedAt }) => {
               const { profile } = await getProfileWithSlug(`@${author}`);

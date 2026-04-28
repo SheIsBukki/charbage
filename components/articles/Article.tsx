@@ -7,20 +7,16 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { MdOutlineBookmarkAdd } from "react-icons/md";
 import { BiCommentDetail } from "react-icons/bi";
-import { CiCircleChevDown, CiCircleChevUp, CiSettings } from "react-icons/ci";
+import { CiCircleChevDown, CiCircleChevUp } from "react-icons/ci";
 import {
   BsFillBookmarkCheckFill,
   BsHeartFill,
-  BsThreeDots,
   BsThreeDotsVertical,
 } from "react-icons/bs";
+import { FaShare } from "react-icons/fa";
 
 import md from "@/utils/md";
-import {
-  copyCurrentUrl,
-  getReadingTime,
-  getRelativeTime,
-} from "@/utils/helpers";
+import { getReadingTime, getRelativeTime } from "@/utils/helpers";
 import { DbActionType, PostType, ReactionsType } from "@/lib/types";
 import { removeBookmark, removeLike } from "@/db/queries/delete";
 import { addBookmark, addLike } from "@/db/queries/insert";
@@ -30,7 +26,6 @@ import ReaderInteraction from "@/app/ui/ReaderInteraction";
 import AuthenticationDialogue from "@/components/auth/AuthenticationDialogue";
 import Avatar from "@/app/ui/Avatar";
 import { useDisableScroll } from "@/app/ui/useDisableScroll";
-import { FaShare } from "react-icons/fa";
 import SocialShare from "@/app/ui/SocialShare";
 
 // export const dynamic = "force-dynamic";
@@ -74,7 +69,7 @@ export default function Article({
     <>
       <div className="container relative mx-auto lg:grid lg:grid-cols-8 lg:gap-x-8">
         {/*ARTICLE*/}
-        <div className="px-6 lg:order-2 lg:col-span-6 lg:pe-16">
+        <div className="px-6 lg:order-2 lg:col-span-7 lg:pe-16">
           <div className="mb-8 flex flex-col space-y-8">
             {/*Title*/}
             <h1 className="text-2xl font-bold md:text-5xl">{post.title}</h1>
@@ -114,8 +109,8 @@ export default function Article({
                 <p className="flex flex-col space-y-1 dark:text-gray-400">
                   <span className="">
                     {post.updatedAt
-                      ? `Updated at: ${getRelativeTime(post.updatedAt)}`
-                      : `Published at: ${getRelativeTime(post.createdAt)}`}
+                      ? `Updated: ${getRelativeTime(post.updatedAt)}`
+                      : `Published: ${getRelativeTime(post.createdAt)}`}
                   </span>
 
                   <span className="text-sm underline underline-offset-4 dark:text-gray-400">
@@ -127,9 +122,9 @@ export default function Article({
           </div>
 
           {/*Post content*/}
-          <article className="">
+          <article className="leading-relaxed md:text-lg">
             <Interweave
-              className="leading-relaxed dark:text-gray-400"
+              className="dark:text-gray-400"
               content={md.render(post.content)}
             />
           </article>

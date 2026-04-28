@@ -68,16 +68,13 @@ export default function ArticleCard({ article }: { article: PostType }) {
           </div>
 
           {/*EXCERPT*/}
-          {article.description ? (
-            <p className="dark:text-gray-400">{article.description}</p>
-          ) : (
-            <div>
-              <Interweave
-                className="dark:text-gray-400"
-                content={createExcerpt(article.content)}
-              />
-            </div>
-          )}
+          <div className="text-sm md:text-base dark:text-gray-400">
+            {article.description ? (
+              <p>{article.description}</p>
+            ) : (
+              <Interweave content={createExcerpt(article.content)} />
+            )}
+          </div>
         </div>
 
         {/*FEATURED IMAGE*/}
