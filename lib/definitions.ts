@@ -48,10 +48,10 @@ export const ProfileFormSchema = z.object({
 
 export const AccountSettingsFormSchema = z.object({
   email: z.string().email(),
-  username: z
-    .string()
-    .min(1, { message: "Username must be at least 1 character" })
-    .regex(/\S/, { message: "Username must be at least 1 character" }),
+  username: z.string().regex(/^\w{2,16}$/, {
+    message:
+      "Username must be 2-16 characters, letters/numbers/underscores only",
+  }),
   // password: z.string().optional(), //LATER
 });
 

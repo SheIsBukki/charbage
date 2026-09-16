@@ -45,7 +45,7 @@ export default async function RootLayout({
             }
           `}
         </Script>
-        <meta name="color-scheme" content="dqrk light" />
+        <meta name="color-scheme" content="dark light" />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} relative h-full antialiased`}

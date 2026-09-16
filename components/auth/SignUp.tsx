@@ -71,11 +71,12 @@ export default function SignUp({ userAlreadyLoggedIn, action }: SignUpProps) {
                 <input
                   onChange={(e) => handleDuplicate(e)}
                   type="text"
-                  className="peer block w-full rounded-md border border-gray-200 py-[9px] pl-5 text-sm outline-2 placeholder:text-gray-500"
+                  className="peer block w-full rounded-md border border-gray-200 py-[9px] pl-5 text-sm outline-2 placeholder:text-gray-500 invalid:border-red-500"
                   id="username"
                   name="username"
                   placeholder="Enter your username"
                   // required
+                  pattern="\w{2,16}"
                 />
                 {usernameDuplicateError && (
                   <ErrorMessage message={usernameDuplicateError} />
