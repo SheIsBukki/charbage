@@ -1,36 +1,79 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Charbage
+
+A markdown-based blogging/publishing platform built with Next.js.
+
+🔗 [Live Demo](https://charbage.netlify.app)
+
+## Features
+
+- **Markdown Editor** — write posts with live preview, syntax highlighting
+- **Authentication** — secure sign-up/login with session-based auth
+- **Social Interaction** — comment, like, and bookmark posts
+- **Database** — persistent storage for posts, users, and interactions
+- **Responsive UI** — clean, mobile-friendly design with light/dark mode
+
+## Tech Stack
+
+- **Language:** TypeScript
+- **Frontend:** Next.js 15, React 19, Tailwind CSS, shadcn/ui, Radix UI
+- **Backend:** Next.js (API routes), RESTful API
+- **Authentication:** Email/Password + OAuth (GitHub, Google) via Oslo.js, Arctic, bcrypt
+- **Database:** PostgreSQL (NeonDB), Drizzle ORM
+- **Editor:** react-md-editor, react-markdown, highlight.js
+- **Media Storage:** Cloudinary
+- **HTTP Client:** Fetch API
+- **Hosting:** Netlify
+- **Other:** Zod, React Hook Form, next-share, dayjs
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
 
+- Node.js 18+
+- pnpm (or npm/yarn/bun)
+- A Neon Postgres database
+- Cloudinary account (for image uploads)
+
+### Installation
+
+1. Clone the repo
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+   git clone https://github.com/SheIsBukki/charbage.git
+   cd charbage
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Install dependencies
+```bash
+   pnpm install
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. Set up environment variables
+```bash
+   cp .env.example .env
+```
+Fill in your database URL, Cloudinary credentials, and auth secrets.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+4. Run database migrations
+```bash
+   pnpm drizzle-kit push
+```
 
-## Learn More
+5. Start the dev server
+```bash
+   pnpm dev
+```
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-To learn more about Next.js, take a look at the following resources:
+## Project Structure
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```
+charbage/ 
+├── app/ # Next.js app router pages & routes
+├── components/ # Reusable UI components
+├── context/ # React context providers
+├── db/ # Database schema & config
+├── lib/ # Core utilities/helpers
+├── migrations/ # Drizzle database migrations
+├── public/ # Static assets
+└── utils/ # Utility functions
+```
